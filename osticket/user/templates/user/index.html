@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+</head>
+<body>
+    {% if latest_user_list %}
+    <ul>
+    {% for user in latest_user_list %}
+        <li><a href="{% url 'user:detail' user.id %}">{{ user.fullname }}</a></li>
+    {% endfor %}
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
+    </ul>
+    
+{% else %}
+    <p>No user are available.</p>
+
+{% endif %}
+</body>
+</html>
