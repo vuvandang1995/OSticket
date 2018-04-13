@@ -81,4 +81,50 @@ class UserLoginForm(forms.Form):
     def clean_username(self):
         username =  self.cleaned_data['username']
         return username
-        
+
+
+class CreateNewTicketForm(forms.Form):
+    subject = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'subject',
+        }
+    ))
+    choice = Topics.objects.all()
+    choices =[(x.id,x.name) for x in choice]
+    topic = forms.ChoiceField(choices=choices)
+
+    content = forms.CharField(widget=forms.Textarea(attrs={
+        'cols': '146',
+        'rows': '20',
+        'class': 'form-control',
+        'placeholder': 'content',
+    })
+    )
+
+    attach = forms.ImageField(widget=forms.FileInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'attach',
+    })
+    )
+
+    def clean_password2(self):
+        if 'password' in self.cleaned_data:
+            password = self.cleaned_data['password']
+            password2 = self.cleaned_data['password2']
+            if password == password2 and password:
+                return password2
+        raise forms.ValidationError("Mật khẩu không hợp lệ")
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        try:
+            User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            return username
+        raise forms.ValidationError("Tài khoản đã tồn tại")
+
+    def save(self):
+        u = UserUsers(fullname=self.cleaned_data['fullname'], username=self.cleaned_data['username'],
+                      email=self.cleaned_data['email'], password=self.cleaned_data['password'], created=timezone.now())
+        u.save()

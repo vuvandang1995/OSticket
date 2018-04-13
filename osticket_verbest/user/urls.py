@@ -12,4 +12,5 @@ urlpatterns = [
     #path('<int:user_id>/profile', views.detail, name='detail'),
     path('user/', views.homeuser, name='homeuser'),
     path('profile', views.detail, name='detail'),
+    path('user/create_ticket',views.create_ticket, name='create_ticket'),
 ]

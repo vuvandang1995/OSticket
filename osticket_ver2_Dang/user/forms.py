@@ -82,4 +82,26 @@ class UserLoginForm(forms.Form):
     def clean_username(self):
         username =  self.cleaned_data['username']
         return username
-        
+
+class CreateNewTicketForm(forms.Form):
+    title = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'title',
+        }
+    ))
+    topic = forms.ChoiceField(choices=[(x.id,x.name) for x in Topics.objects.all()])
+
+    content = forms.CharField(widget=forms.Textarea(attrs={
+        'cols': '146',
+        'rows': '20',
+        'class': 'form-control',
+        'placeholder': 'content',
+    })
+    )
+
+    attach = forms.FileField(widget=forms.FileInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'attach',
+    })
+    )
