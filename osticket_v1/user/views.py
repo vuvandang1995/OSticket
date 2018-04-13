@@ -21,6 +21,8 @@ from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 
+MAX_UPLOAD_SIZE = 10485760
+
 
 def homeuser(request):
     if request.session.has_key('username'):
@@ -106,12 +108,21 @@ def create_ticket(request):
             form = CreateNewTicketForm(request.POST,request.FILES)
             if form.is_valid():
                 topic = Topics.objects.get(id=form.cleaned_data['topic'])
-                Tickets.objects.create(title="abc", content='abc', sender=user,
-                                       topicid=topic, datestart=timezone.now(),
-                                       dateend=(timezone.now()+timezone.timedelta(days=3)),
-                                       attach=request.FILES['attach'])
-                handle_uploaded_file(request.FILES['attach'])
-                return redirect("/")
+                if request.FILES.get('attach') is None:
+                    Tickets.objects.create(title="abc", content='abc', sender=user,
+                                           topicid=topic, datestart=timezone.now(),
+                                           dateend=(timezone.now() + timezone.timedelta(days=3)))
+                    return redirect("/")
+                else:
+                    if request.FILES['attach']._size > MAX_UPLOAD_SIZE:
+                        return render(request, 'user/create_ticket.html', {'form': form})
+                    else:
+                        Tickets.objects.create(title="abc", content='abc', sender=user,
+                                                       topicid=topic, datestart=timezone.now(),
+                                                       dateend=(timezone.now()+timezone.timedelta(days=3)),
+                                                       attach=request.FILES['attach'])
+                        handle_uploaded_file(request.FILES['attach'])
+                        return redirect("/")
             else:
                 print("form invalid")
                 return render(request, 'user/create_ticket.html', {'form': form})
