@@ -21,14 +21,41 @@ from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 
+MAX_UPLOAD_SIZE = 10485760
+
 
 def homeuser(request):
     if request.session.has_key('username'):
-        print(request.session.session_key)
         user = Users.objects.get(username=request.session['username'])
-        return render(request, 'user/home_user.html', {'user': user})
+        form = CreateNewTicketForm()
+        content = {'ticket': Tickets.objects.filter(sender=user.id),'form':form}
+        if request.method == 'POST':
+            form = CreateNewTicketForm(request.POST,request.FILES)
+            if form.is_valid():
+                topic = Topics.objects.get(id=form.cleaned_data['topic'])
+                if request.FILES.get('attach') is None:
+                    Tickets.objects.create(title=form.cleaned_data['title'], content=form.cleaned_data['content'],
+                                           sender=user,topicid=topic, datestart=timezone.now(),
+                                           dateend=(timezone.now() + timezone.timedelta(days=3)))
+                else:
+                    if request.FILES['attach']._size < MAX_UPLOAD_SIZE:
+                        Tickets.objects.create(title=form.cleaned_data['title'],content=form.cleaned_data['content'],
+                                               sender=user,topicid=topic, datestart=timezone.now(),
+                                               dateend=(timezone.now()+timezone.timedelta(days=3)),
+                                               attach=request.FILES['attach'])
+                        handle_uploaded_file(request.FILES['attach'])
+        return render(request, 'user/home_user.html', content)
     else:
         return redirect("/")
+
+
+def handle_uploaded_file(f):
+    path = "media/photos/"+f.name
+    file = open(path, 'wb+')
+    for chunk in f.chunks():
+        file.write(chunk)
+    file.close()
+
 
 def detail(request):
     if request.session.has_key('username'):
@@ -98,32 +125,36 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
 
 
-def create_ticket(request):
-    if request.session.has_key('username'):
-        user = Users.objects.get(username=request.session['username'])
-        form = CreateNewTicketForm()
-        if request.method == 'POST':
-            form = CreateNewTicketForm(request.POST,request.FILES)
-            if form.is_valid():
-                topic = Topics.objects.get(id=form.cleaned_data['topic'])
-                Tickets.objects.create(title="abc", content='abc', sender=user,
-                                       topicid=topic, datestart=timezone.now(),
-                                       dateend=(timezone.now()+timezone.timedelta(days=3)),
-                                       attach=request.FILES['attach'])
-                handle_uploaded_file(request.FILES['attach'])
-                return redirect("/")
-            else:
-                print("form invalid")
-                return render(request, 'user/create_ticket.html', {'form': form})
-        else:
-            return render(request, 'user/create_ticket.html', {'form': form})
-    else:
-        return redirect("/")
+# def create_ticket(request):
+#     if request.session.has_key('username'):
+#         user = Users.objects.get(username=request.session['username'])
+#         form = CreateNewTicketForm()
+#         if request.method == 'POST':
+#             form = CreateNewTicketForm(request.POST,request.FILES)
+#             if form.is_valid():
+#                 topic = Topics.objects.get(id=form.cleaned_data['topic'])
+#                 if request.FILES.get('attach') is None:
+#                     Tickets.objects.create(title="abc", content='abc', sender=user,
+#                                            topicid=topic, datestart=timezone.now(),
+#                                            dateend=(timezone.now() + timezone.timedelta(days=3)))
+#                     return redirect("/")
+#                 else:
+#                     if request.FILES['attach']._size > MAX_UPLOAD_SIZE:
+#                         return render(request, 'user/create_ticket.html', {'form': form})
+#                     else:
+#                         Tickets.objects.create(title="abc", content='abc', sender=user,
+#                                                        topicid=topic, datestart=timezone.now(),
+#                                                        dateend=(timezone.now()+timezone.timedelta(days=3)),
+#                                                        attach=request.FILES['attach'])
+#                         handle_uploaded_file(request.FILES['attach'])
+#                         return redirect("/")
+#             else:
+#                 print("form invalid")
+#                 return render(request, 'user/create_ticket.html', {'form': form})
+#         else:
+#             return render(request, 'user/create_ticket.html', {'form': form})
+#     else:
+#         return redirect("/")
 
 
-def handle_uploaded_file(f):
-    path = "media/photos/"+f.name
-    file = open(path, 'wb+')
-    for chunk in f.chunks():
-        file.write(chunk)
-    file.close()
+
