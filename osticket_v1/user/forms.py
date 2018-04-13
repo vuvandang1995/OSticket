@@ -101,8 +101,9 @@ class CreateNewTicketForm(forms.Form):
     })
     )
 
-    attach = forms.FileField(widget=forms.FileInput(attrs={
+    attach = forms.FileField(required=False, widget=forms.FileInput(attrs={
         'class': 'form-control',
         'placeholder': 'attach',
+        'id': 'i_file',
     })
     )
