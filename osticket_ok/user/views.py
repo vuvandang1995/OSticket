@@ -1,33 +1,27 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import *
-from django.shortcuts import get_object_or_404, render
-from django.http import Http404
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.views import generic
-from django.urls import reverse
-from django.contrib.auth import (
-    get_user_model,
-    login,
-    logout
-)
+from .models import *
 from .forms import *
-from django.contrib import messages, auth
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import user_passes_test
 
+
+def creat_ticket(request):
+    form = CreateNewTicketForm()
+    return render(request, 'user/create_ticket.html',{'form': form})
 
 
 def homeuser(request):
     if request.session.has_key('username'):
         print(request.session.session_key)
-        user = UserUsers.objects.get(username=request.session['username'])
+        user = User.objects.get(username=request.session['username'])
         return render(request, 'user/home_user.html', {'user': user})
     else:
         return redirect("/")
 
 def detail(request):
     if request.session.has_key('username'):
-        user = UserUsers.objects.get(username=request.session['username'])
+        user = User.objects.get(username=request.session['username'])
         return render(request, 'user/detail.html', {'user': user})
     else:
         return redirect("/")
@@ -74,9 +68,9 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return UserUsers.objects.order_by('-created')
+        return User.objects.order_by('-created')
 
 
 class DetailView(generic.DetailView):
-    model = UserUsers
+    model = User
     template_name = 'user/detail.html'

@@ -126,6 +126,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 LOGIN_REDIRECT_URL = '/'
 
 MESSAGE_LEVEL = message_constants.DEBUG

@@ -52,7 +52,7 @@ class Tickets(models.Model):
     status = models.IntegerField(default=0)
     datestart = models.DateTimeField()
     dateend = models.DateTimeField()
-
+    attach = models.ImageField(upload_to='photos')
     class Meta:
         managed = True
         db_table = 'tickets'

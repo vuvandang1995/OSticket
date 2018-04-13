@@ -31,6 +31,37 @@ def detail(request):
     else:
         return redirect("/")
 
+def create_ticket(request):
+    if request.session.has_key('username'):
+        user = Users.objects.get(username=request.session['username'])
+        form = CreateNewTicketForm()
+        if request.method == 'POST':
+            form = CreateNewTicketForm(request.POST,request.FILES)
+            if form.is_valid():
+                topic = Topics.objects.get(id=form.cleaned_data['topic'])
+                Tickets.objects.create(title="abc", content='abc', sender=user,
+                                       topicid=topic, datestart=timezone.now(),
+                                       dateend=(timezone.now()+timezone.timedelta(days=3)),
+                                       attach=request.FILES['attach'])
+                handle_uploaded_file(request.FILES['attach'])
+                return redirect("/")
+            else:
+                print("form invalid")
+                return render(request, 'user/create_ticket.html', {'form': form})
+        else:
+            return render(request, 'user/create_ticket.html', {'form': form})
+    else:
+        return redirect("/")
+
+
+def handle_uploaded_file(f):
+    path = "media/photos/"+f.name
+    file = open(path, 'wb+')
+    for chunk in f.chunks():
+        file.write(chunk)
+    file.close()
+
+
 def login_user1(request):
     form = UserLoginForm()
     if request.method == 'POST':
@@ -90,7 +121,6 @@ def register(request):
 class IndexView(generic.ListView):
     template_name = 'user/index.html'
     context_object_name = 'latest_user_list'
-
     def get_queryset(self):
         """Return the last five published questions."""
         return Users.objects.order_by('-created')

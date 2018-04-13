@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
+    <title>{% block title %}Create ticket{% endblock %}</title>
+</head>
+<body>
+        {% block content %}
+        <h2>Ticket Form</h2>
+
+    <button onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Create new ticket</button>
+
+    <div id="id02" class="modal">
+        <form class="modal-content" action="." method="POST">
+            {% csrf_token %}
+            {% for key, value in form.error.items %}
+                {{value}}
+            {% endfor%}
+
+            <div class="imgcontainer">
+                <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+            </div>
+          <div class="container">
+            <h1>New Ticket</h1>
+            <p>Please fill in this form to create a ticket.</p>
+            <hr>
+
+            <label for="subject"><b>Subject</b></label>
+            {{form.subject}}
+
+            <label for="topic"><b>Topic</b></label><br />
+            {{form.topic}}
+
+            <br /><br /><label for="content"><b>Content</b></label> <br/>
+            {{form.content}}
+
+            <br /><br /><label for="attach"><b>Attach image</b></label> <br/>
+            {{form.attach}}
+            <br /><br /><input type="submit" value="Send" />
+            <p>By creating a ticket you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+            <div class="clearfix">
+              <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    <script src="{% static 'js/login.js' %}"></script>
+    {% endblock %}
+</body>
+</html>

@@ -8,6 +8,11 @@
 from django.db import models
 from django.contrib.auth.hashers import check_password
 from user.models import *
+from django.core.files.storage import FileSystemStorage
+
+
+fs = FileSystemStorage(location='/media/photos')
+
 
 class Users(models.Model):
     fullname = models.CharField(max_length=255)
@@ -51,6 +56,7 @@ class Tickets(models.Model):
     status = models.IntegerField(default=0)
     datestart = models.DateTimeField()
     dateend = models.DateTimeField()
+    attach = models.ImageField(upload_to='photos')
 
     class Meta:
         managed = True
