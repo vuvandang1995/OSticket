@@ -28,7 +28,7 @@ def homeuser(request):
     if request.session.has_key('username'):
         user = Users.objects.get(username=request.session['username'])
         form = CreateNewTicketForm()
-        content = {'ticket': Tickets.objects.filter(sender=user.id),'form':form}
+        content = {'ticket': Tickets.objects.filter(sender=user.id),'form':form, 'user': user}
         if request.method == 'POST':
             form = CreateNewTicketForm(request.POST,request.FILES)
             if form.is_valid():
@@ -80,40 +80,60 @@ def detail(request):
 
 
 def login_user(request):
-    form = UserLoginForm()
-    if request.method == 'POST':
-        if 'fullname' and 'email' and 'password2' not in request.POST:
-            form = UserLoginForm(request.POST)
-            if form.is_valid():
-                username = form.cleaned_data['username']
-                password = form.cleaned_data['password']
-                user = authenticate_user(request, username=username, password=password)
-                if user is not None:
+    if request.session.has_key('username'):
+        return redirect("/user")
+    else:
+        form = UserLoginForm()
+        if request.method == 'POST':
+            if 'uemail' in request.POST:
+                form = UserResetForm(request.POST)
+                if form.is_valid():
+                    to_email = form.cleaned_data['uemail']
+                    current_site = get_current_site(request)
+                    user = get_user_email(to_email)
+                    mail_subject = 'Reset password your account.'
+                    message = render_to_string('user/resetpwd.html', {
+                        'user': user,
+                        'domain': current_site.domain,
+                        'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
+                        'token':account_activation_token.make_token(user),
+                    })
+                    email = EmailMessage(
+                                mail_subject, message, to=[to_email]
+                    )
+                    email.send()
+                    return HttpResponse('Please confirm your email address to reset your account')
+                else:
+                    return redirect('/')
+            elif 'fullname' and 'email' and 'password2' in request.POST:
+                form = RegistrationForm(request.POST)
+                if form.is_valid():
+                    current_site = get_current_site(request)
+                    user = form.save()
+                    mail_subject = 'Activate your blog account.'
+                    message = render_to_string('user/acc_active_email.html', {
+                        'user': user,
+                        'domain': current_site.domain,
+                        'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
+                        'token':account_activation_token.make_token(user),
+                    })
+                    to_email = form.cleaned_data['email']
+                    email = EmailMessage(
+                                mail_subject, message, to=[to_email]
+                    )
+                    email.send()
+                    return HttpResponse('Please confirm your email address to complete the registration')
+                else:
+                    return redirect('/')
+            else:
+                form = UserLoginForm(request.POST)
+                if form.is_valid():
+                    username = form.cleaned_data['username']
                     request.session['username'] = username
                     return redirect("/user")
                 else:
-                    return redirect("/")
-        else:
-            form = RegistrationForm(request.POST)
-            if form.is_valid():
-                current_site = get_current_site(request)
-                user = form.save()
-                mail_subject = 'Activate your blog account.'
-                message = render_to_string('acc_active_email.html', {
-                    'user': user,
-                    'domain': current_site.domain,
-                    'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
-                    'token':account_activation_token.make_token(user),
-                })
-                to_email = form.cleaned_data['email']
-                email = EmailMessage(
-                            mail_subject, message, to=[to_email]
-                )
-                email.send()
-                return HttpResponse('Please confirm your email address to complete the registration')
-            else:
-                return redirect('/')
-    return render(request, 'user/index.html',{})
+                    redirect("/user")
+        return render(request, 'user/index.html',{})
 
 
 def logout_user(request):
@@ -139,36 +159,46 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
 
 
-# def create_ticket(request):
-#     if request.session.has_key('username'):
-#         user = Users.objects.get(username=request.session['username'])
-#         form = CreateNewTicketForm()
-#         if request.method == 'POST':
-#             form = CreateNewTicketForm(request.POST,request.FILES)
-#             if form.is_valid():
-#                 topic = Topics.objects.get(id=form.cleaned_data['topic'])
-#                 if request.FILES.get('attach') is None:
-#                     Tickets.objects.create(title="abc", content='abc', sender=user,
-#                                            topicid=topic, datestart=timezone.now(),
-#                                            dateend=(timezone.now() + timezone.timedelta(days=3)))
-#                     return redirect("/")
-#                 else:
-#                     if request.FILES['attach']._size > MAX_UPLOAD_SIZE:
-#                         return render(request, 'user/create_ticket.html', {'form': form})
-#                     else:
-#                         Tickets.objects.create(title="abc", content='abc', sender=user,
-#                                                        topicid=topic, datestart=timezone.now(),
-#                                                        dateend=(timezone.now()+timezone.timedelta(days=3)),
-#                                                        attach=request.FILES['attach'])
-#                         handle_uploaded_file(request.FILES['attach'])
-#                         return redirect("/")
-#             else:
-#                 print("form invalid")
-#                 return render(request, 'user/create_ticket.html', {'form': form})
-#         else:
-#             return render(request, 'user/create_ticket.html', {'form': form})
-#     else:
-#         return redirect("/")
+def resetpwd(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = Users.objects.get(id=uid)
+    except(TypeError, ValueError, OverflowError, Users.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        if request.method == 'POST':
+            form = ResetForm(request.POST)
+            if form.is_valid():
+                user.password = form.cleaned_data
+                user.save()
+                return redirect('/')
+            else:
+                return redirect('/')
+        return render(request, 'user/formresetpass.html', {})
+    else:
+        return HttpResponse('Activation link is invalid!')
 
+
+def create_ticket(request):
+    if request.session.has_key('username'):
+        user = Users.objects.get(username=request.session['username'])
+        form = CreateNewTicketForm()
+        if request.method == 'POST':
+            form = CreateNewTicketForm(request.POST,request.FILES)
+            if form.is_valid():
+                topic = Topics.objects.get(id=form.cleaned_data['topic'])
+                Tickets.objects.create(title="abc", content='abc', sender=user,
+                                       topicid=topic, datestart=timezone.now(),
+                                       dateend=(timezone.now()+timezone.timedelta(days=3)),
+                                       attach=request.FILES['attach'])
+                handle_uploaded_file(request.FILES['attach'])
+                return redirect("/")
+            else:
+                print("form invalid")
+                return render(request, 'user/create_ticket.html', {'form': form})
+        else:
+            return render(request, 'user/create_ticket.html', {'form': form})
+    else:
+        return redirect("/")
 
 
