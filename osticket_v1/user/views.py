@@ -49,6 +49,20 @@ def homeuser(request):
         return redirect("/")
 
 
+def detail_ticket(request,id):
+    if request.session.has_key('username'):
+        ticket = Tickets.objects.get(id=id)
+        if request.method == 'POST':
+            print("post")
+            ticket.status = 3
+            ticket.save()
+            return redirect("/user")
+        else:
+            return render(request, 'user/ticket_detail.html', {'ticket': ticket})
+    else:
+        return redirect("/")
+
+
 def handle_uploaded_file(f):
     path = "media/photos/"+f.name
     file = open(path, 'wb+')

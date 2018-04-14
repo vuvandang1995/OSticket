@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket detail</title>
+</head>
+<body>
+    <div>
+        <h2>Ticket no.{{ticket.id}}</h2>
+        <h3>Title</h3>
+        <p>{{ticket.title}}</p>
+        <h3>Status</h3>
+        {% if ticket.status == 0 %}
+        <p>pending...</p>
+        {% elif tk.status == 1 %}
+        <p>processing...</p>
+        {% elif tk.status == 2 %}
+        <p>done</p>
+        {% else %}
+        <p>closed</p>
+        {% endif %}
+        <h3>Content</h3>
+        <p>{{ticket.content}}</p>
+        <h3>Data created</h3>
+        <p>{{ticket.datestart}}</p>
+        <h3>Date expired</h3>
+        <p>{{ticket.dateend}}</p>
+    </div>
+    {% if ticket.status != 3 %}
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" value="Close ticket">
+        </form>
+    </div>
+    {% endif %}
+</body>
+</html>
