@@ -52,7 +52,7 @@ class Tickets(models.Model):
     status = models.IntegerField(default=0)
     datestart = models.DateTimeField()
     dateend = models.DateTimeField()
-    attach = models.ImageField(upload_to='photos')
+    attach = models.FileField(null=True, blank=True, upload_to='photos')
     class Meta:
         managed = True
         db_table = 'tickets'
@@ -73,6 +73,14 @@ def get_user(usname):
     except Users.DoesNotExist:
         return None
 
+
+def get_user_email(email1):
+    try:
+        return Users.objects.get(email=email1)
+    except Users.DoesNotExist:
+        return None
+
+
 def active(user):
         if user.status == 0:
             return False
@@ -80,7 +88,7 @@ def active(user):
             return True
 
 #class SettingsBackend:
-def authenticate_user(request, username, password):
+def authenticate_user(username, password):
     u = get_user(username)
     if u is not None:
         login_valid = (u.username == username)

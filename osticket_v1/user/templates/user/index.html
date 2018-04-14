@@ -45,12 +45,46 @@
         
             <div class="container" style="background-color:#f1f1f1">
                 <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-                <span class="psw">Forgot <a href="#">password?</a></span>
+                <button type="button" onclick="document.getElementById('id03').style.display='block', document.getElementById('id01').style.display='none'" class="cancelbtn">Bạn quên mật khẩu?</button>          
             </div>
             </form>
         </div>
         <script src="{% static 'js/login.js' %}"></script>
         <script src="{% static 'js/validate.js' %}"></script>
+
+
+
+        <div id="id03" class="modal">
+            <form class="modal-content animate" action="" method="POST">
+            {% csrf_token %}
+            
+            <div class="imgcontainer">
+                <span onclick="document.getElementById('id03').style.display='none'" class="close" title="Close Modal">&times;</span>
+            </div>
+            <div class="container">
+                <label for="uemail"><b>Nhập email của bạn</b></label>
+                {% comment %} {{form.email}} {% endcomment %}
+                <input type="text" placeholder="Enter Email your name" name="uemail" required>
+                <div class="invalid-msg"></div>
+    
+                <button type="submit" value="OK" id="uemail" >Reset</button>
+            </div>
+            <div class="container" style="background-color:#f1f1f1">
+                <button type="button" onclick="document.getElementById('id03').style.display='none'" class="cancelbtn">Cancel</button>
+            </div>
+            </form>
+        </div>
+        <script src="{% static 'js/login.js' %}"></script>
+
+
+
+
+
+
+
+
+
+
 
         <div id="id02" class="modal">
                 <form class="modal-content" action="." method="POST">
