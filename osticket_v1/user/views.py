@@ -69,7 +69,6 @@ def login_user(request):
     if request.session.has_key('username'):
         return redirect("/user")
     else:
-        form = UserLoginForm()
         if request.method == 'POST':
             if 'uemail' in request.POST:
                 form = UserResetForm(request.POST)
@@ -136,11 +135,9 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.status = 1
         user.save()
-        #request.session['username'] = username
-        return redirect("/")
         mess = 'Thank you for your email confirmation. Now you can login your account.'
         # return render(request, 'user/index.html',{'mess': mess})
-        
+        return redirect('/', {'mess': mess})
     else:
         return HttpResponse('Activation link is invalid!')
 
