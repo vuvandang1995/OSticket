@@ -28,7 +28,7 @@ def homeuser(request):
     if request.session.has_key('username'):
         user = Users.objects.get(username=request.session['username'])
         form = CreateNewTicketForm()
-        content = {'ticket': Tickets.objects.filter(sender=user.id),'form':form}
+        content = {'ticket': Tickets.objects.filter(sender=user.id),'form':form, 'user': user}
         if request.method == 'POST':
             form = CreateNewTicketForm(request.POST,request.FILES)
             if form.is_valid():
@@ -66,57 +66,60 @@ def detail(request):
 
 
 def login_user(request):
-    form = UserLoginForm()
-    if request.method == 'POST':
-        if 'uemail' in request.POST:
-            form = UserResetForm(request.POST)
-            if form.is_valid():
-                to_email = form.cleaned_data['uemail']
-                current_site = get_current_site(request)
-                user = get_user_email(to_email)
-                mail_subject = 'Reset password your account.'
-                message = render_to_string('user/resetpwd.html', {
-                    'user': user,
-                    'domain': current_site.domain,
-                    'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
-                    'token':account_activation_token.make_token(user),
-                })
-                email = EmailMessage(
-                            mail_subject, message, to=[to_email]
-                )
-                email.send()
-                return HttpResponse('Please confirm your email address to reset your account')
+    if request.session.has_key('username'):
+        return redirect("/user")
+    else:
+        form = UserLoginForm()
+        if request.method == 'POST':
+            if 'uemail' in request.POST:
+                form = UserResetForm(request.POST)
+                if form.is_valid():
+                    to_email = form.cleaned_data['uemail']
+                    current_site = get_current_site(request)
+                    user = get_user_email(to_email)
+                    mail_subject = 'Reset password your account.'
+                    message = render_to_string('user/resetpwd.html', {
+                        'user': user,
+                        'domain': current_site.domain,
+                        'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
+                        'token':account_activation_token.make_token(user),
+                    })
+                    email = EmailMessage(
+                                mail_subject, message, to=[to_email]
+                    )
+                    email.send()
+                    return HttpResponse('Please confirm your email address to reset your account')
+                else:
+                    return redirect('/')
+            elif 'fullname' and 'email' and 'password2' in request.POST:
+                form = RegistrationForm(request.POST)
+                if form.is_valid():
+                    current_site = get_current_site(request)
+                    user = form.save()
+                    mail_subject = 'Activate your blog account.'
+                    message = render_to_string('user/acc_active_email.html', {
+                        'user': user,
+                        'domain': current_site.domain,
+                        'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
+                        'token':account_activation_token.make_token(user),
+                    })
+                    to_email = form.cleaned_data['email']
+                    email = EmailMessage(
+                                mail_subject, message, to=[to_email]
+                    )
+                    email.send()
+                    return HttpResponse('Please confirm your email address to complete the registration')
+                else:
+                    return redirect('/')
             else:
-                return redirect('/')
-        elif 'fullname' and 'email' and 'password2' in request.POST:
-            form = RegistrationForm(request.POST)
-            if form.is_valid():
-                current_site = get_current_site(request)
-                user = form.save()
-                mail_subject = 'Activate your blog account.'
-                message = render_to_string('user/acc_active_email.html', {
-                    'user': user,
-                    'domain': current_site.domain,
-                    'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
-                    'token':account_activation_token.make_token(user),
-                })
-                to_email = form.cleaned_data['email']
-                email = EmailMessage(
-                            mail_subject, message, to=[to_email]
-                )
-                email.send()
-                return HttpResponse('Please confirm your email address to complete the registration')
-            else:
-                return redirect('/')
-        else:
-            form = UserLoginForm(request.POST)
-            if form.is_valid():
-                username = form.cleaned_data['username']
-                request.session['username'] = username
-                return redirect("/user")
-            else:
-                redirect("/user")
-    return render(request, 'user/index.html',{})
+                form = UserLoginForm(request.POST)
+                if form.is_valid():
+                    username = form.cleaned_data['username']
+                    request.session['username'] = username
+                    return redirect("/user")
+                else:
+                    redirect("/user")
+        return render(request, 'user/index.html',{})
 
 
 def logout_user(request):
