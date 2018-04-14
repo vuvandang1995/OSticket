@@ -48,6 +48,7 @@ def homeuser(request):
     else:
         return redirect("/")
 
+
 def detail_ticket(request,id):
     if request.session.has_key('username'):
         ticket = Tickets.objects.get(id=id)
@@ -55,9 +56,9 @@ def detail_ticket(request,id):
             print("post")
             ticket.status = 3
             ticket.save()
-            return HttpResponse("Thanh cong")
+            return redirect("/user")
         else:
-            return render(request, 'user/detail_ticket.html', {'ticket': ticket})
+            return render(request, 'user/ticket_detail.html', {'ticket': ticket})
     else:
         return redirect("/")
 

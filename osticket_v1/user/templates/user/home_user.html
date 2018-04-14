@@ -42,7 +42,7 @@
                 {% endif %}
                 <td>{{tk.datestart}}</td>
                 <td>{{tk.dateend}}</td>
-                <td><a href=" url 'user:detail_ticket' tk.id"></a></td>
+                <td><a href="{% url 'user:detail_ticket' tk.id %}">detail</a></td>
             </tr>
             {% endfor%}
 		</table>

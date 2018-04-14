@@ -19,17 +19,20 @@
         {% else %}
         <p>closed</p>
         {% endif %}
-        <p>{{ticket.status}}</p>
+        <h3>Content</h3>
+        <p>{{ticket.content}}</p>
         <h3>Data created</h3>
         <p>{{ticket.datestart}}</p>
         <h3>Date expired</h3>
         <p>{{ticket.dateend}}</p>
     </div>
+    {% if ticket.status != 3 %}
     <div>
         <form method="post">
             {% csrf_token %}
             <input type="submit" value="Close ticket">
         </form>
     </div>
+    {% endif %}
 </body>
 </html>
