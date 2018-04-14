@@ -14,7 +14,8 @@
 <body>
     <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
     <button onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Register</button>
-    <!-- <a href="{% url 'user:login' %}">Login</a> -->
+    <p>{{ mess }}</p>
+
 
     <div id="id01" class="modal">
         
@@ -75,13 +76,6 @@
             </form>
         </div>
         <script src="{% static 'js/login.js' %}"></script>
-
-
-
-
-
-
-
 
 
 
