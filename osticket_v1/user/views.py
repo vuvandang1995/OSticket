@@ -41,24 +41,33 @@ def detail(request):
 def login_user(request):
     form = UserLoginForm()
     if request.method == 'POST':
-        if 'fullname' and 'email' and 'password2' not in request.POST:
-            form = UserLoginForm(request.POST)
+        if 'uemail' in request.POST:
+            form = UserResetForm(request.POST)
             if form.is_valid():
-                username = form.cleaned_data['username']
-                password = form.cleaned_data['password']
-                user = authenticate_user(request, username=username, password=password)
-                if user is not None:
-                    request.session['username'] = username
-                    return redirect("/user")
-                else:
-                    return redirect("/")
-        else:
+                to_email = form.cleaned_data['uemail']
+                current_site = get_current_site(request)
+                user = get_user_email(to_email)
+                mail_subject = 'Reset password your account.'
+                message = render_to_string('user/resetpwd.html', {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
+                    'token':account_activation_token.make_token(user),
+                })
+                email = EmailMessage(
+                            mail_subject, message, to=[to_email]
+                )
+                email.send()
+                return HttpResponse('Please confirm your email address to reset your account')
+            else:
+                return redirect('/')
+        elif 'fullname' and 'email' and 'password2' in request.POST:
             form = RegistrationForm(request.POST)
             if form.is_valid():
                 current_site = get_current_site(request)
                 user = form.save()
                 mail_subject = 'Activate your blog account.'
-                message = render_to_string('acc_active_email.html', {
+                message = render_to_string('user/acc_active_email.html', {
                     'user': user,
                     'domain': current_site.domain,
                     'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
@@ -72,6 +81,14 @@ def login_user(request):
                 return HttpResponse('Please confirm your email address to complete the registration')
             else:
                 return redirect('/')
+        else:
+            form = UserLoginForm(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data['username']
+                request.session['username'] = username
+                return redirect("/user")
+            else:
+                redirect("/user")
     return render(request, 'user/index.html',{})
 
 
@@ -94,6 +111,26 @@ def activate(request, uidb64, token):
         mess = 'Thank you for your email confirmation. Now you can login your account.'
         # return render(request, 'user/index.html',{'mess': mess})
         
+    else:
+        return HttpResponse('Activation link is invalid!')
+
+
+def resetpwd(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = Users.objects.get(id=uid)
+    except(TypeError, ValueError, OverflowError, Users.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        if request.method == 'POST':
+            form = ResetForm(request.POST)
+            if form.is_valid():
+                user.password = form.cleaned_data
+                user.save()
+                return redirect('/')
+            else:
+                return redirect('/')
+        return render(request, 'user/formresetpass.html', {})
     else:
         return HttpResponse('Activation link is invalid!')
 
