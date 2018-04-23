@@ -88,18 +88,19 @@ def manager_agent(request):
                 if request.POST['agentid'] == '0':
                     fullname = request.POST['add_agent']
                     email = request.POST['email']
+                    phone = request.POST['phone']
                     username = request.POST['username']
                     password = request.POST['password']
-                    ag = Agents(fullname=fullname, username=username, email=email, password=password)
+                    ag = Agents(fullname=fullname, username=username, phone=phone, email=email, password=password)
                     ag.save()
                 else:
                     ag = Agents.objects.get(id=request.POST['agentid'])
                     fullname = request.POST['add_agent']
                     email = request.POST['email']
-                    username = request.POST['username']
+                    phone = request.POST['phone']
                     ag.fullname = fullname
                     ag.email = email
-                    ag.username = username
+                    ag.phone = phone
                     ag.save()
         return render(request, 'agent/manager_agent.html', content)
     else:

@@ -11,15 +11,7 @@ from django.core.mail import EmailMessage
 from django.http import Http404
 from django.views import generic
 from django.urls import reverse
-from django.contrib.auth import (
-    get_user_model,
-    login,
-    logout
-)
 from .forms import *
-from django.contrib import messages, auth
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import user_passes_test
 import string
 import datetime
 from random import *
@@ -83,8 +75,10 @@ def detail_user(request):
                 u = Users.objects.get(id=request.POST['userid'])
                 fullname = request.POST['change_user']
                 email = request.POST['email']
+                phone = request.POST['phone']
                 u.fullname = fullname
                 u.email = email
+                u.phone = phone
                 u.save()
             elif 'pwd' in request.POST:
                 u = Users.objects.get(id=request.POST['userid'])

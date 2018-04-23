@@ -1,8 +1,4 @@
-from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
 from django import forms
-from django.contrib.auth import authenticate, login
 from user.models import *
 from django.utils import timezone
 from django.core.validators import validate_email
@@ -29,6 +25,13 @@ class RegistrationForm(forms.Form):
         'placeholder': 'Email'
     })
     )
+
+    phone = forms.CharField(widget=forms.TextInput(
+        attrs={               
+            'class': 'form-control',
+            'placeholder': 'Your phone number',
+        }
+    ))
 
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={               
@@ -77,7 +80,7 @@ class RegistrationForm(forms.Form):
 
     # lưu tài khoản User
     def save(self):
-        u = Users(fullname=self.cleaned_data['fullname'], username=self.cleaned_data['username'], email=self.cleaned_data['email'], password=self.cleaned_data['password'], created=timezone.now())
+        u = Users(fullname=self.cleaned_data['fullname'], username=self.cleaned_data['username'], email=self.cleaned_data['email'], phone=self.cleaned_data['phone'], password=self.cleaned_data['password'], created=timezone.now())
         u.save()
         return u
 

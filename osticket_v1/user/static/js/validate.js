@@ -24,7 +24,7 @@ $(document).ready(function(){
                             }
                     }       
                     
-                    if (dem == 5)
+                    if (dem == 6)
                     {
                         if (p2 != p1){
                             $(this).next('div.invalid-msg').html('<em>Mật khẩu không trùng khớp</em>').css('color','red');

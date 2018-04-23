@@ -6,7 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django.contrib.auth.hashers import check_password
+# from django.contrib.auth.hashers import check_password
 from user.models import *
 
 class Users(models.Model):
@@ -14,6 +14,8 @@ class Users(models.Model):
     email = models.CharField(max_length=255)
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+    phone = models.CharField(max_length=255,null=True)
+    receive_email = models.IntegerField(default=1)
     status = models.IntegerField(default=0)
     created = models.DateTimeField()
 
@@ -26,7 +28,8 @@ class Users(models.Model):
 class Topics(models.Model):
     name = models.CharField(max_length=255)
     status = models.IntegerField(default=0)
-    kieu = models.IntegerField(default=1)
+    type_send = models.IntegerField(default=1)
+    description = models.TextField()
 
 
     class Meta:
@@ -38,6 +41,8 @@ class Agents(models.Model):
     fullname = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     username = models.CharField(max_length=255)
+    phone = models.CharField(max_length=255,null=True)
+    receive_email = models.IntegerField(default=1)
     password = models.CharField(max_length=255)
     admin = models.IntegerField(default=0)
     status = models.IntegerField(default=1)

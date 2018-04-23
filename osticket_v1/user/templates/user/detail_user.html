@@ -20,7 +20,7 @@
           <th>Full name</th>
           <th>Email</th>
           <th>Username</th>
-          <th></th>
+          <th>Phone</th>
           <th>Status</th>
           <th>Date Created</th>
         </tr>
@@ -29,8 +29,8 @@
         <tr>
           <td id="full_name">{{ user.fullname }}</td>
           <td id="email_user">{{ user.email }}</td>
-          <td id="user_name">{{ user.username }}</td>
-          <td></td>
+          <td>{{ user.username }}</td>
+          <td id="phone_user">{{user.phone}}</td>
           {% if user.status == 1 %}
                 <td>Enable</td>
           {% endif%}
@@ -66,6 +66,9 @@
             
                         <label for="email"><b>Email</b></label>
                         <input class="inputText" type="text" placeholder="Enter Email" name="email">
+
+                        <label for="phone"><b>Phone</b></label>
+                        <input class="inputText" type="text" placeholder="Enter your phone number" name="phone">
                     </div>
 
                     <div id="pwd">

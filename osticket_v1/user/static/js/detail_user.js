@@ -3,6 +3,7 @@ $(document).ready(function(){
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var fullname = $("input[name=fullname]").val();
         var email = $("input[name=email]").val();
+        var phone = $("input[name=phone]").val();
         var pwd_current = $("input[name=current_password]").val();
         var userid = $("input[name=userid]").val();
         var pwd1 = $("input[name=password]").val();
@@ -32,7 +33,7 @@ $(document).ready(function(){
             $.ajax({
                 type:'POST',
                 url:location.href,
-                data: {'change_user': fullname, 'email': email, 'csrfmiddlewaretoken':token, 'userid': userid},
+                data: {'change_user': fullname, 'email': email, 'phone': phone, 'csrfmiddlewaretoken':token, 'userid': userid},
                 success: function(){
                     window.location.reload();
                     // $("#info_user").load(location.href + "#info_user");
@@ -57,6 +58,9 @@ $(document).ready(function(){
 
             var email = $("#email_user").html();
             $("input[name=email]").val(email);
+
+            var phone = $("#phone_user").html();
+            $("input[name=phone]").val(phone);
 
             $('#info').show();
             $('#pwd').hide();
