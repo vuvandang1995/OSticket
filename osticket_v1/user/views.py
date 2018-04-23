@@ -193,7 +193,7 @@ def login_user(request):
                     return redirect("/user")
                 else:
                     return render(request, 'user/index.html',{'mess': mess_login_error})
-        return render(request, 'user/index.html',{})
+        return render(request, 'user/index.html', {})
 
 
 def logout_user(request):
