@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing ticket</title>
+</head>
+<body>
+    <div>
+        <a href="{% url 'agent:home_agent' %}">Home</a>
+        <a href="{% url 'agent:processing_ticket' %}">Processing ticket</a>
+        <a href="{% url 'agent:forward_ticket' %}">Forward ticket</a>
+        <a href="{% url 'agent:logout' %}">Logout</a>
+    </div>
+    <div>
+        <h2>Closed tickets</h2>
+        <table border="1" cellpadding="10" cellspacing="5">
+			<tr>
+				<td>ID</td>
+				<td>Title</td>
+                <td>Date created</td>
+                <td>Date expired</td>
+			</tr>
+            {% for tk in ticket %}
+            <tr>
+                <td>{{tk.ticketid.id}}</td>
+                <td>{{tk.ticketid.title}}</td>
+                <td>{{tk.ticketid.datestart}}</td>
+                <td>{{tk.ticketid.dateend}}</td>
+            </tr>
+            {% endfor%}
+		</table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static 'js/mess.js' %}"></script>
+    <script src="{% static 'js/validate.js' %}"></script>
+    <title>Forward ticket</title>
+</head>
+<body>
+    <div>
+        <a href="{% url 'agent:home_agent' %}">Home</a>
+        <a href="{% url 'agent:processing_ticket' %}">Processing ticket</a>
+        <a href="{% url 'agent:closed_ticket' %}">Closed ticket</a>
+        <a href="{% url 'agent:logout' %}">Logout</a>
+    </div>
+    <div>
+        <h2>Forward ticket</h2>
+        <table border="1" cellpadding="10" cellspacing="5">
+			<tr>
+				<td>ID</td>
+				<td>Title</td>
+                <td>Date created</td>
+                <td>Date expired</td>
+                <td>Status</td>
+                <td>Accept</td>
+                <td>Deny</td>
+			</tr>
+            {% for tk in ticket %}
+            <tr>
+                <td>{{tk.ticketid.id}}</td>
+                <td>{{tk.ticketid.title}}</td>
+                <td>{{tk.ticketid.datestart}}</td>
+                <td>{{tk.ticketid.dateend}}</td>
+                {% if tk.ticketid.status == 1 %}
+                <td>processing...</td>
+                {% else %}
+                <td>done</td>
+                {% endif %}
+                <td>
+                    <form >
+                        <button id="accept_{{forloop.counter}}" type="button">Accept</button>
+                    </form>
+                    <script type="text/javascript">
+                        var btn = document.getElementById("accept_{{forloop.counter}}");
+                        btn.onclick = function(){
+                            if(confirm("Are you sure ?")){
+                                location.href="{% url 'agent:accept_forward' tk.ticketid.id %}"
+                            }
+                        };
+                    </script>
+                </td>
+                <td>
+                    <form >
+                        <button id="deny_{{forloop.counter}}" type="button">Deny</button>
+                    </form>
+                    <script type="text/javascript">
+                        var btn = document.getElementById("deny_{{forloop.counter}}");
+                        btn.onclick = function(){
+                            if(confirm("Are you sure ?")){
+                                location.href="{% url 'agent:deny_forward' tk.ticketid.id %}"
+                            }
+                        };
+                    </script>
+                </td>
+            </tr>
+            {% endfor%}
+		</table>
+    </div>
+    <script src="{% static 'js/login.js' %}"></script>
+    <script src="{% static 'js/validate.js' %}"></script>
+</body>
+</html>
