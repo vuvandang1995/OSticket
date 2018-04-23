@@ -1,7 +1,11 @@
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+
 from user.models import *
 from .forms import ForwardForm, AddForm
+from django.core.mail import EmailMessage
 from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
@@ -150,7 +154,15 @@ def processing_ticket(request):
                                 TicketAgent.objects.get(ticketid=ticket,agentid=rc)
                             except ObjectDoesNotExist:
                                 ForwardTickets.objects.get_or_create(senderid=sender,receiverid=rc,ticketid=ticket,content=text)
-
+                                email = EmailMessage(
+                                    'Forward ticket',
+                                    render_to_string('agent/mail/forward_mail.html',
+                                                     {'receiver': rc,
+                                                      'domain': (get_current_site(request)).domain,
+                                                      'sender': sender}),
+                                    to=[rc.email]
+                                )
+                                email.send()
             else:
                 form1 = AddForm(request.POST)
                 if form1.is_valid():
@@ -163,6 +175,15 @@ def processing_ticket(request):
                                 TicketAgent.objects.get(ticketid=ticket,agentid=rc)
                             except ObjectDoesNotExist:
                                 AddAgents.objects.get_or_create(senderid=sender, receiverid=rc, ticketid=ticket,content=text)
+                                email = EmailMessage(
+                                    'Add in a ticket',
+                                    render_to_string('agent/mail/add_mail.html',
+                                                     {'receiver': rc,
+                                                      'domain': (get_current_site(request)).domain,
+                                                      'sender': sender}),
+                                    to=[rc.email]
+                                )
+                                email.send()
         return render(request,'agent/processing_ticket.html', content)
     else:
         return redirect("/")
@@ -227,6 +248,7 @@ def accept_forward(request,id):
         agent = Agents.objects.get(username=request.session.get('agent'))
         ticket = Tickets.objects.get(id=id)
         fwticket = ForwardTickets.objects.get(ticketid=ticket,receiverid=agent)
+        sender = fwticket.senderid
         agticket = TicketAgent.objects.get(ticketid=ticket,agentid=fwticket.senderid)
         fwticket.delete()
         try:
@@ -234,6 +256,15 @@ def accept_forward(request,id):
         except TicketAgent.DoesNotExist:
             agticket.agentid = agent
             agticket.save()
+            email = EmailMessage(
+                'Accept forward request',
+                render_to_string('agent/mail/accept_mail.html',
+                                 {'receiver': sender,
+                                  'domain': (get_current_site(request)).domain,
+                                  'sender': agent}),
+                to=[sender.email]
+            )
+            email.send()
         else:
             agticket.delete()
         return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
@@ -247,7 +278,17 @@ def deny_forward(request,id):
         agent = Agents.objects.get(username=request.session.get('agent'))
         ticket = Tickets.objects.get(id=id)
         fwticket = ForwardTickets.objects.get(ticketid=ticket,receiverid=agent)
+        sender = fwticket.senderid
         fwticket.delete()
+        email = EmailMessage(
+            'Deny forward request',
+            render_to_string('agent/mail/deny_mail.html',
+                             {'receiver': sender,
+                              'domain': (get_current_site(request)).domain,
+                              'sender': agent}),
+            to=[sender.email]
+        )
+        email.send()
         return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
                   'addin': AddAgents.objects.filter(receiverid=agent)})
     else:
@@ -271,10 +312,20 @@ def accept_add(request,id):
         agent = Agents.objects.get(username=request.session.get('agent'))
         ticket = Tickets.objects.get(id=id)
         fwticket = AddAgents.objects.get(ticketid=ticket,receiverid=agent)
+        sender = fwticket.senderid
         try:
             TicketAgent.objects.get(ticketid=ticket, agentid=agent)
         except TicketAgent.DoesNotExist:
             TicketAgent.objects.create(ticketid=ticket, agentid=agent)
+            email = EmailMessage(
+                'Accept add request',
+                render_to_string('agent/mail/accept_mail.html',
+                                 {'receiver': sender,
+                                  'domain': (get_current_site(request)).domain,
+                                  'sender': agent}),
+                to=[sender.email]
+            )
+            email.send()
         fwticket.delete()
 
 
@@ -289,6 +340,16 @@ def deny_add(request,id):
         agent = Agents.objects.get(username=request.session.get('agent'))
         ticket = Tickets.objects.get(id=id)
         fwticket = AddAgents.objects.get(ticketid=ticket,receiverid=agent)
+        sender = fwticket.senderid
+        email = EmailMessage(
+            'Deny add request',
+            render_to_string('agent/mail/deny_mail.html',
+                             {'receiver': sender,
+                              'domain': (get_current_site(request)).domain,
+                              'sender': agent}),
+            to=[sender.email]
+        )
+        email.send()
         fwticket.delete()
         return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
                   'addin': AddAgents.objects.filter(receiverid=agent)})
