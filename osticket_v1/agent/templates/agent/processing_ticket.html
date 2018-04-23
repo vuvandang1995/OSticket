@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/home_admin.js' %}"></script>
+    <script src="{% static 'js/mess.js' %}"></script>
+    <script src="{% static 'js/validate.js' %}"></script>
+
+    <title>Processing ticket</title>
+</head>
+<body>
+    <div class="header">
+        <nav class="main-menu">
+				<ul>
+					<li><a href="{% url 'agent:home_agent' %}">Home</a></li>
+                    <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
+                    <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
+                    <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
+                    <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
+                    <li><a href="{% url 'agent:manage_user' %}">Manage user</a></li>
+                    <li><a href="{% url 'agent:logout' %}">Logout</a></li>
+				</ul>
+		</nav>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div>
+        <h2>Processing tickets</h2>
+        <table class="table table-striped table-bordered" >
+			<tr>
+				<td>ID</td>
+				<td>Title</td>
+                <td>Date expired</td>
+                <td>Status</td>
+                <td>Handler</td>
+                <td>Handle</td>
+                <td>Forward</td>
+                <td>Add agent</td>
+                <td>Give up</td>
+			</tr>
+            {% for tk in ticket %}
+            <tr>
+                <td>
+                    <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
+                </td>
+                <td>{{tk.ticketid.title}}</td>
+                <td>{{tk.ticketid.dateend}}</td>
+                {% if tk.ticketid.status == 1 %}
+                <td>processing...</td>
+                <td>
+                    {% for t in tic%}
+                        {% if t.ticketid == tk.ticketid %}
+                            {{t.agentid.fullname}},
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    <form >
+                        <button id="done_{{forloop.counter}}" type="button">Done</button>
+                    </form>
+                    <script type="text/javascript">
+                        var btn = document.getElementById("done_{{forloop.counter}}");
+                        btn.onclick = function(){
+                            if(confirm("Are you sure ?")){
+                                location.href="{% url 'agent:done' tk.ticketid.id %}"
+                            }
+                        };
+                    </script>
+                </td>
+                {% else %}
+                <td>done</td>
+                <td>
+                    {% for t in tic%}
+                        {% if t.ticketid == tk.ticketid %}
+                            {{t.agentid.fullname}},
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    <form >
+                        <button id="processing_{{forloop.counter}}" type="button">Processing</button>
+                    </form>
+                    <script type="text/javascript">
+                        var btn = document.getElementById("processing_{{forloop.counter}}");
+                        btn.onclick = function(){
+                            if(confirm("Are you sure ?")){
+                                location.href="{% url 'agent:process' tk.ticketid.id %}"
+                            }
+                        };
+                    </script>
+                </td>
+                {% endif %}
+                <td>
+                    <button id="forward_{{forloop.counter}}" onclick="document.getElementById('id01').style.display='block';document.getElementById('tkid').value = {{tk.ticketid.id}}" >Forward</button>
+                </td>
+                <td>
+                    <button id="add_{{forloop.counter}}" onclick="document.getElementById('id02').style.display='block';document.getElementById('tkid1').value = {{tk.ticketid.id}}" >Add</button>
+                </td>
+                <td>
+                    <form >
+                        <button id="giveup_{{forloop.counter}}" type="button">Give up</button>
+                    </form>
+                    <script type="text/javascript">
+                        var btn = document.getElementById("giveup_{{forloop.counter}}");
+                        btn.onclick = function(){
+                            if(confirm("Are you sure ?")){
+                                location.href="{% url 'agent:give_up' tk.ticketid.id %}"
+                            }
+                        };
+                    </script>
+                </td>
+            </tr>
+            <div class="modal fade" id="{{tk.ticketid.id}}content" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Chi tiết</h4>
+                        </div>
+                        <div class="modal-body form-group">
+                            <label for="content">Content:</label>
+                            <p><b>{{tk.ticketid.content}}</b></p><br>
+                            <label for="datestart">Date Start:</label>
+                            <p><b>{{ tk.ticketid.datestart}}</b></p><br>
+                            <label for="dateend">Date End:</label>
+                            <p><b>{{tk.ticketid.dateend}}</b></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            {% endfor%}
+		</table>
+    </div>
+    <div id="id01" class="modal">
+        <form class="modal-content animate" action="" method="POST">
+            {% csrf_token %}
+            <h2 align="center">Forward a ticket</h2>
+            <div class="imgcontainer">
+                <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+            </div>
+            <div class="container">
+                <input type="hidden" name="type" value="forward" >
+                <input id="tkid" type="hidden" name="ticketid" >
+                <label for="content"><b>Content</b></label>
+                <br />
+                {{form.content}}
+                <br />
+                <label for="receiver"><b>Receiver</b></label>
+                <br />
+                {{form.receiver }}
+                <br />
+                <button type="submit" value="OK" >Forward</button>
+            </div>
+        </form>
+    </div>
+    <div id="id02" class="modal">
+        <form class="modal-content animate" action="" method="POST">
+            {% csrf_token %}
+            <h2 align="center">Add agents</h2>
+            <div class="imgcontainer">
+                <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+            </div>
+            <div class="container">
+                <input type="hidden" name="type" value="add" >
+                <input id="tkid1" type="hidden" name="ticketid" >
+                <label for="content"><b>Content</b></label>
+                <br />
+                {{form1.content}}
+                <br />
+                <label for="receiver"><b>Receiver</b></label>
+                <br />
+                {{form1.receiver }}
+                <br />
+                <button type="submit" value="OK" >Forward</button>
+            </div>
+        </form>
+    </div>
+    <script src="{% static 'js/login.js' %}"></script>
+    <script src="{% static 'js/validate.js' %}"></script>
+</body>
+</html>
