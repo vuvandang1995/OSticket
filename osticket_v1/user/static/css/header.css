@@ -1,0 +1,47 @@
+.main-menu {
+	float: right;
+}
+
+.main-menu ul {
+	list-style: none;
+}
+
+.main-menu ul li {
+	display: inline;
+}
+
+.main-menu ul li a {
+	display: inline-block;
+	text-transform: uppercase;
+	font-size: 16px;
+	color: #000000;
+	padding: 15px;
+	margin-right: 10px;
+	position: relative;
+}
+
+.main-menu ul li a:after {
+	position: absolute;
+	content: '';
+	width: 0;
+	height: 2px;
+	background: #fff;
+	left: 50%;
+	top: 26px;
+	margin-left: -17px;
+	-webkit-transform: rotate(-45deg);
+	    -ms-transform: rotate(-45deg);
+	        transform: rotate(-45deg);
+	opacity: 0;
+	-webkit-transform-origin: top center;
+	    -ms-transform-origin: top center;
+	        transform-origin: top center;
+	-webkit-transition: all 0.4s;
+	-o-transition: all 0.4s;
+	transition: all 0.4s;
+}
+
+.main-menu ul li a:hover:after {
+	opacity: 1;
+	width: 34px;
+}

@@ -1,19 +1,21 @@
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from user.models import *
-from .forms import AddOrForwardForm
+from .forms import ForwardForm, AddForm
 from django.http import HttpResponse, HttpResponseRedirect
-import simplejson as json
 
 # Create your views here.
+
+
 def home_admin(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin, 'agent': Agents.objects.all()}
+        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
                 tk = Tickets.objects.get(id=ticketid)
-                if tk.status == 3: 
+                if tk.status == 3:
                     tk.status = 0
                 else:
                     tk.status = 3
@@ -22,21 +24,11 @@ def home_admin(request):
                 ticketid = request.POST['delete']
                 tk = Tickets.objects.get(id=ticketid)
                 tk.delete()
-            elif 'ticketid' in request.POST:
-                list_agent = request.POST['list_agent[]']
-                list_agent = json.loads(list_agent)
-                ticketid = request.POST['ticketid']
-                for agentid in list_agent:
-                    agent = Agents.objects.get(id=agentid)
-                    ticket = Tickets.objects.get(id=ticketid)
-                    tkag = TicketAgent(agentid=agent, ticketid=ticket)
-                    tkag.save()
-                    ticket.status = 1
-                    ticket.save()
+            elif 'forward' in request.POST:
+                print('forward')
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
-
 
 
 def manager_topic(request):
@@ -47,7 +39,7 @@ def manager_topic(request):
             if 'close' in request.POST:
                 topictid = request.POST['close']
                 tp = Topics.objects.get(id=topictid)
-                if tp.status == 0: 
+                if tp.status == 0:
                     tp.status = 1
                 else:
                     tp.status = 0
@@ -78,12 +70,12 @@ def manager_topic(request):
 def manager_agent(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'agent': Agents.objects.all(), 'admin': admin, 'tkag': TicketAgent.objects.all()}
+        content = {'agent': Agents.objects.all(), 'admin': admin}
         if request.method == 'POST':
             if 'close' in request.POST:
                 agentid = request.POST['close']
                 ag = Agents.objects.get(id=agentid)
-                if ag.status == 0: 
+                if ag.status == 0:
                     ag.status = 1
                 else:
                     ag.status = 0
@@ -137,16 +129,39 @@ def processing_ticket(request):
     if request.session.has_key('agent'):
         sender = Agents.objects.get(username=request.session['agent'])
         tem = Tickets.objects.filter(status__in=[1, 2]).order_by('status')
-        form = AddOrForwardForm()
-        content ={'ticket': TicketAgent.objects.filter(agentid=sender, ticketid__in=tem),'form': form}
+        form = ForwardForm()
+        form1 = AddForm()
+        ticket = TicketAgent.objects.filter(agentid=sender, ticketid__in=tem)
+        tic=[]
+        for t in ticket:
+            tic += [x for x in TicketAgent.objects.filter(ticketid=t.ticketid)]
+        content ={'ticket': ticket,'tic': tic,'form': form, 'form1':form1}
         if request.method == 'POST':
-            form = AddOrForwardForm(request.POST)
-            if form.is_valid():
-                ticket = Tickets.objects.get(id=request.POST['ticketid'])
-                receiver = {'receiver': Agents.objects.filter(id__in=form.cleaned_data.get('receiver'))}
-                for rc in receiver['receiver']:
-                    if rc != sender:
-                        ForwardTickets.objects.get_or_create(senderid=sender,receiverid=rc,ticketid=ticket)
+            if request.POST['type']=='forward':
+                form = ForwardForm(request.POST)
+                if form.is_valid():
+                    ticket = Tickets.objects.get(id=request.POST['ticketid'])
+                    receiver = {'receiver': Agents.objects.filter(id__in=form.cleaned_data.get('receiver'))}
+                    text = form.cleaned_data.get('content')
+                    for rc in receiver['receiver']:
+                        if rc != sender:
+                            try:
+                                TicketAgent.objects.get(ticketid=ticket,agentid=rc)
+                            except ObjectDoesNotExist:
+                                ForwardTickets.objects.get_or_create(senderid=sender,receiverid=rc,ticketid=ticket,content=text)
+
+            else:
+                form1 = AddForm(request.POST)
+                if form1.is_valid():
+                    ticket = Tickets.objects.get(id=request.POST['ticketid'])
+                    receiver = {'receiver': Agents.objects.filter(id__in=form1.cleaned_data.get('receiver'))}
+                    text = form1.cleaned_data.get('content')
+                    for rc in receiver['receiver']:
+                        if rc != sender:
+                            try:
+                                TicketAgent.objects.get(ticketid=ticket,agentid=rc)
+                            except ObjectDoesNotExist:
+                                AddAgents.objects.get_or_create(senderid=sender, receiverid=rc, ticketid=ticket,content=text)
         return render(request,'agent/processing_ticket.html', content)
     else:
         return redirect("/")
@@ -172,11 +187,36 @@ def done(request,id):
         return redirect("/")
 
 
-def forward_ticket(request):
+def give_up(request,id):
+    if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session['agent'])
+        ticket = Tickets.objects.get(id=id)
+        try :
+            TicketAgent.objects.get(ticketid=ticket)
+        except MultipleObjectsReturned:
+            tk = TicketAgent.objects.get(ticketid=ticket,agentid=agent)
+            tk.delete()
+        return redirect("/agent/processing_ticket")
+    else:
+        return redirect("/")
+
+
+def inbox(request):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session.get('agent'))
-        content ={'ticket':ForwardTickets.objects.filter(receiverid=agent)}
-        return render(request,'agent/forward_ticket.html',content)
+        content ={'forwardin': ForwardTickets.objects.filter(receiverid=agent),
+                  'addin': AddAgents.objects.filter(receiverid=agent)}
+        return render(request,'agent/inbox.html',content)
+    else:
+        return redirect("/")
+
+
+def outbox(request):
+    if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session.get('agent'))
+        content ={'forwardout':ForwardTickets.objects.filter(senderid=agent),
+                  'addout': AddAgents.objects.filter(senderid=agent)}
+        return render(request,'agent/outbox.html',content)
     else:
         return redirect("/")
 
@@ -186,13 +226,20 @@ def accept_forward(request,id):
         agent = Agents.objects.get(username=request.session.get('agent'))
         ticket = Tickets.objects.get(id=id)
         fwticket = ForwardTickets.objects.get(ticketid=ticket,receiverid=agent)
+        agticket = TicketAgent.objects.get(ticketid=ticket,agentid=fwticket.senderid)
         fwticket.delete()
-        agticket = TicketAgent.objects.get(ticketid=ticket)
-        agticket.agentid = agent
-        agticket.save()
-        return render(request,'agent/forward_ticket.html',{'ticket':ForwardTickets.objects.filter(receiverid=agent)})
+        try:
+            TicketAgent.objects.get(ticketid=ticket, agentid=agent)
+        except TicketAgent.DoesNotExist:
+            agticket.agentid = agent
+            agticket.save()
+        else:
+            agticket.delete()
+        return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
+                  'addin': AddAgents.objects.filter(receiverid=agent)})
     else:
         return redirect("/")
+
 
 def deny_forward(request,id):
     if request.session.has_key('agent'):
@@ -200,7 +247,20 @@ def deny_forward(request,id):
         ticket = Tickets.objects.get(id=id)
         fwticket = ForwardTickets.objects.get(ticketid=ticket,receiverid=agent)
         fwticket.delete()
-        return render(request,'agent/forward_ticket.html',{'ticket':ForwardTickets.objects.filter(receiverid=agent)})
+        return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
+                  'addin': AddAgents.objects.filter(receiverid=agent)})
+    else:
+        return redirect("/")
+
+
+def cancel_forward(request,id):
+    if request.session.has_key('agent'):
+        fwticket = ForwardTickets.objects.get(id=id)
+        fwticket.delete()
+        agent = Agents.objects.get(username=request.session.get('agent'))
+        content = {'forwardout': ForwardTickets.objects.filter(senderid=agent),
+                   'addout': AddAgents.objects.filter(senderid=agent)}
+        return render(request, 'agent/outbox.html', content)
     else:
         return redirect("/")
 
@@ -209,10 +269,16 @@ def accept_add(request,id):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session.get('agent'))
         ticket = Tickets.objects.get(id=id)
-        fwticket = ForwardTickets.objects.get(ticketid=ticket,receiverid=agent)
+        fwticket = AddAgents.objects.get(ticketid=ticket,receiverid=agent)
+        try:
+            TicketAgent.objects.get(ticketid=ticket, agentid=agent)
+        except TicketAgent.DoesNotExist:
+            TicketAgent.objects.create(ticketid=ticket, agentid=agent)
         fwticket.delete()
-        TicketAgent.objects.create(ticketid=ticket,agentid=agent)
-        return render(request,'agent/forward_ticket.html',{'ticket':ForwardTickets.objects.filter(receiverid=agent)})
+
+
+        return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
+                  'addin': AddAgents.objects.filter(receiverid=agent)})
     else:
         return redirect("/")
 
@@ -221,9 +287,22 @@ def deny_add(request,id):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session.get('agent'))
         ticket = Tickets.objects.get(id=id)
-        fwticket = ForwardTickets.objects.get(ticketid=ticket,receiverid=agent)
+        fwticket = AddAgents.objects.get(ticketid=ticket,receiverid=agent)
         fwticket.delete()
-        return render(request,'agent/forward_ticket.html',{'ticket':ForwardTickets.objects.filter(receiverid=agent)})
+        return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
+                  'addin': AddAgents.objects.filter(receiverid=agent)})
+    else:
+        return redirect("/")
+
+
+def cancel_add(request,id):
+    if request.session.has_key('agent'):
+        fwticket = AddAgents.objects.get(id=id)
+        fwticket.delete()
+        agent = Agents.objects.get(username=request.session.get('agent'))
+        content = {'forwardout': ForwardTickets.objects.filter(senderid=agent),
+                   'addout': AddAgents.objects.filter(senderid=agent)}
+        return render(request, 'agent/outbox.html', content)
     else:
         return redirect("/")
 
@@ -246,5 +325,35 @@ def assign_ticket(request,id):
         ticket.save()
         TicketAgent.objects.create(agentid=agent, ticketid=ticket)
         return redirect("/agent")
+    else:
+        return redirect("/")
+
+
+def manager_user(request):
+    if request.session.has_key('agent'):
+        users = Users.objects.all()
+        return render(request,"agent/manage_user.html",{'user':users})
+    else:
+        return redirect("/")
+
+
+def block_user(request,id):
+    if request.session.has_key('agent'):
+        users = Users.objects.all()
+        user = Users.objects.get(id=id)
+        user.status = 0
+        user.save()
+        return render(request,"agent/manage_user.html",{'user':users})
+    else:
+        return redirect("/")
+
+
+def unblock_user(request,id):
+    if request.session.has_key('agent'):
+        users = Users.objects.all()
+        user = Users.objects.get(id=id)
+        user.status = 1
+        user.save()
+        return render(request,"agent/manage_user.html",{'user':users})
     else:
         return redirect("/")
