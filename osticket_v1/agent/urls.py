@@ -17,6 +17,7 @@ urlpatterns = [
     path('done/<int:id>', views.done, name="done"),
     path('inbox', views.inbox, name="inbox"),
     path('outbox', views.outbox, name="outbox"),
+    path('profile', views.profile, name="profile"),
     path('manage_user', views.manager_user, name="manage_user"),
     path('block_user/<int:id>', views.block_user, name="block_user"),
     path('unblock_user/<int:id>', views.unblock_user, name="unblock_user"),

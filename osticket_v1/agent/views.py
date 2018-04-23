@@ -2,7 +2,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-
 from user.models import *
 from .forms import ForwardForm, AddForm
 from django.core.mail import EmailMessage
@@ -243,6 +242,14 @@ def outbox(request):
         return redirect("/")
 
 
+def profile(request):
+    if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session['agent'])
+        return render(request,"agent/profile.html",{'agent':agent})
+    else:
+        return redirect("/")
+
+
 def accept_forward(request,id):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session.get('agent'))
@@ -367,6 +374,7 @@ def cancel_add(request,id):
         return render(request, 'agent/outbox.html', content)
     else:
         return redirect("/")
+
 
 
 def closed_ticket(request):
