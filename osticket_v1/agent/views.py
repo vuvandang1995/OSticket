@@ -65,11 +65,15 @@ def manager_topic(request):
             elif 'add_topic' in request.POST:
                 if request.POST['topicid'] == '0':
                     topicname = request.POST['add_topic']
-                    tp = Topics(name=topicname)
+                    description = request.POST['description']
+                    type_send = request.POST['type_send']
+                    tp = Topics(name=topicname, description=description, type_send=type_send)
                     tp.save()
                 else:
                     tp = Topics.objects.get(id=request.POST['topicid'])
                     tp.name = request.POST['add_topic']
+                    tp.description = request.POST['description']
+                    tp.type_send = request.POST['type_send']
                     tp.save()
         return render(request, 'agent/manager_topic.html', content)
     else:
@@ -79,7 +83,11 @@ def manager_topic(request):
 def manager_agent(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'agent': Agents.objects.all(), 'admin': admin}
+        list_tk = {}
+        ag = Agents.objects.all()
+        for ag in ag:
+            list_tk[ag.username] = count_tk(ag.username)
+        content = {'agent': Agents.objects.all(), 'admin': admin, 'list_tk': list_tk.items()}
         if request.method == 'POST':
             if 'close' in request.POST:
                 agentid = request.POST['close']
@@ -111,6 +119,7 @@ def manager_agent(request):
                     ag.email = email
                     ag.phone = phone
                     ag.save()
+                    username =ag.username
         return render(request, 'agent/manager_agent.html', content)
     else:
         return redirect('/')

@@ -29,11 +29,13 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Status</th>
+                <th>Description</th>
+                <th>Type send</th>
                 <th>Tùy chọn</th>
             </tr>
             </thead>
             <tbody>
-
+                {% csrf_token %}
             {% for tp in topic %}
             <tr>
 
@@ -47,11 +49,19 @@
                     <td>Disable</td>
                 {% endif %}
 
+                <td id="description_topic{{tp.id}}">{{ tp.description}}</td>
+
+                {% if tp.type_send == 1 %}
+                    <td id="type_send{{tp.id}}">All</td>
+                {% else %}
+                    <td id="type_send{{tp.id}}">Leader</td>
+                {% endif %}
+
                 {% if tp.name == 'Other' %}
                     <td></td>
                 {% else %}
                     <td>
-                        {% csrf_token %}
+                        
                         <button type="button" class="btn btn-primary" id="{{tp.id}}">
                             <span class="glyphicon glyphicon-off"></span>
                         </button>
@@ -84,6 +94,12 @@
                     <div class="modal-body form-group">
                         <label for="topicname"><b>Topic name</b></label>
                         <input type="text" placeholder="Enter Topic name" name="topicname" required>
+
+                        <label for="description"><b>Description</b></label>
+                        <input type="text" placeholder="Enter description" name="description" required>
+
+                        <input class="inputText" type="checkbox" name="type_send" > <b> Type send</b>
+
                         <input type="hidden" name="topicid" value="">                        
 
                     <div class="msg"></div>
