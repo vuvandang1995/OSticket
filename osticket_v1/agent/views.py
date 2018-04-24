@@ -1,10 +1,14 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
+from django.utils import timezone
+
 from user.models import *
 from .forms import ForwardForm, AddForm
+from user.forms import CommentForm
 from django.core.mail import EmailMessage
+import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
@@ -190,9 +194,14 @@ def processing_ticket(request):
 
 def process(request, id):
     if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session['agent'])
         ticket = Tickets.objects.get(id=id)
         ticket.status = 1
         ticket.save()
+        Comments.objects.create(content="continue handle ...",
+                                date=timezone.now(),
+                                agentid=agent,
+                                ticketid=ticket)
         return redirect("/agent/processing_ticket")
     else:
         return redirect("/")
@@ -200,9 +209,14 @@ def process(request, id):
 
 def done(request,id):
     if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session['agent'])
         ticket = Tickets.objects.get(id=id)
         ticket.status = 2
         ticket.save()
+        Comments.objects.create(content="this ticket has done",
+                                date=timezone.now(),
+                                agentid=agent,
+                                ticketid=ticket)
         return redirect("/agent/processing_ticket")
     else:
         return redirect("/")
@@ -394,6 +408,10 @@ def assign_ticket(request,id):
         ticket.status = 1
         ticket.save()
         TicketAgent.objects.create(agentid=agent, ticketid=ticket)
+        Comments.objects.create(content=" received this ticket to handle",
+                                date=timezone.now(),
+                                agentid=agent,
+                                ticketid=ticket)
         return redirect("/agent")
     else:
         return redirect("/")
@@ -425,5 +443,25 @@ def unblock_user(request,id):
         user.status = 1
         user.save()
         return render(request,"agent/manage_user.html",{'user':users})
+    else:
+        return redirect("/")
+
+
+def conversation(request,id):
+    if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session['agent'])
+        ticket = get_object_or_404(Tickets, pk=id)
+        form = CommentForm()
+        comments = Comments.objects.filter(ticketid=ticket).order_by('date')
+        content = {'agent': agent, 'ticket': ticket, 'form': form, 'comments': comments}
+        if request.method == 'POST':
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                Comments.objects.create(ticketid=ticket,
+                                        agentid=agent,
+                                        content=form.cleaned_data['content'],
+                                        date = timezone.now())
+                redirect("{% url 'agent:conversation' ticket.id %}")
+        return render(request, 'agent/conversation.html',content)
     else:
         return redirect("/")

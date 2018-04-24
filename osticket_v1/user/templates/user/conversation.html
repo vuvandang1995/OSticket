@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversation</title>
+</head>
+<body>
+    <div>
+        <h2>Ticket no.{{ticket.id}}</h2>
+        <label><b>Owner:{{user.fullname}}</b></label><br/>
+        <label>Created:{{ticket.datestart}}</label><br/>
+        <label><b>Content:</b>{{ticket.content}}</label><br/>
+        <p>----------------------------------------------</p>
+    </div>
+    <div>
+        {% for com in comments %}
+        {% if com.userid %}
+        <label><strong>{{com.userid.fullname}}(user)</strong>:{{com.content}}</label><br/>
+        {% else %}
+        <label><strong>{{com.agentid.fullname}}(agent)</strong>:{{com.content}}</label><br/>
+        {% endif%}
+        <label>{{com.date}}</label><br/><br/>
+        {% endfor %}
+    </div>
+    <br/>
+<div>
+    <form id='myForm' method="POST">
+        {% csrf_token %}
+        <label for="comment"><b>Comment:</b></label><br />
+        {{form.content}}
+        <button id="btn">Send</button>
+    </form>
+</div>
+</body>
+</html>

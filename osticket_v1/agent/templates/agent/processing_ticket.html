@@ -12,6 +12,7 @@
                 <td>Date expired</td>
                 <td>Status</td>
                 <td>Handler</td>
+                <td>Conversation</td>
                 <td>Handle</td>
                 <td>Forward</td>
                 <td>Add agent</td>
@@ -32,6 +33,17 @@
                             {{t.agentid.fullname}},
                         {% endif %}
                     {% endfor %}
+                </td>
+                <td>
+                    <form >
+                        <button id="con_{{forloop.counter}}" type="button">Conversation</button>
+                    </form>
+                    <script type="text/javascript">
+                        var btn = document.getElementById("con_{{forloop.counter}}");
+                        btn.onclick = function(){
+                            location.href="{% url 'agent:conversation' tk.ticketid.id %}"
+                        };
+                    </script>
                 </td>
                 <td>
                     <form >

@@ -98,6 +98,17 @@ class AddAgents(models.Model):
         db_table = 'add_agents'
 
 
+class Comments(models.Model):
+    userid = models.ForeignKey(Users, models.CASCADE, null=True, db_column='userid', related_name='usercm')
+    agentid = models.ForeignKey(Agents, models.CASCADE, null=True, db_column='agentid', related_name='agentcm')
+    ticketid = models.ForeignKey(Tickets, models.CASCADE, db_column='ticketid', related_name='ticketcm')
+    content = models.TextField()
+    date = models.DateTimeField()
+
+    class Meta:
+        managed = True
+        db_table = 'comments'
+
 
 def get_user(usname):
     try:

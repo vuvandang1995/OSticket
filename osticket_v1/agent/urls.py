@@ -28,4 +28,6 @@ urlpatterns = [
     path('deny_add/<int:id>', views.deny_add, name="deny_add"),
     path('cancel_add/<int:id>', views.cancel_add, name="cancel_add"),
     path('closed_ticket', views.closed_ticket, name='closed_ticket'),
+    path('processing_ticket/conversation_<int:id>', views.conversation, name='conversation'),
+
 ]
