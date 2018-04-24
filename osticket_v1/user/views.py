@@ -285,17 +285,16 @@ def conversation(request,id):
     if request.session.has_key('user'):
         user = Users.objects.get(username=request.session['user'])
         ticket = get_object_or_404(Tickets, pk=id)
-        form = CommentForm()
+        # form = CommentForm()
         comments = Comments.objects.filter(ticketid=ticket).order_by('date')
-        content = {'user': user, 'ticket': ticket, 'form': form, 'comments': comments}
+        content = {'user': user, 'ticket': ticket, 'comments': comments}
         if request.method == 'POST':
-            form = CommentForm(request.POST)
-            if form.is_valid():
-                Comments.objects.create(ticketid=ticket,
-                                        userid=user,
-                                        content=form.cleaned_data['content'],
-                                        date=timezone.now())
-                redirect("{% url 'user:conversation' ticket.id %}")
+            # form = CommentForm(request.POST)//
+            # if form.is_valid():
+            Comments.objects.create(ticketid=ticket,
+                                    userid=user,
+                                    content=request.POST['content'],
+                                    date=timezone.now())
         return render(request, 'user/conversation.html',content)
     else:
         return redirect("/")

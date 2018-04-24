@@ -1,5 +1,7 @@
 {% extends 'agent/base.html' %}
 {% block lib %}
+{% load static %}
+<script src="{% static 'js/conversation.js' %}" ></script>
 {% endblock %}
 {% block title %}Conversation{% endblock %}
 {% block content %}
@@ -10,7 +12,7 @@
         <label><b>Content:</b>{{ticket.content}}</label><br/>
         <p>----------------------------------------------</p>
     </div>
-    <div>
+    <div id="list_comment">
         {% for com in comments %}
         {% if com.userid %}
         <label><strong>{{com.userid.fullname}}(user)</strong>:{{com.content}}</label><br/>
@@ -21,12 +23,10 @@
         {% endfor %}
     </div>
     <br/>
-<div>
-    <form id='myForm' method="POST">
+    <div>
         {% csrf_token %}
-        <label for="comment"><b>Comment:</b></label><br />
-        {{form.content}}
+        <label for="comment"><b>Comment:</b></label><br/>
+        <textarea id="content" name="content" placeholder="comment here" rows="5" cols="50" ></textarea><br/>
         <button id="btn">Send</button>
-    </form>
-</div>
+    </div>
 {% endblock %}

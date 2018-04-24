@@ -178,15 +178,16 @@ def processing_ticket(request):
                                 TicketAgent.objects.get(ticketid=ticket,agentid=rc)
                             except ObjectDoesNotExist:
                                 AddAgents.objects.get_or_create(senderid=sender, receiverid=rc, ticketid=ticket,content=text)
-                                email = EmailMessage(
-                                    'Add in a ticket',
-                                    render_to_string('agent/mail/add_mail.html',
-                                                     {'receiver': rc,
-                                                      'domain': (get_current_site(request)).domain,
-                                                      'sender': sender}),
-                                    to=[rc.email]
-                                )
-                                email.send()
+                                if rc.receive_email == 1:
+                                    email = EmailMessage(
+                                        'Add in a ticket',
+                                        render_to_string('agent/mail/add_mail.html',
+                                                         {'receiver': rc,
+                                                          'domain': (get_current_site(request)).domain,
+                                                          'sender': sender}),
+                                        to=[rc.email]
+                                    )
+                                    email.send()
         return render(request,'agent/processing_ticket.html', content)
     else:
         return redirect("/")
@@ -259,6 +260,16 @@ def outbox(request):
 def profile(request):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session['agent'])
+        if request.method == 'POST':
+            if 'fullname' in request.POST:
+                agent.fullname = request.POST['fullname']
+                agent.email = request.POST['email']
+                agent.phone = request.POST['phone']
+                agent.receive_email = request.POST['receive']
+                agent.save()
+            elif 'pwd' in request.POST:
+                agent.password = request.POST['pwd']
+                agent.save()
         return render(request,"agent/profile.html",{'agent':agent})
     else:
         return redirect("/")
@@ -277,15 +288,16 @@ def accept_forward(request,id):
         except TicketAgent.DoesNotExist:
             agticket.agentid = agent
             agticket.save()
-            email = EmailMessage(
-                'Accept forward request',
-                render_to_string('agent/mail/accept_mail.html',
-                                 {'receiver': sender,
-                                  'domain': (get_current_site(request)).domain,
-                                  'sender': agent}),
-                to=[sender.email]
-            )
-            email.send()
+            if sender.receive_email == 1:
+                email = EmailMessage(
+                    'Accept forward request',
+                    render_to_string('agent/mail/accept_mail.html',
+                                     {'receiver': sender,
+                                      'domain': (get_current_site(request)).domain,
+                                      'sender': agent}),
+                    to=[sender.email]
+                )
+                email.send()
         else:
             agticket.delete()
         return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
@@ -301,15 +313,16 @@ def deny_forward(request,id):
         fwticket = ForwardTickets.objects.get(ticketid=ticket,receiverid=agent)
         sender = fwticket.senderid
         fwticket.delete()
-        email = EmailMessage(
-            'Deny forward request',
-            render_to_string('agent/mail/deny_mail.html',
-                             {'receiver': sender,
-                              'domain': (get_current_site(request)).domain,
-                              'sender': agent}),
-            to=[sender.email]
-        )
-        email.send()
+        if sender.receive_email == 1:
+            email = EmailMessage(
+                'Deny forward request',
+                render_to_string('agent/mail/deny_mail.html',
+                                 {'receiver': sender,
+                                  'domain': (get_current_site(request)).domain,
+                                  'sender': agent}),
+                to=[sender.email]
+            )
+            email.send()
         return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
                   'addin': AddAgents.objects.filter(receiverid=agent)})
     else:
@@ -338,15 +351,16 @@ def accept_add(request,id):
             TicketAgent.objects.get(ticketid=ticket, agentid=agent)
         except TicketAgent.DoesNotExist:
             TicketAgent.objects.create(ticketid=ticket, agentid=agent)
-            email = EmailMessage(
-                'Accept add request',
-                render_to_string('agent/mail/accept_mail.html',
-                                 {'receiver': sender,
-                                  'domain': (get_current_site(request)).domain,
-                                  'sender': agent}),
-                to=[sender.email]
-            )
-            email.send()
+            if sender.receive_email == 1:
+                email = EmailMessage(
+                    'Accept add request',
+                    render_to_string('agent/mail/accept_mail.html',
+                                     {'receiver': sender,
+                                      'domain': (get_current_site(request)).domain,
+                                      'sender': agent}),
+                    to=[sender.email]
+                )
+                email.send()
         fwticket.delete()
 
 
@@ -362,15 +376,16 @@ def deny_add(request,id):
         ticket = Tickets.objects.get(id=id)
         fwticket = AddAgents.objects.get(ticketid=ticket,receiverid=agent)
         sender = fwticket.senderid
-        email = EmailMessage(
-            'Deny add request',
-            render_to_string('agent/mail/deny_mail.html',
-                             {'receiver': sender,
-                              'domain': (get_current_site(request)).domain,
-                              'sender': agent}),
-            to=[sender.email]
-        )
-        email.send()
+        if sender.receive_email == 1:
+            email = EmailMessage(
+                'Deny add request',
+                render_to_string('agent/mail/deny_mail.html',
+                                 {'receiver': sender,
+                                  'domain': (get_current_site(request)).domain,
+                                  'sender': agent}),
+                to=[sender.email]
+            )
+            email.send()
         fwticket.delete()
         return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
                   'addin': AddAgents.objects.filter(receiverid=agent)})
@@ -451,17 +466,13 @@ def conversation(request,id):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session['agent'])
         ticket = get_object_or_404(Tickets, pk=id)
-        form = CommentForm()
         comments = Comments.objects.filter(ticketid=ticket).order_by('date')
-        content = {'agent': agent, 'ticket': ticket, 'form': form, 'comments': comments}
+        content = {'agent': agent, 'ticket': ticket, 'comments': comments}
         if request.method == 'POST':
-            form = CommentForm(request.POST)
-            if form.is_valid():
-                Comments.objects.create(ticketid=ticket,
-                                        agentid=agent,
-                                        content=form.cleaned_data['content'],
-                                        date = timezone.now())
-                redirect("{% url 'agent:conversation' ticket.id %}")
-        return render(request, 'agent/conversation.html',content)
+            Comments.objects.create(ticketid=ticket,
+                                    agentid=agent,
+                                    content=request.POST['content'],
+                                    date=timezone.now())
+        return render(request, 'agent/conversation.html', content)
     else:
         return redirect("/")
