@@ -133,6 +133,22 @@ def home_agent(request):
         return redirect("/")
 
 
+def assign_ticket(request, id):
+    if request.session.has_key('agent'):
+        ticket = Tickets.objects.get(id=id)
+        agent = Agents.objects.get(username=request.session['agent'])
+        ticket.status = 1
+        ticket.save()
+        TicketAgent.objects.create(agentid=agent, ticketid=ticket)
+        Comments.objects.create(content=" received this ticket to handle",
+                                date=timezone.now(),
+                                agentid=agent,
+                                ticketid=ticket)
+        return redirect("/agent")
+    else:
+        return redirect("/")
+
+
 def processing_ticket(request):
     if request.session.has_key('agent'):
         sender = Agents.objects.get(username=request.session['agent'])
@@ -143,7 +159,7 @@ def processing_ticket(request):
         tic=[]
         for t in ticket:
             tic += [x for x in TicketAgent.objects.filter(ticketid=t.ticketid)]
-        content ={'ticket': ticket,'tic': tic,'form': form, 'form1':form1}
+        content = {'ticket': ticket, 'tic': tic}
         if request.method == 'POST':
             if request.POST['type']=='forward':
                 form = ForwardForm(request.POST)
@@ -156,16 +172,20 @@ def processing_ticket(request):
                             try:
                                 TicketAgent.objects.get(ticketid=ticket,agentid=rc)
                             except ObjectDoesNotExist:
-                                ForwardTickets.objects.get_or_create(senderid=sender,receiverid=rc,ticketid=ticket,content=text)
-                                email = EmailMessage(
-                                    'Forward ticket',
-                                    render_to_string('agent/mail/forward_mail.html',
-                                                     {'receiver': rc,
-                                                      'domain': (get_current_site(request)).domain,
-                                                      'sender': sender}),
-                                    to=[rc.email]
-                                )
-                                email.send()
+                                try:
+                                    ForwardTickets.objects.get(senderid=sender, receiverid=rc,ticketid=ticket, content=text)
+                                except ObjectDoesNotExist:
+                                    ForwardTickets.objects.create(senderid=sender, receiverid=rc, ticketid=ticket,content=text)
+                                    if rc.receive_email == 1:
+                                        email = EmailMessage(
+                                            'Forward ticket',
+                                            render_to_string('agent/mail/forward_mail.html',
+                                                             {'receiver': rc,
+                                                              'domain': (get_current_site(request)).domain,
+                                                              'sender': sender}),
+                                            to=[rc.email],
+                                        )
+                                        email.send()
             else:
                 form1 = AddForm(request.POST)
                 if form1.is_valid():
@@ -177,18 +197,21 @@ def processing_ticket(request):
                             try:
                                 TicketAgent.objects.get(ticketid=ticket,agentid=rc)
                             except ObjectDoesNotExist:
-                                AddAgents.objects.get_or_create(senderid=sender, receiverid=rc, ticketid=ticket,content=text)
-                                if rc.receive_email == 1:
-                                    email = EmailMessage(
-                                        'Add in a ticket',
-                                        render_to_string('agent/mail/add_mail.html',
-                                                         {'receiver': rc,
-                                                          'domain': (get_current_site(request)).domain,
-                                                          'sender': sender}),
-                                        to=[rc.email]
-                                    )
-                                    email.send()
-        return render(request,'agent/processing_ticket.html', content)
+                                try:
+                                    AddAgents.objects.get(senderid=sender, receiverid=rc, ticketid=ticket,content=text)
+                                except ObjectDoesNotExist:
+                                    AddAgents.objects.create(senderid=sender, receiverid=rc, ticketid=ticket, content=text)
+                                    if rc.receive_email == 1:
+                                        email = EmailMessage(
+                                            'Add in a ticket',
+                                            render_to_string('agent/mail/add_mail.html',
+                                                             {'receiver': rc,
+                                                              'domain': (get_current_site(request)).domain,
+                                                              'sender': sender}),
+                                            to=[rc.email]
+                                        )
+                                        email.send()
+        return render(request,'agent/processing_ticket.html',content)
     else:
         return redirect("/")
 
@@ -405,29 +428,12 @@ def cancel_add(request,id):
         return redirect("/")
 
 
-
 def closed_ticket(request):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session['agent'])
         tem = Tickets.objects.filter(status=3)
         content = {'ticket': TicketAgent.objects.filter(agentid=agent, ticketid__in=tem)}
         return render(request,'agent/closed_ticket.html', content)
-    else:
-        return redirect("/")
-
-
-def assign_ticket(request,id):
-    if request.session.has_key('agent'):
-        ticket = Tickets.objects.get(id=id)
-        agent = Agents.objects.get(username=request.session['agent'])
-        ticket.status = 1
-        ticket.save()
-        TicketAgent.objects.create(agentid=agent, ticketid=ticket)
-        Comments.objects.create(content=" received this ticket to handle",
-                                date=timezone.now(),
-                                agentid=agent,
-                                ticketid=ticket)
-        return redirect("/agent")
     else:
         return redirect("/")
 
