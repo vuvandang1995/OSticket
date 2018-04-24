@@ -3,19 +3,18 @@ from django.shortcuts import render, redirect
 from user.models import *
 from .forms import ForwardForm, AddForm
 from django.http import HttpResponse, HttpResponseRedirect
+import simplejson as json
 
 # Create your views here.
-
-
 def home_admin(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin}
+        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin, 'agent': Agents.objects.all()}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
                 tk = Tickets.objects.get(id=ticketid)
-                if tk.status == 3:
+                if tk.status == 3: 
                     tk.status = 0
                 else:
                     tk.status = 3
@@ -24,11 +23,21 @@ def home_admin(request):
                 ticketid = request.POST['delete']
                 tk = Tickets.objects.get(id=ticketid)
                 tk.delete()
-            elif 'forward' in request.POST:
-                print('forward')
+            elif 'ticketid' in request.POST:
+                list_agent = request.POST['list_agent[]']
+                list_agent = json.loads(list_agent)
+                ticketid = request.POST['ticketid']
+                for agentid in list_agent:
+                    agent = Agents.objects.get(id=agentid)
+                    ticket = Tickets.objects.get(id=ticketid)
+                    tkag = TicketAgent(agentid=agent, ticketid=ticket)
+                    tkag.save()
+                    ticket.status = 1
+                    ticket.save()
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
+
 
 
 def manager_topic(request):
