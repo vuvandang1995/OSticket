@@ -117,6 +117,22 @@ def get_user(usname):
         return None
 
 
+def count_tk(agentname):
+    try:
+        ag = Agents.objects.get(username=agentname)
+        tkag = TicketAgent.objects.filter(agentid=ag)
+        done = 0
+        processing = 0
+        for count in tkag:
+            if count.ticketid.status == 3:
+                done = done + 1
+            elif count.ticketid.status == 1:
+                processing = processing + 1
+        return done, processing
+    except Agents.DoesNotExist:
+        return None
+
+
 def get_agent(agentname):
     try:
         return Agents.objects.get(username=agentname)

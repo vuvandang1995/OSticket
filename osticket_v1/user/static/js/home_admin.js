@@ -9,8 +9,8 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-                    window.location.reload();
-                    // $("#list_ticket").load(location.href + "#list_ticket");
+                    // window.location.reload();
+                    $("#list_ticket").load(location.href + " #list_ticket");
                 }
            });
         }
@@ -26,8 +26,8 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-                    window.location.reload();
-                    // $("#list_ticket").load(location.href + "#list_ticket");
+                    // window.location.reload();
+                    $("#list_ticket").load(location.href + " #list_ticket");
                 }
            });
         }
@@ -47,6 +47,7 @@ $(document).ready(function(){
             data: {'list_agent[]': JSON.stringify(list_agent),'csrfmiddlewaretoken':token, 'ticketid': ticketid},
             success: function(){
                 window.location.reload();
+                // $("#list_ticket").load(location.href + "#list_ticket");
             }
         });
     });

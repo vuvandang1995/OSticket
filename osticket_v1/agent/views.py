@@ -10,19 +10,18 @@ from user.forms import CommentForm
 from django.core.mail import EmailMessage
 import datetime
 from django.http import HttpResponse, HttpResponseRedirect
+import simplejson as json
 
 # Create your views here.
-
-
 def home_admin(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin}
+        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin, 'agent': Agents.objects.all()}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
                 tk = Tickets.objects.get(id=ticketid)
-                if tk.status == 3:
+                if tk.status == 3: 
                     tk.status = 0
                 else:
                     tk.status = 3
@@ -31,11 +30,21 @@ def home_admin(request):
                 ticketid = request.POST['delete']
                 tk = Tickets.objects.get(id=ticketid)
                 tk.delete()
-            elif 'forward' in request.POST:
-                print('forward')
+            elif 'ticketid' in request.POST:
+                list_agent = request.POST['list_agent[]']
+                list_agent = json.loads(list_agent)
+                ticketid = request.POST['ticketid']
+                for agentid in list_agent:
+                    agent = Agents.objects.get(id=agentid)
+                    ticket = Tickets.objects.get(id=ticketid)
+                    tkag = TicketAgent(agentid=agent, ticketid=ticket)
+                    tkag.save()
+                    ticket.status = 1
+                    ticket.save()
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
+
 
 
 def manager_topic(request):
@@ -63,11 +72,15 @@ def manager_topic(request):
             elif 'add_topic' in request.POST:
                 if request.POST['topicid'] == '0':
                     topicname = request.POST['add_topic']
-                    tp = Topics(name=topicname)
+                    description = request.POST['description']
+                    type_send = request.POST['type_send']
+                    tp = Topics(name=topicname, description=description, type_send=type_send)
                     tp.save()
                 else:
                     tp = Topics.objects.get(id=request.POST['topicid'])
                     tp.name = request.POST['add_topic']
+                    tp.description = request.POST['description']
+                    tp.type_send = request.POST['type_send']
                     tp.save()
         return render(request, 'agent/manager_topic.html', content)
     else:
@@ -77,7 +90,11 @@ def manager_topic(request):
 def manager_agent(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'agent': Agents.objects.all(), 'admin': admin}
+        list_tk = {}
+        ag = Agents.objects.all()
+        for ag in ag:
+            list_tk[ag.username] = count_tk(ag.username)
+        content = {'agent': Agents.objects.all(), 'admin': admin, 'list_tk': list_tk.items()}
         if request.method == 'POST':
             if 'close' in request.POST:
                 agentid = request.POST['close']
@@ -109,6 +126,7 @@ def manager_agent(request):
                     ag.email = email
                     ag.phone = phone
                     ag.save()
+                    username =ag.username
         return render(request, 'agent/manager_agent.html', content)
     else:
         return redirect('/')
