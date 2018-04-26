@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import *
@@ -30,24 +31,26 @@ def homeuser(request):
     if request.session.has_key('user'):
         user = Users.objects.get(username=request.session['user'])
         form = CreateNewTicketForm()
+        topic = Topics.objects.all()
         ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
         atic = TicketAgent.objects.filter(ticketid__in=ticket)
         content = {'ticket': ticket,
                    'form': form,
                    'user': user,
-                   'atic': atic}
+                   'atic': atic,
+                   'topic': topic}
         if request.method == 'POST':
             form = CreateNewTicketForm(request.POST,request.FILES)
             if form.is_valid():
-                topic = Topics.objects.get(id=form.cleaned_data['topic'])
+                topicA = Topics.objects.get(id=request.POST['topic'])
                 if request.FILES.get('attach') is None:
                     Tickets.objects.create(title=form.cleaned_data['title'], content=form.cleaned_data['content'],
-                                           sender=user,topicid=topic, datestart=timezone.now(),
+                                           sender=user,topicid=topicA, datestart=timezone.now(),
                                            dateend=(timezone.now() + timezone.timedelta(days=3)))
                 else:
                     if request.FILES['attach']._size < MAX_UPLOAD_SIZE:
                         Tickets.objects.create(title=form.cleaned_data['title'],content=form.cleaned_data['content'],
-                                               sender=user,topicid=topic, datestart=timezone.now(),
+                                               sender=user,topicid=topicA, datestart=timezone.now(),
                                                dateend=(timezone.now()+timezone.timedelta(days=3)),
                                                attach=request.FILES['attach'])
                         handle_uploaded_file(request.FILES['attach'])
@@ -81,8 +84,7 @@ def close_ticket(request,id):
             for rc in receiver:
                 if rc.receive_email == 1:
                     email = EmailMessage('Closed ticket',
-                                         render_to_string('user/close_mail.html',
-                                                          {'receiver': rc,'sender': sender,'id':id}),
+                                         render_to_string('user/close_email.html',{'receiver': rc,'sender': sender,'id':id}),
                                          to=[rc.email],)
                     email.send()
         return redirect("/user")
