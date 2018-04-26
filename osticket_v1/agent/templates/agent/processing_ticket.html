@@ -10,10 +10,10 @@
 				<td>ID</td>
 				<td>Title</td>
                 <td>Date expired</td>
-                <td>Status</td>
                 <td>Handler</td>
-                <td>Conversation</td>
+                <td>Status</td>
                 <td>Handle</td>
+                <td>Conversation</td>
                 <td>Forward</td>
                 <td>Add agent</td>
                 <td>Give up</td>
@@ -25,8 +25,6 @@
                 </td>
                 <td>{{tk.ticketid.title}}</td>
                 <td>{{tk.ticketid.dateend}}</td>
-                {% if tk.ticketid.status == 1 %}
-                <td>processing...</td>
                 <td>
                     {% for t in tic%}
                         {% if t.ticketid == tk.ticketid %}
@@ -34,17 +32,8 @@
                         {% endif %}
                     {% endfor %}
                 </td>
-                <td>
-                    <form >
-                        <button id="con_{{forloop.counter}}" type="button">Conversation</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("con_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            location.href="{% url 'agent:conversation' tk.ticketid.id %}"
-                        };
-                    </script>
-                </td>
+                {% if tk.ticketid.status == 1 %}
+                <td>processing...</td>
                 <td>
                     <form >
                         <button id="done_{{forloop.counter}}" type="button">Done</button>
@@ -61,13 +50,6 @@
                 {% else %}
                 <td>done</td>
                 <td>
-                    {% for t in tic%}
-                        {% if t.ticketid == tk.ticketid %}
-                            {{t.agentid.fullname}},
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td>
                     <form >
                         <button id="processing_{{forloop.counter}}" type="button">Processing</button>
                     </form>
@@ -82,10 +64,21 @@
                 </td>
                 {% endif %}
                 <td>
-                    <button id="forward_{{forloop.counter}}" onclick="document.getElementById('id01').style.display='block';document.getElementById('tkid').value = {{tk.ticketid.id}}" >Forward</button>
+                    <form >
+                        <button id="con_{{forloop.counter}}" type="button">Conversation</button>
+                    </form>
+                    <script type="text/javascript">
+                        var btn = document.getElementById("con_{{forloop.counter}}");
+                        btn.onclick = function(){
+                            location.href="{% url 'agent:conversation' tk.ticketid.id %}"
+                        };
+                    </script>
                 </td>
                 <td>
-                    <button id="add_{{forloop.counter}}" onclick="document.getElementById('id02').style.display='block';document.getElementById('tkid1').value = {{tk.ticketid.id}}" >Add</button>
+                    <button id="forward_{{forloop.counter}}" style="width:auto;" onclick="document.getElementById('tkid').value = {{tk.ticketid.id}}" data-toggle="modal" data-target="#id01">Forward</button>
+                </td>
+                <td>
+                    <button id="add_{{forloop.counter}}" style="width:auto;" onclick="document.getElementById('tkid1').value = {{tk.ticketid.id}}" data-toggle="modal" data-target="#id02">Add</button>
                 </td>
                 <td>
                     <form >
@@ -106,15 +99,25 @@
                       <div class="modal-content">
                         <div class="modal-header">
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
-                          <h4 class="modal-title">Chi tiết</h4>
+                          <h4 class="modal-title">Ticket no.{{tk.ticketid.id}}</h4>
                         </div>
                         <div class="modal-body form-group">
+                            <label for="content">Owner:</label>
+                            <p><b>{{tk.ticketid.sender.fullname}}</b></p><br>
+                            <label for="content">Title:</label>
+                            <p><b>{{tk.ticketid.title}}</b></p><br>
+                            <label for="content">Topic:</label>
+                            <p><b>{{tk.ticketid.topicid.name}}</b></p><br>
                             <label for="content">Content:</label>
                             <p><b>{{tk.ticketid.content}}</b></p><br>
                             <label for="datestart">Date Start:</label>
                             <p><b>{{ tk.ticketid.datestart}}</b></p><br>
                             <label for="dateend">Date End:</label>
                             <p><b>{{tk.ticketid.dateend}}</b></p>
+                            {% if tk.ticketid.attach != '' %}
+                            <label for="dateend">Attach:</label>
+                            <img src="/media/{{tk.ticketid.attach}}" alt="none" style="width:100%;height:100%;">
+                             {% endif %}
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -125,48 +128,84 @@
             {% endfor%}
 		</table>
     </div>
-    <div id="id01" class="modal">
-        <form class="modal-content animate" action="" method="POST">
-            {% csrf_token %}
-            <h2 align="center">Forward a ticket</h2>
-            <div class="imgcontainer">
-                <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-            </div>
-            <div class="container">
-                <input type="hidden" name="type" value="forward" >
-                <input id="tkid" type="hidden" name="ticketid" >
-                <label for="content"><b>Content</b></label>
-                <br />
-                {{form.content}}
-                <br />
-                <label for="receiver"><b>Receiver</b></label>
-                <br />
-                {{form.receiver }}
-                <br />
-                <button type="submit" value="OK" >Forward</button>
-            </div>
-        </form>
+    <!--<div id="id01" class="modal">-->
+        <!--<form class="modal-content animate" action="" method="POST">-->
+            <!--{% csrf_token %}-->
+            <!--<h2 align="center">Forward a ticket</h2>-->
+            <!--<div class="imgcontainer">-->
+                <!--<span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>-->
+            <!--</div>-->
+            <!--<div class="container">-->
+                <!--<input type="hidden" name="type" value="forward" >-->
+                <!--<input id="tkid" type="hidden" name="ticketid" >-->
+                <!--<label for="content"><b>Content</b></label>-->
+                <!--<br />-->
+                <!--{{form.content}}-->
+                <!--<br />-->
+                <!--<label for="receiver"><b>Receiver</b></label>-->
+                <!--<br />-->
+                <!--{{form.receiver }}-->
+                <!--<br />-->
+                <!--<button type="submit" value="OK" >Forward</button>-->
+            <!--</div>-->
+        <!--</form>-->
+    <!--</div>-->
+<div class="modal fade" id="id01" >
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Forward</h4>
+        </div>
+             <div class="modal-body form-group">
+                 <form method="POST" enctype="multipart/form-data">
+                     {% csrf_token %}
+                     {% for key, value in form.error.items %}
+                     {{value}}
+                     {% endfor%}
+                     <input type="hidden" name="type" value="forward" >
+                    <input id="tkid" type="hidden" name="ticketid" >
+                    <label for="content"><b>Content</b></label>
+                    <br />
+                    {{form.content}}
+                    <br />
+                    <label for="receiver"><b>Receiver</b></label>
+                     <br />
+                    {{form.receiver }}
+                    <br />
+                    <button type="submit" value="OK" >Forward</button>
+                 </form>
+             </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
     </div>
-    <div id="id02" class="modal">
-        <form class="modal-content animate" action="" method="POST">
-            {% csrf_token %}
-            <h2 align="center">Add agents</h2>
-            <div class="imgcontainer">
-                <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
-            </div>
-            <div class="container">
-                <input type="hidden" name="type" value="add" >
-                <input id="tkid1" type="hidden" name="ticketid" >
-                <label for="content"><b>Content</b></label>
-                <br />
-                {{form1.content}}
-                <br />
-                <label for="receiver"><b>Receiver</b></label>
-                <br />
-                {{form1.receiver }}
-                <br />
-                <button type="submit" value="OK" >Forward</button>
-            </div>
-        </form>
+</div>
+<div class="modal fade" id="id02" >
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Add agents</h4>
+        </div>
+             <div class="modal-body form-group">
+                 <form method="POST" enctype="multipart/form-data">
+                     {% csrf_token %}
+                     {% for key, value in form.error.items %}
+                     {{value}}
+                     {% endfor%}
+                     <input type="hidden" name="type" value="add" >
+                    <input id="tkid1" type="hidden" name="ticketid" >
+                    <label for="content"><b>Content</b></label>
+                    <br />
+                    {{form1.content}}
+                    <br />
+                    <label for="receiver"><b>Receiver</b></label>
+                    <br />
+                    {{form1.receiver }}
+                    <br />
+                    <button type="submit" value="OK" >Add</button>
+                 </form>
+             </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
     </div>
+</div>
 {% endblock %}

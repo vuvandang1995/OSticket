@@ -42,6 +42,10 @@
                             <p><b>{{ tk.datestart}}</b></p><br>
                             <label for="dateend">Date End:</label>
                             <p><b>{{tk.dateend}}</b></p>
+                            {% if tk.attach != '' %}
+                             <label for="dateend">Attach:</label>
+                            <img src="/media/{{tk.attach}}" alt="none" style="width:100%;height:100%;">
+                            {% endif %}
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

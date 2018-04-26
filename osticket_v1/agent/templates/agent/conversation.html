@@ -5,11 +5,18 @@
 {% endblock %}
 {% block title %}Conversation{% endblock %}
 {% block content %}
+<div class="container" id="info_user">
     <div>
         <h2>Ticket no.{{ticket.id}}</h2>
         <label><b>Owner:{{ticket.sender.fullname}}</b></label><br/>
         <label>Created:{{ticket.datestart}}</label><br/>
         <label><b>Content:</b>{{ticket.content}}</label><br/>
+        {% if ticket.attach != '' %}
+        <label for="dateend">Attach:</label>
+        <br/>
+        <br/>
+        <img src="/media/{{ticket.attach}}" alt="none" style="width:80%;height:80%;">
+        {% endif %}
         <p>----------------------------------------------</p>
     </div>
     <div id="list_comment">
@@ -27,6 +34,7 @@
         {% csrf_token %}
         <label for="comment"><b>Comment:</b></label><br/>
         <textarea id="content" name="content" placeholder="comment here" rows="5" cols="50" ></textarea><br/>
-        <button id="btn">Send</button>
+        <button style="width:auto;" id="btn">Send</button>
     </div>
+</div>
 {% endblock %}
