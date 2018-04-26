@@ -79,38 +79,12 @@
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
 
-                        <button type="button" class="btn btn-info" data-title="forward" id="{{tk.id}}" data-toggle="modal" data-target="#topicModal">
+                        <button type="button" class="btn btn-info" data-title="forward" id="{{tk.id}}" data-toggle="modal" data-target="#forward{{tk.id}}">
                             <span class="glyphicon glyphicon-share"></span>
                         </button>
                     </td>
                     
                 </tr>
-
-                <div id="topicModal" class="modal fade">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                <h3 class="modal-title" style= "color: red";><strong> Agent List</strong></h3>
-                            </div>
-                            
-                            <div class="modal-body form-group">
-                                <hr>
-                                {% for ag in agent %}
-                                    <input class="inputText" type="checkbox" name="{{ag.id}}" > {{ag.fullname}} <br>
-                                {% endfor%}
-                                <input type="hidden" name="ticketid" value="">                        
-            
-                            </div>
-                            
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal" id = "forward_ticket_close">Close</button>
-                                <button type="button" id="forward_ticket" class="btn btn-success">Forward</button>
-                            </div>
-                
-                        </div>
-                    </div>
-                </div>
 
 
                 <div class="modal fade" id="{{tk.id}}content" role="dialog">
@@ -136,6 +110,36 @@
                       
                     </div>
                   </div>
+                  
+                  <div id="forward{{tk.id}}" class="modal fade fw">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h3 class="modal-title" style= "color: red";><strong> Agent List</strong></h3>
+                            </div>
+                            
+                            <div class="modal-body form-group">
+                                <hr>
+                                {% for key, value in list_other %}
+                                    {% if key == tk.id %}
+                                        {% for value in value %}
+                                            <input class="inputText" type="checkbox" name="{{value}}" > {{ value }} <br>
+                                        {% endfor%}
+                                    {% endif%}
+                                {% endfor%}
+                                {% comment %} <input type="hidden" name="ticketid" value="">                         {% endcomment %}
+            
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id = "forward_ticket_close">Close</button>
+                                <button type="button" id="{{tk.id}}" class="btn btn-success forward_ticket">Forward</button>
+                            </div>
+                
+                        </div>
+                    </div>
+                </div>
 
                 {% endfor%}
                 </tbody>
