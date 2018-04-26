@@ -175,7 +175,6 @@ class AgentLoginForm(forms.Form):
         }
     ))
 
-        
 
 # form tạo tịcket
 class CreateNewTicketForm(forms.Form):
@@ -188,7 +187,7 @@ class CreateNewTicketForm(forms.Form):
     topic = forms.ChoiceField(choices=[(x.id,x.name) for x in Topics.objects.all()])
 
     content = forms.CharField(widget=forms.Textarea(attrs={
-        'cols': '146',
+        'cols': '100',
         'rows': '20',
         'class': 'form-control',
         'placeholder': 'content',
@@ -201,3 +200,10 @@ class CreateNewTicketForm(forms.Form):
         'id': 'i_file',
     })
     )
+
+
+class CommentForm(forms.Form):
+    content = forms.CharField(widget=forms.Textarea(attrs={
+        'placeholder': 'comment here',
+        'name':'content',
+    }))

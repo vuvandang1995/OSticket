@@ -14,4 +14,5 @@ urlpatterns = [
     path(r'^resetpassword/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.resetpwd, name='resetpassword'),
     path('user/<int:id>',views.close_ticket, name='close_ticket'),
+    path('user/conversation_<int:id>', views.conversation, name='conversation'),
 ]

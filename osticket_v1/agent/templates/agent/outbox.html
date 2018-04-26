@@ -1,40 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load staticfiles %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/mess.js' %}"></script>
-    <script src="{% static 'js/validate.js' %}"></script>
-    <script src="{% static 'js/home_admin.js' %}"></script>
-
-    <title>Outbox</title>
-</head>
-<body>
-    <div class="header">
-        <nav class="main-menu">
-				<ul>
-					<li><a href="{% url 'agent:home_agent' %}">Home</a></li>
-                    <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
-                    <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
-                    <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
-                    <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
-                    <li><a href="{% url 'agent:manage_user' %}">Manage user</a></li>
-                    <li><a href="{% url 'agent:logout' %}">Logout</a></li>
-				</ul>
-		</nav>
-    </div>
-    <br />
-    <br />
-    <br />
-    <div>
-        <h2>Forward out request</h2>
+{% extends 'agent/base.html' %}
+{% block lib %}
+{% endblock%}
+{% block title %}Outbox{% endblock %}
+{% block content %}
+<div>
+<h2>Forward out request</h2>
         <table class="table table-striped table-bordered" >
 			<tr>
 				<td>ID</td>
@@ -155,7 +125,4 @@
             {% endfor%}
 		</table>
     </div>
-    <script src="{% static 'js/login.js' %}"></script>
-    <script src="{% static 'js/validate.js' %}"></script>
-</body>
-</html>
+{% endblock %}

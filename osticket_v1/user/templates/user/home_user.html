@@ -22,9 +22,11 @@
                         <td>ID</td>
                         <td>Title</td>
                         <td>Status</td>
+                        <td>Handler</td>
                         <td>Date created</td>
                         <td>Date expired</td>
                         <td>Close ticket</td>
+                        <td>Conversation</td>
                     </tr>
                     {% for tk in ticket %}
                     <tr>
@@ -39,6 +41,12 @@
                         {% else %}
                             <td>closed</td>
                         {% endif %}
+                        <td>{% for tic in atic %}
+                        {% if tic.ticketid == tk %}
+                        {{tic.agentid.fullname}},
+                        {% endif %}
+                        {% endfor %}
+                        </td>
                         <td>{{tk.datestart}}</td>
                         <td>{{tk.dateend}}</td>
                         {% if tk.status < 3 %}
@@ -50,13 +58,23 @@
                         {% else %}
                         <td></td>
                         {% endif %}
+                        <td>
+                            <form >
+                                <button id="con_{{forloop.counter}}" type="button">Conversation</button>
+                            </form>
+                        </td>
                     </tr>
                     <script type="text/javascript">
                     var btn = document.getElementById("close_{{forloop.counter}}");
+
                     btn.onclick = function(){
                         if(confirm("Are you sure ?")){
                             location.href="{% url 'user:close_ticket' tk.id %}"
                         }
+                    };
+                    var btn2 = document.getElementById("con_{{forloop.counter}}");
+                    btn2.onclick = function(){
+                        location.href="{% url 'user:conversation' tk.id %}"
                     };
                     </script>
                     {% endfor %}
@@ -83,7 +101,7 @@
             <label for="topic"><b>Topic</b></label><br />
             {{form.topic}}
             <br /><br />
-            <label for="content"><b>Content</b></label>
+            <label for="content"><b>Content</b></label><br /><br />
             {{form.content}}
             <br /><br />
             <label for="attach"><b>Attach</b></label><br />

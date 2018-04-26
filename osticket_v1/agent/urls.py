@@ -17,6 +17,7 @@ urlpatterns = [
     path('done/<int:id>', views.done, name="done"),
     path('inbox', views.inbox, name="inbox"),
     path('outbox', views.outbox, name="outbox"),
+    path('profile', views.profile, name="profile"),
     path('manage_user', views.manager_user, name="manage_user"),
     path('block_user/<int:id>', views.block_user, name="block_user"),
     path('unblock_user/<int:id>', views.unblock_user, name="unblock_user"),
@@ -27,4 +28,6 @@ urlpatterns = [
     path('deny_add/<int:id>', views.deny_add, name="deny_add"),
     path('cancel_add/<int:id>', views.cancel_add, name="cancel_add"),
     path('closed_ticket', views.closed_ticket, name='closed_ticket'),
+    path('processing_ticket/conversation_<int:id>', views.conversation, name='conversation'),
+
 ]

@@ -28,7 +28,12 @@ def homeuser(request):
     if request.session.has_key('user'):
         user = Users.objects.get(username=request.session['user'])
         form = CreateNewTicketForm()
-        content = {'ticket': Tickets.objects.filter(sender=user.id).order_by('status'),'form':form,'user': user}
+        ticket = Tickets.objects.filter(sender=user.id).order_by('status')
+        atic = TicketAgent.objects.filter(ticketid__in=ticket)
+        content = {'ticket': ticket,
+                   'form': form,
+                   'user': user,
+                   'atic': atic}
         if request.method == 'POST':
             form = CreateNewTicketForm(request.POST,request.FILES)
             if form.is_valid():
@@ -275,3 +280,21 @@ def create_ticket(request):
     else:
         return redirect("/")
 
+
+def conversation(request,id):
+    if request.session.has_key('user'):
+        user = Users.objects.get(username=request.session['user'])
+        ticket = get_object_or_404(Tickets, pk=id)
+        # form = CommentForm()
+        comments = Comments.objects.filter(ticketid=ticket).order_by('date')
+        content = {'user': user, 'ticket': ticket, 'comments': comments}
+        if request.method == 'POST':
+            # form = CommentForm(request.POST)//
+            # if form.is_valid():
+            Comments.objects.create(ticketid=ticket,
+                                    userid=user,
+                                    content=request.POST['content'],
+                                    date=timezone.now())
+        return render(request, 'user/conversation.html',content)
+    else:
+        return redirect("/")

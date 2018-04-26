@@ -32,8 +32,6 @@ $(document).ready(function(){
            });
         }
     });
-
-
     $("#forward_ticket").click(function() {
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var list_agent = [];
