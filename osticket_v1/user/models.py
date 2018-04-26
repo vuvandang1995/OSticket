@@ -132,6 +132,17 @@ def count_tk(agentname):
     except Agents.DoesNotExist:
         return None
 
+def list_hd(ticketid):
+    try:
+        tkag = TicketAgent.objects.filter(ticketid=ticketid).values('agentid')
+        list_hd_other = []
+        ag = Agents.objects.exclude(id__in=tkag)
+        for ag in ag:
+            list_hd_other.append(ag.username)
+        return list_hd_other
+    except:
+        return None
+
 
 def get_agent(agentname):
     try:

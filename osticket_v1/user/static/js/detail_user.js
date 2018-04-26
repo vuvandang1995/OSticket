@@ -30,10 +30,16 @@ $(document).ready(function(){
                 alert('Mật khẩu hiện tại không đúng')
             }
         }else{
+            var receive_mail;
+            if ($('#topicModal input:checkbox').is(":checked")){
+                receive_mail = 1;
+            }else {
+                receive_mail = 0;
+            }
             $.ajax({
                 type:'POST',
                 url:location.href,
-                data: {'change_user': fullname, 'email': email, 'phone': phone, 'csrfmiddlewaretoken':token, 'userid': userid},
+                data: {'change_user': fullname, 'email': email, 'phone': phone, 'csrfmiddlewaretoken':token, 'userid': userid, 'receive_mail': receive_mail},
                 success: function(){
                     window.location.reload();
                     // $("#info_user").load(location.href + "#info_user");
@@ -61,6 +67,12 @@ $(document).ready(function(){
 
             var phone = $("#phone_user").html();
             $("input[name=phone]").val(phone);
+
+            if ($('#rc_email').html() == 'Yes'){
+                $('#topicModal input:checkbox').prop('checked', true);
+            }else{
+                $('#topicModal input:checkbox').prop('checked', false);
+            }
 
             $('#info').show();
             $('#pwd').hide();

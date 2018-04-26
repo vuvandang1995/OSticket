@@ -16,13 +16,20 @@ import simplejson as json
 def home_admin(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin, 'agent': Agents.objects.all()}
+        list_other = {}
+        tk = Tickets.objects.all()
+        for tk in tk:
+            list_other[tk.id] = list_hd(tk.id)
+        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin, 'list_other': list_other.items()}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
                 tk = Tickets.objects.get(id=ticketid)
-                if tk.status == 3: 
-                    tk.status = 0
+                if tk.status == 3:
+                    if not TicketAgent.objects.filter(ticketid=tk):
+                        tk.status = 0
+                    else:
+                        tk.status = 1
                 else:
                     tk.status = 3
                 tk.save()
@@ -35,12 +42,22 @@ def home_admin(request):
                 list_agent = json.loads(list_agent)
                 ticketid = request.POST['ticketid']
                 for agentid in list_agent:
-                    agent = Agents.objects.get(id=agentid)
+                    agent = Agents.objects.get(username=agentid)
                     ticket = Tickets.objects.get(id=ticketid)
                     tkag = TicketAgent(agentid=agent, ticketid=ticket)
                     tkag.save()
                     ticket.status = 1
                     ticket.save()
+                    if agent.receive_email == 1:
+                        email = EmailMessage(
+                            'Forward ticket',
+                            render_to_string('agent/mail/forward_mail_leader.html',
+                                                {'receiver': agent,
+                                                'domain': (get_current_site(request)).domain,
+                                                'sender': 'Leader'}),
+                            to=[agent.email],
+                        )
+                        email.send()
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')

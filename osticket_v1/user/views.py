@@ -81,9 +81,11 @@ def detail_user(request):
                 fullname = request.POST['change_user']
                 email = request.POST['email']
                 phone = request.POST['phone']
+                receive_mail = request.POST['receive_mail']
                 u.fullname = fullname
                 u.email = email
                 u.phone = phone
+                u.receive_email = receive_mail
                 u.save()
             elif 'pwd' in request.POST:
                 u = Users.objects.get(id=request.POST['userid'])

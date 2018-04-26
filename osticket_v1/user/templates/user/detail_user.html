@@ -21,6 +21,7 @@
           <th>Email</th>
           <th>Username</th>
           <th>Phone</th>
+          <th>Receive email</th>
           <th>Status</th>
           <th>Date Created</th>
         </tr>
@@ -28,12 +29,25 @@
       <tbody>
         <tr>
           <td id="full_name">{{ user.fullname }}</td>
+
           <td id="email_user">{{ user.email }}</td>
+
           <td>{{ user.username }}</td>
+
           <td id="phone_user">{{user.phone}}</td>
+
+          {% if user.receive_email == 1 %}
+                <td id="rc_email">Yes</td>
+            {% else %}
+                <td id="rc_email">No</td>
+          {% endif%}
+
           {% if user.status == 1 %}
                 <td>Enable</td>
+            {% else %}
+                <td>Disable</td>
           {% endif%}
+        
           <td>{{ user.created }}</td>
         </tr>      
       </tbody>
@@ -69,6 +83,8 @@
 
                         <label for="phone"><b>Phone</b></label>
                         <input class="inputText" type="text" placeholder="Enter your phone number" name="phone">
+
+                        <input class="inputText" type="checkbox" name="receive_mail" > <b> Receive Email?</b>
                     </div>
 
                     <div id="pwd">
