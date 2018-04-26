@@ -8,6 +8,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+
 from django.http import Http404
 from django.views import generic
 from django.urls import reverse
@@ -28,7 +30,7 @@ def homeuser(request):
     if request.session.has_key('user'):
         user = Users.objects.get(username=request.session['user'])
         form = CreateNewTicketForm()
-        ticket = Tickets.objects.filter(sender=user.id).order_by('status')
+        ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
         atic = TicketAgent.objects.filter(ticketid__in=ticket)
         content = {'ticket': ticket,
                    'form': form,
@@ -49,7 +51,9 @@ def homeuser(request):
                                                dateend=(timezone.now()+timezone.timedelta(days=3)),
                                                attach=request.FILES['attach'])
                         handle_uploaded_file(request.FILES['attach'])
-        return render(request, 'user/home_user.html', content)
+            return redirect("/user")
+        else:
+            return render(request, 'user/home_user.html', content)
     else:
         return redirect("/")
 
@@ -64,9 +68,23 @@ def handle_uploaded_file(f):
 
 def close_ticket(request,id):
     if request.session.has_key('user'):
+        sender = Users.objects.get(username=request.session['user'])
         ticket = Tickets.objects.get(id=id)
         ticket.status = 3
         ticket.save()
+        try:
+            tkag = TicketAgent.objects.filter(ticketid=id).values('agentid')
+        except ObjectDoesNotExist:
+            pass
+        else:
+            receiver = Agents.objects.filter(id__in=tkag)
+            for rc in receiver:
+                if rc.receive_email == 1:
+                    email = EmailMessage('Closed ticket',
+                                         render_to_string('user/close_mail.html',
+                                                          {'receiver': rc,'sender': sender,'id':id}),
+                                         to=[rc.email],)
+                    email.send()
         return redirect("/user")
     else:
         return redirect("/")
@@ -241,7 +259,6 @@ def resetpwd(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
 
 
-
 def submitadmin(request):
     mess = 'Please confirm your email address to complete the login admin'
     mess_code_error = 'Code sai rồi bạn ơi'
@@ -258,29 +275,6 @@ def submitadmin(request):
         else:
             return render(request, 'user/submit_code_admin.html', {'mess': mess_code_error})
     return render(request, 'user/submit_code_admin.html', {'mess': mess})
-
-
-def create_ticket(request):
-    if request.session.has_key('user'):
-        user = Users.objects.get(username=request.session['user'])
-        form = CreateNewTicketForm()
-        if request.method == 'POST':
-            form = CreateNewTicketForm(request.POST,request.FILES)
-            if form.is_valid():
-                topic = Topics.objects.get(id=form.cleaned_data['topic'])
-                Tickets.objects.create(title="abc", content='abc', sender=user,
-                                       topicid=topic, datestart=timezone.now(),
-                                       dateend=(timezone.now()+timezone.timedelta(days=3)),
-                                       attach=request.FILES['attach'])
-                handle_uploaded_file(request.FILES['attach'])
-                return redirect("/")
-            else:
-                print("form invalid")
-                return render(request, 'user/create_ticket.html', {'form': form})
-        else:
-            return render(request, 'user/create_ticket.html', {'form': form})
-    else:
-        return redirect("/")
 
 
 def conversation(request,id):

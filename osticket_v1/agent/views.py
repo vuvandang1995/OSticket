@@ -12,6 +12,7 @@ import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 import simplejson as json
 
+
 # Create your views here.
 def home_admin(request):
     if request.session.has_key('admin'):
@@ -61,7 +62,6 @@ def home_admin(request):
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
-
 
 
 def manager_topic(request):
@@ -175,10 +175,18 @@ def assign_ticket(request, id):
         ticket.status = 1
         ticket.save()
         TicketAgent.objects.create(agentid=agent, ticketid=ticket)
-        Comments.objects.create(content=" received this ticket to handle",
-                                date=timezone.now(),
-                                agentid=agent,
-                                ticketid=ticket)
+        user = Users.objects.get(id=ticket.sender.id)
+        if user.receive_email == 1:
+            email = EmailMessage(
+                'Assign ticket',
+                render_to_string('agent/mail/assign_mail.html',
+                                 {'receiver': user,
+                                  'domain': (get_current_site(request)).domain,
+                                  'sender': agent,
+                                  'ticketid':ticket.id}),
+                to=[user.email],
+            )
+            email.send()
         return redirect("/agent")
     else:
         return redirect("/")
@@ -194,7 +202,7 @@ def processing_ticket(request):
         tic=[]
         for t in ticket:
             tic += [x for x in TicketAgent.objects.filter(ticketid=t.ticketid)]
-        content = {'ticket': ticket, 'tic': tic}
+        content = {'ticket': ticket, 'tic': tic, 'form':form, 'form1': form1}
         if request.method == 'POST':
             if request.POST['type']=='forward':
                 form = ForwardForm(request.POST)
@@ -221,6 +229,7 @@ def processing_ticket(request):
                                             to=[rc.email],
                                         )
                                         email.send()
+                return redirect("/agent/processing_ticket")
             else:
                 form1 = AddForm(request.POST)
                 if form1.is_valid():
@@ -246,6 +255,7 @@ def processing_ticket(request):
                                             to=[rc.email]
                                         )
                                         email.send()
+                return redirect("/agent/processing_ticket")
         return render(request,'agent/processing_ticket.html',content)
     else:
         return redirect("/")
@@ -253,14 +263,9 @@ def processing_ticket(request):
 
 def process(request, id):
     if request.session.has_key('agent'):
-        agent = Agents.objects.get(username=request.session['agent'])
         ticket = Tickets.objects.get(id=id)
         ticket.status = 1
         ticket.save()
-        Comments.objects.create(content="continue handle ...",
-                                date=timezone.now(),
-                                agentid=agent,
-                                ticketid=ticket)
         return redirect("/agent/processing_ticket")
     else:
         return redirect("/")
@@ -272,10 +277,18 @@ def done(request,id):
         ticket = Tickets.objects.get(id=id)
         ticket.status = 2
         ticket.save()
-        Comments.objects.create(content="this ticket has done",
-                                date=timezone.now(),
-                                agentid=agent,
-                                ticketid=ticket)
+        user = Users.objects.get(id=ticket.sender.id)
+        if user.receive_email == 1:
+            email = EmailMessage(
+                'Finished ticket',
+                render_to_string('agent/mail/done_mail.html',
+                                 {'receiver': user,
+                                  'domain': (get_current_site(request)).domain,
+                                  'sender': agent,
+                                  'ticketid':ticket.id}),
+                to=[user.email],
+            )
+            email.send()
         return redirect("/agent/processing_ticket")
     else:
         return redirect("/")
@@ -285,7 +298,7 @@ def give_up(request,id):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session['agent'])
         ticket = Tickets.objects.get(id=id)
-        try :
+        try:
             TicketAgent.objects.get(ticketid=ticket)
         except MultipleObjectsReturned:
             tk = TicketAgent.objects.get(ticketid=ticket,agentid=agent)
@@ -358,8 +371,9 @@ def accept_forward(request,id):
                 email.send()
         else:
             agticket.delete()
-        return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
-                  'addin': AddAgents.objects.filter(receiverid=agent)})
+        # return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
+        #           'addin': AddAgents.objects.filter(receiverid=agent)})
+        return redirect("/agent/inbox")
     else:
         return redirect("/")
 
@@ -381,8 +395,9 @@ def deny_forward(request,id):
                 to=[sender.email]
             )
             email.send()
-        return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
-                  'addin': AddAgents.objects.filter(receiverid=agent)})
+        # return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
+        #           'addin': AddAgents.objects.filter(receiverid=agent)})
+        return redirect("/agent/inbox")
     else:
         return redirect("/")
 
@@ -420,10 +435,9 @@ def accept_add(request,id):
                 )
                 email.send()
         fwticket.delete()
-
-
-        return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
-                  'addin': AddAgents.objects.filter(receiverid=agent)})
+        # return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
+        #         #           'addin': AddAgents.objects.filter(receiverid=agent)})
+        return redirect("/agent/inbox")
     else:
         return redirect("/")
 
@@ -445,8 +459,9 @@ def deny_add(request,id):
             )
             email.send()
         fwticket.delete()
-        return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
-                  'addin': AddAgents.objects.filter(receiverid=agent)})
+        # return render(request,'agent/inbox.html',{'forwardin':ForwardTickets.objects.filter(receiverid=agent),
+        #           'addin': AddAgents.objects.filter(receiverid=agent)})
+        return redirect("/agent/inbox")
     else:
         return redirect("/")
 

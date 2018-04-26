@@ -3,17 +3,40 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/home_admin.js' %}"></script>
     <script src="{% static 'js/conversation.js' %}" ></script>
     <title>Conversation</title>
 </head>
 <body>
+<div class="header">
+        <nav class="main-menu">
+				<ul>
+                    <li><a href="{% url 'user:homeuser' %}">Home</a></li>
+                    <li><a href="{% url 'user:detail_user' %}">Profile</a></li>
+                    <li><a href="{% url 'user:logout' %}">Logout</a></li>
+				</ul>
+		</nav>
+    </div>
+<div class="container" id="info_user">
     <div>
         <h2>Ticket no.{{ticket.id}}</h2>
         <label><b>Owner:{{user.fullname}}</b></label><br/>
         <label>Created:{{ticket.datestart}}</label><br/>
         <label><b>Content:</b>{{ticket.content}}</label><br/>
-        <p>----------------------------------------------</p>
+        {% if ticket.attach != '' %}
+        <label for="dateend">Attach:</label>
+        <br/>
+        <br/>
+        <img src="/media/{{ticket.attach}}" alt="none" style="width:80%;height:80%;">
+        {% endif %}
+        <p>-----------------------------------------------------------------------</p>
     </div>
     <div id="list_comment">
         {% for com in comments %}
@@ -30,7 +53,8 @@
         {% csrf_token %}
         <label for="comment"><b>Comment:</b></label><br/>
         <textarea id="content" name="content" placeholder="comment here" rows="5" cols="50" ></textarea><br/>
-        <button id="btn">Send</button>
+        <button style="width:auto" id="btn">Send</button>
     </div>
+</div>
 </body>
 </html>
