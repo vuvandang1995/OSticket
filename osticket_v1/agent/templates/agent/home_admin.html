@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -13,11 +14,18 @@
     <title>{{ admin.fullname}}</title>
 </head>
 <body>
-        
+<div class="header">
+        <nav class="main-menu">
+				<ul>
+                    <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
+                    <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
+                    <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
+				</ul>
+		</nav>
+    </div>
+    <br />
+    <br />
         <div class="container" id="list_ticket">
-            <a href="{% url 'agent:manager_topic' %}">Topic</a>
-            <a href="{% url 'agent:manager_agent' %}">Agent</a>
-            <a href="{% url 'agent:logout_admin' %}">Logout</a>
             <h2>All Ticket</h2>
             <p>Đây là bảng danh sách tất cả Ticket trên hệ thống:</p>  
             <div id="list_ticket">          

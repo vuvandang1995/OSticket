@@ -162,7 +162,8 @@ def logout(request):
 
 def home_agent(request):
     if request.session.has_key('agent'):
-        content = {'ticket': Tickets.objects.filter(status=0).order_by('dateend'),
+        topic = Topics.objects.exclude(Q(name='Other') | Q(type_send=0))
+        content = {'ticket': Tickets.objects.filter(status=0,topicid__in=topic).order_by('dateend'),
                    'agent': Agents.objects.get(username=request.session.get('agent'))}
         return render(request,'agent/home_agent.html',content)
     else:
