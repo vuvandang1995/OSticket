@@ -1,5 +1,6 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -194,31 +195,34 @@ def assign_ticket(request, id):
 
 def processing_ticket(request):
     if request.session.has_key('agent'):
-        sender = Agents.objects.get(username=request.session['agent'])
-        tem = Tickets.objects.filter(status__in=[1, 2]).order_by('status')
         form = ForwardForm()
         form1 = AddForm()
-        ticket = TicketAgent.objects.filter(agentid=sender, ticketid__in=tem)
-        tic=[]
-        for t in ticket:
-            tic += [x for x in TicketAgent.objects.filter(ticketid=t.ticketid)]
-        content = {'ticket': ticket, 'tic': tic, 'form':form, 'form1': form1}
+        sender = Agents.objects.get(username=request.session['agent'])
+        tksd = TicketAgent.objects.filter(agentid=sender)
+        tksdpr = Tickets.objects.filter(id__in=tksd.values('ticketid'),status__in=[1, 2])
+        agk = {}
+        agc = {}
+        for tk in tksdpr:
+            agt = TicketAgent.objects.filter(ticketid=tk).values('agentid')
+            agc[tk.id] =[ x.fullname for x in Agents.objects.filter(id__in=agt, admin=0)]
+            agk[tk.id] =[ x.fullname for x in Agents.objects.exclude(Q(id__in=agt) | Q(admin=1))]
+        content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1}
         if request.method == 'POST':
-            if request.POST['type']=='forward':
+            if request.POST['type'] == 'forward':
                 form = ForwardForm(request.POST)
                 if form.is_valid():
-                    ticket = Tickets.objects.get(id=request.POST['ticketid'])
-                    receiver = {'receiver': Agents.objects.filter(id__in=form.cleaned_data.get('receiver'))}
+                    tksd = Tickets.objects.get(id=request.POST['ticketid'])
+                    receiver = Agents.objects.filter(fullname__in=request.POST.getlist('receiver'))
                     text = form.cleaned_data.get('content')
-                    for rc in receiver['receiver']:
+                    for rc in receiver:
                         if rc != sender:
                             try:
-                                TicketAgent.objects.get(ticketid=ticket,agentid=rc)
+                                TicketAgent.objects.get(ticketid=tksd, agentid=rc)
                             except ObjectDoesNotExist:
                                 try:
-                                    ForwardTickets.objects.get(senderid=sender, receiverid=rc,ticketid=ticket, content=text)
+                                    ForwardTickets.objects.get(senderid=sender, receiverid=rc,ticketid=tksd, content=text)
                                 except ObjectDoesNotExist:
-                                    ForwardTickets.objects.create(senderid=sender, receiverid=rc, ticketid=ticket,content=text)
+                                    ForwardTickets.objects.create(senderid=sender, receiverid=rc, ticketid=tksd,content=text)
                                     if rc.receive_email == 1:
                                         email = EmailMessage(
                                             'Forward ticket',
@@ -233,18 +237,18 @@ def processing_ticket(request):
             else:
                 form1 = AddForm(request.POST)
                 if form1.is_valid():
-                    ticket = Tickets.objects.get(id=request.POST['ticketid'])
-                    receiver = {'receiver': Agents.objects.filter(id__in=form1.cleaned_data.get('receiver'))}
+                    tksd = Tickets.objects.get(id=request.POST['ticketid'])
+                    receiver = Agents.objects.filter(fullname__in=request.POST.getlist('receiver'))
                     text = form1.cleaned_data.get('content')
-                    for rc in receiver['receiver']:
+                    for rc in receiver:
                         if rc != sender:
                             try:
-                                TicketAgent.objects.get(ticketid=ticket,agentid=rc)
+                                TicketAgent.objects.get(ticketid=tksd,agentid=rc)
                             except ObjectDoesNotExist:
                                 try:
-                                    AddAgents.objects.get(senderid=sender, receiverid=rc, ticketid=ticket,content=text)
+                                    AddAgents.objects.get(senderid=sender, receiverid=rc, ticketid=tksd,content=text)
                                 except ObjectDoesNotExist:
-                                    AddAgents.objects.create(senderid=sender, receiverid=rc, ticketid=ticket, content=text)
+                                    AddAgents.objects.create(senderid=sender, receiverid=rc, ticketid=tksd, content=text)
                                     if rc.receive_email == 1:
                                         email = EmailMessage(
                                             'Add in a ticket',
