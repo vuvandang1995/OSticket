@@ -149,6 +149,6 @@ MESSAGE_LEVEL = message_constants.DEBUG
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'toiyeuem9597@gmail.com'
-EMAIL_HOST_PASSWORD = 'Vuvandang95'
+EMAIL_HOST_USER = 'ticketmdtpro@gmail.com'
+EMAIL_HOST_PASSWORD = 'meditech2018'
 EMAIL_PORT = 587

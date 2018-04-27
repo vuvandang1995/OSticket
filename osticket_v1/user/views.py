@@ -30,10 +30,12 @@ dic_time = {}
 def homeuser(request):
     if request.session.has_key('user'):
         user = Users.objects.get(username=request.session['user'])
+        admin = Agents.objects.get(admin=1)
         form = CreateNewTicketForm()
         topic = Topics.objects.all()
         ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
         atic = TicketAgent.objects.filter(ticketid__in=ticket)
+        receiver = Agents.objects.all()
         content = {'ticket': ticket,
                    'form': form,
                    'user': user,
@@ -46,7 +48,7 @@ def homeuser(request):
                 if request.FILES.get('attach') is None:
                     Tickets.objects.create(title=form.cleaned_data['title'], content=form.cleaned_data['content'],
                                            sender=user,topicid=topicA, datestart=timezone.now(),
-                                           dateend=(timezone.now() + timezone.timedelta(days=3)))
+                                           dateend=(timezone.now() + timezone.timedelta(days=3)))        
                 else:
                     if request.FILES['attach']._size < MAX_UPLOAD_SIZE:
                         Tickets.objects.create(title=form.cleaned_data['title'],content=form.cleaned_data['content'],
@@ -54,6 +56,18 @@ def homeuser(request):
                                                dateend=(timezone.now()+timezone.timedelta(days=3)),
                                                attach=request.FILES['attach'])
                         handle_uploaded_file(request.FILES['attach'])
+                if topicA.type_send == 1:
+                    for rc in receiver:
+                        if rc.receive_email == 1:
+                            email = EmailMessage('New ticket',
+                                                render_to_string('user/new_ticket.html', {}),
+                                                to=[rc.email],)
+                            email.send()
+                else:
+                    email = EmailMessage('New ticket',
+                                        render_to_string('user/new_ticket.html', {}),
+                                        to=[admin.email],)
+                    email.send()
             return redirect("/user")
         else:
             return render(request, 'user/home_user.html', content)
