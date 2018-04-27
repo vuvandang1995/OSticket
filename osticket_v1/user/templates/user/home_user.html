@@ -139,7 +139,11 @@
                      <label for="title"><b>Title</b></label>
                      {{form.title}}
                      <label for="topic"><b>Topic</b></label><br />
-                     {{form.topic}}
+                     <select name="topic" >
+                         {% for tp in topic %}
+                         <option value="{{tp.id}}">{{tp.name}}</option>
+                         {% endfor %}
+                     </select>
                      <br /><br />
                      <label for="content"><b>Content</b></label><br /><br />
                      {{form.content}}
