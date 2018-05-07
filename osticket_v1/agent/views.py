@@ -12,6 +12,13 @@ from django.core.mail import EmailMessage
 import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 import simplejson as json
+from django.utils.safestring import mark_safe
+import json
+import string
+from random import *
+min_char = 8
+max_char = 12
+allchar = string.ascii_letters + string.digits
 
 
 # Create your views here.
@@ -527,13 +534,26 @@ def conversation(request,id):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session['agent'])
         ticket = get_object_or_404(Tickets, pk=id)
+        try:
+            hd = TicketAgent.objects.get(ticketid=ticket)
+        except:
+            hd = None
+        if hd is not None and hd.agentid == agent:
+            if ticket.chat is None:
+                room_name = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
+                ticket.chat = room_name
+                ticket.save()
+            tk = mark_safe(json.dumps(ticket.chat))
+        else:
+            return redirect('/agent')
+        
         comments = Comments.objects.filter(ticketid=ticket).order_by('date')
-        content = {'agent': agent, 'ticket': ticket, 'comments': comments}
+        content = {'agent': agent, 'ticket': ticket, 'comments': comments, 'room_name_json': tk, 'who': 'you'}
         if request.method == 'POST':
             Comments.objects.create(ticketid=ticket,
                                     agentid=agent,
                                     content=request.POST['content'],
                                     date=timezone.now())
-        return render(request, 'agent/conversation.html', content)
+        return render(request, 'user/conversation.html', content)
     else:
         return redirect("/")

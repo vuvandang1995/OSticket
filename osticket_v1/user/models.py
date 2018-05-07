@@ -54,6 +54,7 @@ class Agents(models.Model):
 
 class Tickets(models.Model):
     title = models.CharField(max_length=255)
+    chat = models.CharField(max_length=30, null=True)
     content = models.TextField()
     sender = models.ForeignKey('Users', models.CASCADE, db_column='sender')
     topicid = models.ForeignKey('Topics', models.DO_NOTHING, db_column='topicid')

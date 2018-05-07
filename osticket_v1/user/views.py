@@ -10,6 +10,8 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.utils.safestring import mark_safe
+import json
 
 from django.http import Http404
 from django.views import generic
@@ -297,9 +299,22 @@ def conversation(request,id):
     if request.session.has_key('user'):
         user = Users.objects.get(username=request.session['user'])
         ticket = get_object_or_404(Tickets, pk=id)
+        try:
+            hd = TicketAgent.objects.get(ticketid=ticket)
+        except:
+            hd = None
+        if hd is not None and ticket.sender == user:
+            if ticket.chat is None:
+                room_name = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
+                ticket.chat = room_name
+                ticket.save()
+            tk = mark_safe(json.dumps(ticket.chat))
+        else:
+            return redirect('/user')
+        
         # form = CommentForm()
         comments = Comments.objects.filter(ticketid=ticket).order_by('date')
-        content = {'user': user, 'ticket': ticket, 'comments': comments}
+        content = {'user': user, 'ticket': ticket, 'comments': comments, 'room_name_json': tk, 'who': 'me'}
         if request.method == 'POST':
             # form = CommentForm(request.POST)//
             # if form.is_valid():
