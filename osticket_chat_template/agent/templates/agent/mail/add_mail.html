@@ -1,0 +1,6 @@
+{% autoescape off %}
+Hi {{ receiver.fullname }},
+{{sender.fullname}} have just add you in a ticket.
+Accept it if you can handle.
+http://{{ domain }}{% url 'agent:inbox'%}
+{% endautoescape %}

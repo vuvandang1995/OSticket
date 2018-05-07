@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/home_admin.js' %}"></script>
+    <title>{{ admin.fullname}}</title>
+</head>
+<body>
+<div class="header">
+        <nav class="main-menu">
+				<ul>
+                    <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
+                    <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
+                    <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
+                    <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
+				</ul>
+		</nav>
+    </div>
+    <br />
+    <br />
+        <div class="container" id="list_ticket">
+            <h2>All Ticket</h2>
+            <p>Đây là bảng danh sách tất cả Ticket trên hệ thống:</p>  
+            <div id="list_ticket">          
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Topic</th>
+                    <th>Sender</th>
+                    <th>Status</th>
+                    <th>Handler</th>
+                    <th>Tùy chọn</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% csrf_token %}
+                {% for tk in ticket %}
+                <tr>
+                    <td>
+                        <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#{{tk.id}}content">{{ tk.id}}</button>
+                    </td>
+                    
+                    <td>{{tk.title}}</td>
+
+                    <td>{{tk.topicid.name}}</td>
+
+                    <td>{{tk.sender.username}}</td>
+                    
+                    {% if tk.status == 0 %}
+                        <td>Pending</td>
+                    {% elif tk.status == 1 %}
+                        <td>Processing</td>
+                    {% elif tk.status == 2 %}
+                        <td>Done</td>
+                    {% else %}
+                        <td>Closed</td>
+                    {% endif %}
+                    
+                    {% if tk.status == 0 %}
+                        <td>Nobody</td>
+                    {% else %}
+                        <td>
+                            {% for hd in handler %}
+                                {% if hd.ticketid == tk %}
+                                    {{hd.agentid.username}}<br>
+                                {% endif%}
+                            {% endfor%}
+                        </td>
+                    {% endif %}
+
+                    <td>
+                        
+                        <button type="button" class="btn btn-primary" id="{{tk.id}}">
+                            <span class="glyphicon glyphicon-off"></span>
+                        </button>
+                        
+                        <button type="button" class="btn btn-danger" id="{{tk.id}}">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+
+                        <button type="button" class="btn btn-info" data-title="forward" id="{{tk.id}}" data-toggle="modal" data-target="#forward{{tk.id}}">
+                            <span class="glyphicon glyphicon-share"></span>
+                        </button>
+                    </td>
+                    
+                </tr>
+
+
+                <div class="modal fade" id="{{tk.id}}content" role="dialog">
+                    <div class="modal-dialog">
+                    
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Chi tiết</h4>
+                        </div>
+                        <div class="modal-body form-group">
+                            <label for="content">Content:</label>
+                            <p><b>{{tk.content}}</b></p><br>
+                            <label for="datestart">Date Start:</label>
+                            <p><b>{{ tk.datestart}}</b></p><br>
+                            <label for="dateend">Date End:</label>
+                            <p><b>{{tk.dateend}}</b></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                  
+                  <div id="forward{{tk.id}}" class="modal fade fw">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h3 class="modal-title" style= "color: red";><strong> Agent List</strong></h3>
+                            </div>
+                            
+                            <div class="modal-body form-group">
+                                <hr>
+                                {% for key, value in list_other %}
+                                    {% if key == tk.id %}
+                                        {% for value in value %}
+                                            <input class="inputText" type="checkbox" name="{{value}}" > {{ value }} <br>
+                                        {% endfor%}
+                                    {% endif%}
+                                {% endfor%}
+                                {% comment %} <input type="hidden" name="ticketid" value="">                         {% endcomment %}
+            
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id = "forward_ticket_close">Close</button>
+                                <button type="button" id="{{tk.id}}" class="btn btn-success forward_ticket">Forward</button>
+                            </div>
+                
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor%}
+                </tbody>
+            </table>
+        </div>
+        </div>
+
+</body>
+</html>
