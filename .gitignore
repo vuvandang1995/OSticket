@@ -31,7 +31,7 @@ cmake-build-debug/
 
 ## File-based project format:
 *.iws
-.idea/
+*.idea/
 
 ## Plugin-specific files:
 
