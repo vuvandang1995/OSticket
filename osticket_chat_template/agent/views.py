@@ -183,6 +183,10 @@ def assign_ticket(request, id):
         agent = Agents.objects.get(username=request.session['agent'])
         ticket.status = 1
         ticket.save()
+        TicketLog.objects.create(agentid=agent, ticketid=ticket, action='assign ticket',
+                                 date=timezone.now().date(),
+                                 weekday=get_weekday(),
+                                 time=timezone.now().time())
         TicketAgent.objects.create(agentid=agent, ticketid=ticket)
         user = Users.objects.get(id=ticket.sender.id)
         if user.receive_email == 1:
@@ -275,9 +279,14 @@ def processing_ticket(request):
 
 def process(request, id):
     if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session['agent'])
         ticket = Tickets.objects.get(id=id)
         ticket.status = 1
         ticket.save()
+        TicketLog.objects.create(agentid=agent, ticketid=ticket, action='re-process ticket',
+                                 date=timezone.now().date(),
+                                 weekday=get_weekday(),
+                                 time=timezone.now().time())
         return redirect("/agent/processing_ticket")
     else:
         return redirect("/")
@@ -289,6 +298,10 @@ def done(request,id):
         ticket = Tickets.objects.get(id=id)
         ticket.status = 2
         ticket.save()
+        TicketLog.objects.create(agentid=agent, ticketid=ticket, action='done ticket',
+                                 date=timezone.now().date(),
+                                 weekday=get_weekday(),
+                                 time=timezone.now().time())
         user = Users.objects.get(id=ticket.sender.id)
         if user.receive_email == 1:
             email = EmailMessage(
@@ -315,6 +328,10 @@ def give_up(request,id):
         except MultipleObjectsReturned:
             tk = TicketAgent.objects.get(ticketid=ticket,agentid=agent)
             tk.delete()
+            TicketLog.objects.create(agentid=agent, ticketid=ticket, action='give up ticket',
+                                     date=timezone.now().date(),
+                                     weekday=get_weekday(),
+                                     time=timezone.now().time())
         return redirect("/agent/processing_ticket")
     else:
         return redirect("/")
@@ -371,6 +388,11 @@ def accept_forward(request,id):
         except TicketAgent.DoesNotExist:
             agticket.agentid = agent
             agticket.save()
+            action = agent.fullname + ' accept ticket forward from ' + sender.fullname
+            TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
+                                     date=timezone.now().date(),
+                                     weekday=get_weekday(),
+                                     time=timezone.now().time())
             if sender.receive_email == 1:
                 email = EmailMessage(
                     'Accept forward request',
@@ -436,6 +458,11 @@ def accept_add(request,id):
             TicketAgent.objects.get(ticketid=ticket, agentid=agent)
         except TicketAgent.DoesNotExist:
             TicketAgent.objects.create(ticketid=ticket, agentid=agent)
+            action = agent.fullname + ' join to handler ticket '
+            TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
+                                     date=timezone.now().date(),
+                                     weekday=get_weekday(),
+                                     time=timezone.now().time())
             if sender.receive_email == 1:
                 email = EmailMessage(
                     'Accept add request',
