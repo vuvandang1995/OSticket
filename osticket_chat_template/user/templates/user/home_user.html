@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
     <!--<link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{% static 'js/home_admin.js' %}"></script>
@@ -18,9 +19,10 @@
 <div class="header">
         <nav class="main-menu">
 				<ul>
-                    <li><a href="{% url 'user:homeuser' %}">Home</a></li>
-                    <li><a href="{% url 'user:detail_user' %}">Profile</a></li>
-                    <li><a href="{% url 'user:logout' %}">Logout</a></li>
+                    <li><i class="fa fa-bell"></i></li>
+                    <li><a class="list-group-item" href="{% url 'user:homeuser' %}"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a></li>
+                    <li><a class="list-group-item" href="{% url 'user:detail_user' %}"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Settings</a></li>
+                    <li><a class="list-group-item" href="{% url 'user:logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp; Logout</a></li>
 				</ul>
 		</nav>
     </div>
