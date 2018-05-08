@@ -38,26 +38,44 @@ def homeuser(request):
         ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
         atic = TicketAgent.objects.filter(ticketid__in=ticket)
         receiver = Agents.objects.all()
+        htic = TicketLog.objects.filter(ticketid__in=ticket)
+        timeticket = {}
+        for tk in ticket:
+            maxtime = TicketLog.objects.filter(ticketid=tk).latest('time')
+            mintime = TicketLog.objects.filter(ticketid=tk).earliest('time')
+            timeticket[tk.id] = timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
+                mintime.date, mintime.time)
         content = {'ticket': ticket,
                    'form': form,
                    'user': user,
                    'atic': atic,
-                   'topic': topic}
+                   'topic': topic,
+                   'htic': htic,
+                   'timeticket': timeticket}
         if request.method == 'POST':
             form = CreateNewTicketForm(request.POST,request.FILES)
             if form.is_valid():
                 topicA = Topics.objects.get(id=request.POST['topic'])
-                if request.FILES.get('attach') is None:
-                    Tickets.objects.create(title=form.cleaned_data['title'], content=form.cleaned_data['content'],
-                                           sender=user,topicid=topicA, datestart=timezone.now(),
-                                           dateend=(timezone.now() + timezone.timedelta(days=3)))        
-                else:
+                ticket = Tickets()
+                ticket.title = form.cleaned_data['title']
+                ticket.content = form.cleaned_data['content']
+                ticket.sender = user
+                ticket.topicid = topicA
+                ticket.datestart = timezone.now()
+                ticket.dateend = (timezone.now() + timezone.timedelta(days=3))
+                if request.FILES.get('attach') is not None:
                     if request.FILES['attach']._size < MAX_UPLOAD_SIZE:
-                        Tickets.objects.create(title=form.cleaned_data['title'],content=form.cleaned_data['content'],
-                                               sender=user,topicid=topicA, datestart=timezone.now(),
-                                               dateend=(timezone.now()+timezone.timedelta(days=3)),
-                                               attach=request.FILES['attach'])
+                        ticket.attach = request.FILES['attach']
                         handle_uploaded_file(request.FILES['attach'])
+                    else:
+                        return render(request, 'user/home_user.html', content)
+                ticket.save()
+                TicketLog.objects.create(userid=user,
+                                         ticketid=ticket,
+                                         action='create ticket',
+                                         date=timezone.now().date(),
+                                         weekday=get_weekday(),
+                                         time=timezone.now().time())
                 if topicA.type_send == 1:
                     for rc in receiver:
                         if rc.receive_email == 1:
@@ -91,6 +109,12 @@ def close_ticket(request,id):
         ticket = Tickets.objects.get(id=id)
         ticket.status = 3
         ticket.save()
+        TicketLog.objects.create(userid=sender,
+                                 ticketid=ticket,
+                                 action='close ticket',
+                                 date=timezone.now().date(),
+                                 weekday=get_weekday(),
+                                 time=timezone.now().time())
         try:
             tkag = TicketAgent.objects.filter(ticketid=id).values('agentid')
         except ObjectDoesNotExist:

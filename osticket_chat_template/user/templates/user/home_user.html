@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
+	<link rel="stylesheet" href="{% static 'timeline/css/style.css' %}"> <!-- Resource style -->
     <!--<link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
@@ -34,10 +35,9 @@
             <td>Title</td>
             <td>Status</td>
             <td>Handler</td>
-            <td>Date created</td>
-            <td>Date expired</td>
             <td>Close ticket</td>
             <td>Conversation</td>
+            <th>History</th>
         </tr>
         {% for tk in ticket %}
         <tr>
@@ -60,8 +60,6 @@
                 {% endif %}
                 {% endfor %}
             </td>
-            <td>{{tk.datestart}}</td>
-            <td>{{tk.dateend}}</td>
             {% if tk.status < 3 %}
             <td>
                 <form >
@@ -80,6 +78,9 @@
             {% else %}
             <td></td>
             {% endif %}
+            <td>
+                <button data-toggle="modal" data-target="#timeline{{tk.id}}">History</button>
+            </td>
         </tr>
         <script type="text/javascript">
             var btn = document.getElementById("close_{{forloop.counter}}");
@@ -120,6 +121,63 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade " id="timeline{{tk.id}}" >
+            <div class="modal-dialog" style="width:100%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">History of ticket no.{{tk.id}}</h2>
+                    </div>
+                    <div class="modal-body form-group" >
+                        <div>
+                            {% if tk.status == 0 %}
+                            <font color="black" size="5">Ticket status :</font><font color="red" size="5"> pending...</font>
+                            {% elif tk.status == 1 %}
+                            <font color="black" size="5">Ticket status :</font><font color="orange" size="5"> processing...</font>
+                            {% elif tk.status == 2 %}
+                            <font color="black" size="5">Ticket status :</font><font color="green" size="5"> done</font>
+                            {% else %}
+                            <font color="black" size="5">Ticket status :</font><font color="blue" size="5"> closed</font>
+                            {% endif%}
+                            <br/>
+                            <br/>
+                            {% for key, value in timeticket.items %}
+                                {% if key == tk.id %}
+                            <font color="black" size="5">Ticket exist time:</font><font color="green" size="5"> {{value}}</font></p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                            <div style="display:inline-block;width:100%;overflow-x:scroll;">
+                                <ul class="timeline timeline-horizontal">
+                                    {% for ht in htic %}
+                                    {% if ht.ticketid.id == tk.id %}
+                                    <li class="timeline-item">
+                                        <div class="timeline-badge success"><i class="glyphicon glyphicon-check"></i></div>
+                                        <div class="timeline-panel">
+                                            <div class="timeline-heading">
+                                                <h2 class="timeline-title">{{ht.action}}</h2>
+                                                <p><big class="text-muted"><i class="glyphicon glyphicon-time"></i> {{ht.time}} {{ht.weekday}} </big></p>
+                                                <p><big class="text-muted">{{ht.date}}</big></p>
+                                            </div>
+                                            <div class="timeline-body">
+                                                {% if ht.userid is not None %}
+                                                <h3 class="timeline-title">by {{ht.userid.fullname}} ( owner )</h3>
+                                                {% else %}
+                                                <h3 class="timeline-title">by {{ht.agentid.fullname}} ( agent )</h3>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% endif %}
+                                    {% endfor %}
+                                </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
