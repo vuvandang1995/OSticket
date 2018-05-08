@@ -6,6 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.utils import timezone
 # from django.contrib.auth.hashers import check_password
 from user.models import *
 
@@ -132,6 +133,39 @@ def count_tk(agentname):
         return done, processing
     except Agents.DoesNotExist:
         return None
+
+
+def get_weekday():
+    weekday = timezone.now().weekday()
+    if weekday == 0:
+        return 'Monday'
+    elif weekday == 1:
+        return 'Tuesday'
+    elif weekday == 2:
+        return 'Wednesday'
+    elif weekday == 3:
+        return 'Thursday'
+    elif weekday == 4:
+        return 'Friday'
+    elif weekday == 5:
+        return 'Saturday'
+    else:
+        return 'Sunday'
+
+
+class TicketLog(models.Model):
+    userid = models.ForeignKey(Users, models.CASCADE, null=True, db_column='userid', related_name='usertl')
+    agentid = models.ForeignKey(Agents, models.CASCADE, null=True, db_column='agentid', related_name='agenttl')
+    ticketid = models.ForeignKey(Tickets, models.CASCADE, db_column='ticketid', related_name='tickettl')
+    action = models.TextField()
+    date = models.DateField()
+    weekday = models.TextField()
+    time = models.TimeField()
+
+    class Meta:
+        managed = True
+        db_table = 'ticket_log'
+
 
 def list_hd(ticketid):
     try:
