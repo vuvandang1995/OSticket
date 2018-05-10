@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $(".btn-primary").click(function() {
+    $("#list_agent").on('click', '.btn-primary', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
@@ -9,15 +9,15 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-                    window.location.reload();
-                    // $("#list_agent").load(location.href + "#list_agent");
+                    // window.location.reload();
+                    $("#list_agent").load(location.href + " #list_agent");
                 }
            });
         }
     });
 
 
-    $(".btn-danger").click(function() {
+    $("#list_agent").on('click', '.btn-danger', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
@@ -27,8 +27,8 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-                    window.location.reload();
-                    // $("#list_agent").load(location.href + "#list_agent");
+                    // window.location.reload();
+                    $("#list_agent").load(location.href + " #list_agent");
                 }
            });
         }
@@ -47,9 +47,9 @@ $(document).ready(function(){
             url:location.href,
             data: {'add_agent': fullname, 'email': email, 'username': username, 'phone': phone, 'csrfmiddlewaretoken':token, 'agentid': agentid, 'password': password},
             success: function(){
-                window.location.reload();
-                // $("#list_agent").load(location.href + "#list_agent");
-                // document.getElementById("add_agent_close").click();
+                // window.location.reload();
+                $("#list_agent").load(location.href + " #list_agent");
+                document.getElementById("add_agent_close").click();
             }
         });
     });

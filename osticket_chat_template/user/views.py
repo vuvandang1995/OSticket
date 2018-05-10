@@ -79,7 +79,9 @@ def homeuser(request):
                    'form': form,
                    'user': user,
                    'atic': atic,
-                   'topic': topic}
+                   'topic': topic,
+                   'username': mark_safe(json.dumps(user.username))
+                   }
         if request.method == 'POST':
             form = CreateNewTicketForm(request.POST,request.FILES)
             if form.is_valid():

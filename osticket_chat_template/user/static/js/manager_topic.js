@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $(".btn-primary").click(function() {
+    $("#list_topic").on('click', '.btn-primary', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
@@ -9,14 +9,14 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-                    window.location.reload();
-                    // $("#list_topic").load(location.href + "#list_topic");
+                    // window.location.reload();
+                    $("#list_topic").load(location.href + " #list_topic");
                 }
            });
         }
     });
 
-    $(".btn-danger").click(function() {
+    $("#list_topic").on('click', '.btn-danger', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
@@ -26,8 +26,8 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-                    window.location.reload();
-                    // $("#list_topic").load(location.href + "#list_topic");
+                    // window.location.reload();
+                    $("#list_topic").load(location.href + " #list_topic");
                 }
            });
         }
@@ -49,10 +49,9 @@ $(document).ready(function(){
             url:location.href,
             data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'type_send': type_send},
             success: function(){
-                window.location.reload();
-                // $("#list_topic").load(location.href + "#list_topic");
-                // document.getElementById("add_topic_close").click();
-                // $("#topicModal").modal({"backdrop": "static"});
+                // window.location.reload();
+                $("#list_topic").load(location.href + " #list_topic");
+                document.getElementById("add_topic_close").click();
             }
         });
     });
