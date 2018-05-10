@@ -36,32 +36,12 @@
                 {% if tk.status == 1 %}
                 <td>processing...</td>
                 <td>
-                    <form >
-                        <button id="done_{{forloop.counter}}" type="button">Done</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("done_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:done' tk.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="processing_ticket/0_2_{{tk.id}}" class="handle_done" type="button">Done</button>
                 </td>
                 {% else %}
                 <td>done</td>
                 <td>
-                    <form >
-                        <button id="processing_{{forloop.counter}}" type="button">Processing</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("processing_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:process' tk.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="processing_ticket/0_1_{{tk.id}}" class="handle_processing" type="button">Processing</button>
                 </td>
                 {% endif %}
                 <td>
@@ -82,17 +62,7 @@
                     <button id="add_{{forloop.counter}}" style="width:auto;"  data-toggle="modal" data-target="#id02_{{forloop.counter}}">Add</button>
                 </td>
                 <td>
-                    <form >
-                        <button id="giveup_{{forloop.counter}}" type="button">Give up</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("giveup_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?\n*You can't give up when there is only you handle this ticket.")){
-                                location.href="{% url 'agent:give_up' tk.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="processing_ticket/4_1_{{tk.id}}" class="give_up" type="button">Give up</button>
                 </td>
                 <td>
                     <a href="{% url 'agent:history' tk.id %}" class="btn btn-lg">history</a>
@@ -202,4 +172,26 @@
             {% endfor%}
 		</table>
     </div>
+<script>
+   $(document).ready(function(){
+       $("#info_user").on('click', '.handle_done', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+       $("#info_user").on('click', '.handle_processing', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+       $("#info_user").on('click', '.give_up', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?\n*You can't give up when there is only you handle this ticket.")){
+                location.href="/agent/"+id;
+            }
+       });
+   });
+</script>
 {% endblock %}

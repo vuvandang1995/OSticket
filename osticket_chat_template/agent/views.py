@@ -277,61 +277,44 @@ def processing_ticket(request):
         return redirect("/")
 
 
-def process(request, id):
+def processing_ticket_interaction(request, option, choose, id):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session['agent'])
         ticket = Tickets.objects.get(id=id)
-        ticket.status = 1
-        ticket.save()
-        TicketLog.objects.create(agentid=agent, ticketid=ticket, action='re-process ticket',
-                                 date=timezone.now().date(),
-                                 weekday=get_weekday(),
-                                 time=timezone.now().time())
-        return redirect("/agent/processing_ticket")
-    else:
-        return redirect("/")
-
-
-def done(request,id):
-    if request.session.has_key('agent'):
-        agent = Agents.objects.get(username=request.session['agent'])
-        ticket = Tickets.objects.get(id=id)
-        ticket.status = 2
-        ticket.save()
-        TicketLog.objects.create(agentid=agent, ticketid=ticket, action='done ticket',
-                                 date=timezone.now().date(),
-                                 weekday=get_weekday(),
-                                 time=timezone.now().time())
-        user = Users.objects.get(id=ticket.sender.id)
-        if user.receive_email == 1:
-            email = EmailMessage(
-                'Finished ticket',
-                render_to_string('agent/mail/done_mail.html',
-                                 {'receiver': user,
-                                  'domain': (get_current_site(request)).domain,
-                                  'sender': agent,
-                                  'ticketid':ticket.id}),
-                to=[user.email],
-            )
-            email.send()
-        return redirect("/agent/processing_ticket")
-    else:
-        return redirect("/")
-
-
-def give_up(request,id):
-    if request.session.has_key('agent'):
-        agent = Agents.objects.get(username=request.session['agent'])
-        ticket = Tickets.objects.get(id=id)
-        try:
-            TicketAgent.objects.get(ticketid=ticket)
-        except MultipleObjectsReturned:
-            tk = TicketAgent.objects.get(ticketid=ticket,agentid=agent)
-            tk.delete()
-            TicketLog.objects.create(agentid=agent, ticketid=ticket, action='give up ticket',
+        if option == 0:
+            ticket.status = choose
+            ticket.save()
+            if choose == 1:
+                action = 're-process ticket'
+            else:
+                action = 'done ticket'
+                user = Users.objects.get(id=ticket.sender.id)
+                if user.receive_email == 1:
+                    email = EmailMessage(
+                        'Finished ticket',
+                        render_to_string('agent/mail/done_mail.html',
+                                         {'receiver': user,
+                                          'domain': (get_current_site(request)).domain,
+                                          'sender': agent,
+                                          'ticketid': ticket.id}),
+                        to=[user.email],
+                    )
+                    email.send()
+            TicketLog.objects.create(agentid=agent, ticketid=ticket,
+                                     action=action,
                                      date=timezone.now().date(),
                                      weekday=get_weekday(),
                                      time=timezone.now().time())
+        elif option == 4:
+            try:
+                TicketAgent.objects.get(ticketid=ticket)
+            except MultipleObjectsReturned:
+                tk = TicketAgent.objects.get(ticketid=ticket, agentid=agent)
+                tk.delete()
+                TicketLog.objects.create(agentid=agent, ticketid=ticket, action='give up ticket',
+                                         date=timezone.now().date(),
+                                         weekday=get_weekday(),
+                                         time=timezone.now().time())
         return redirect("/agent/processing_ticket")
     else:
         return redirect("/")
@@ -362,13 +345,44 @@ def history(request,id):
             tim = str(timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
                 mintime.date, mintime.time))[:-7]
             result.append({"id": 0,
-                           "content": "Ticket no."+str(id)+" (status: " + status + ") (exits time " + tim + ")",
+                           "content": "Ticket no."+str(id)+" (status: " + status + ") (exist time " + tim + ")",
                            "className": "expected",
                            "group": "overview",
                            "start": str(mintime.date) + "T" + str(mintime.time)[:-7],
                            "end": str(maxtime.date) + "T" + str(maxtime.time)[:-7]})
         tk = json.loads(json.dumps(result))
         return render(request, 'agent/history.html', {'tk': tk, 'id': str(id)})
+    else:
+        return redirect("/")
+
+
+def history_all_ticket(request):
+    if request.session.has_key('admin'):
+        tickets = Tickets.objects.all()
+        result = []
+        for ticket in tickets:
+            maxtime = TicketLog.objects.filter(ticketid=ticket).latest('time')
+            mintime = TicketLog.objects.filter(ticketid=ticket).earliest('time')
+            tim = str(timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
+                mintime.date, mintime.time))[:-7]
+            if maxtime != mintime:
+                if ticket.status == 1:
+                    status = 'processing'
+                elif ticket.status == 2:
+                    status = 'done'
+                else:
+                    status = 'close'
+                result.append({"id": ticket.id,
+                               "content": "Ticket no." + str(ticket.id)+" (status: " + status + ") (exist time " + tim + ")",
+                               "start": str(mintime.date) + "T" + str(mintime.time)[:-7],
+                               "end": str(maxtime.date) + "T" + str(maxtime.time)[:-7]})
+            else:
+                result.append({"id": ticket.id,
+                               "type": 'point',
+                               "content": "Ticket no." + str(ticket.id) + " (status: waiting)",
+                               "start": str(mintime.date) + "T" + str(mintime.time)[:-7]})
+        tk = json.loads(json.dumps(result))
+        return render(request, 'agent/history_all_ticket.html', {'tk': tk})
     else:
         return redirect("/")
 
