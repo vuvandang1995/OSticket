@@ -10,6 +10,7 @@ from django.utils import timezone
 # from django.contrib.auth.hashers import check_password
 from user.models import *
 
+
 class Users(models.Model):
     fullname = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
@@ -25,13 +26,11 @@ class Users(models.Model):
         db_table = 'users'
     
 
-
 class Topics(models.Model):
     name = models.CharField(max_length=255)
     status = models.IntegerField(default=0)
     type_send = models.IntegerField(default=1)
     description = models.TextField()
-
 
     class Meta:
         managed = True
@@ -63,10 +62,10 @@ class Tickets(models.Model):
     datestart = models.DateTimeField()
     dateend = models.DateTimeField()
     attach = models.FileField(null=True, blank=True, upload_to='photos')
+
     class Meta:
         managed = True
         db_table = 'tickets'
-
 
 
 class TicketAgent(models.Model):
@@ -198,6 +197,7 @@ def active(user):
             return False
         else:
             return True
+
 
 def authenticate_user(username, password):
     u = get_user(username)

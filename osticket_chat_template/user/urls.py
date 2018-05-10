@@ -16,4 +16,5 @@ urlpatterns = [
     path('user/close_<int:id>',views.close_ticket, name='close_ticket'),
     # path('user/<int:id>_<str:chat>', views.conversation, name='conversation'),
     url(r'^user/(?P<id>[^/]+)/$', views.conversation, name='conversation'),
+    path('user/history_<int:id>', views.history, name='history')
 ]
