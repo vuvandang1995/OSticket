@@ -50,8 +50,6 @@ def homeuser(request):
                    'user': user,
                    'atic': atic,
                    'topic': topic,
-                   'htic': htic,
-                   'timeticket': timeticket,
                    'username': mark_safe(json.dumps(user.username))
                    }
         if request.method == 'POST':
