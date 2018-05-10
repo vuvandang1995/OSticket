@@ -9,7 +9,6 @@
 			<tr>
 				<td>ID</td>
 				<td>Title</td>
-                <td>Date expired</td>
                 <td>Handler</td>
                 <td>Status</td>
                 <td>Handle</td>
@@ -17,6 +16,7 @@
                 <td>Forward</td>
                 <td>Add agent</td>
                 <td>Give up</td>
+                <td>History</td>
 			</tr>
             {% for tk in ticket %}
             <tr>
@@ -24,7 +24,6 @@
                     <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#{{tk.id}}content">{{tk.id}}</button>
                 </td>
                 <td>{{tk.title}}</td>
-                <td>{{tk.dateend}}</td>
                 <td>
                     {% for key, value in agc.items %}
                         {% if key == tk.id %}
@@ -94,6 +93,9 @@
                             }
                         };
                     </script>
+                </td>
+                <td>
+                    <a href="{% url 'agent:history' tk.id %}" class="btn btn-lg">history</a>
                 </td>
             </tr>
             <div class="modal fade" id="{{tk.id}}content" role="dialog">

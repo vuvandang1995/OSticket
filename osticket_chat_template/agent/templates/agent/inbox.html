@@ -26,30 +26,10 @@
                 <td>done</td>
                 {% endif %}
                 <td>
-                    <form>
-                        <button id="accept_{{forloop.counter}}" type="button">Accept</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("accept_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:accept_forward' tk.ticketid.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="inbox/0_1_{{tk.ticketid.id}}" class="accept_forward" type="button">Accept</button>
                 </td>
                 <td>
-                    <form >
-                        <button id="deny_{{forloop.counter}}" type="button">Deny</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("deny_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:deny_forward' tk.ticketid.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="inbox/0_0_{{tk.ticketid.id}}" class="deny_forward" type="button">Deny</button>
                 </td>
             </tr>
             <div class="modal fade" id="{{tk.ticketid.id}}content1" role="dialog">
@@ -108,30 +88,10 @@
                 <td>done</td>
                 {% endif %}
                 <td>
-                    <form >
-                        <button id="accept1_{{forloop.counter}}" type="button">Accept</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("accept1_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:accept_add' tk.ticketid.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="inbox/1_1_{{tk.ticketid.id}}" class="accept_add" type="button">Accept</button>
                 </td>
                 <td>
-                    <form >
-                        <button id="deny1_{{forloop.counter}}" type="button">Deny</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("deny1_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:deny_add' tk.ticketid.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="inbox/1_0_{{tk.ticketid.id}}" class="deny_add" type="button">Deny</button>
                 </td>
             </tr>
             <div class="modal fade" id="{{tk.ticketid.id}}content" role="dialog">
@@ -158,4 +118,32 @@
             {% endfor%}
 		</table>
     </div>
+<script>
+   $(document).ready(function(){
+       $("#info_user").on('click', '.accept_forward', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+       $("#info_user").on('click', '.deny_forward', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+       $("#info_user").on('click', '.accept_add', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+       $("#info_user").on('click', '.deny_add', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+   });
+</script>
 {% endblock %}

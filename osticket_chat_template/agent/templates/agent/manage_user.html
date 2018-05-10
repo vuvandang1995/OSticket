@@ -23,37 +23,33 @@
                 <td>inactive</td>
                 <td>{{tk.created}}</td>
                 <td>
-                    <form >
-                        <button id="unblock_{{forloop.counter}}" type="button">Unblock</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("unblock_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:unblock_user' tk.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="manage_user/1_{{tk.id}}" class="unblock" type="button">Unblock</button>
                 </td>
                 {% else %}
                 <td>active</td>
                 <td>{{tk.created}}</td>
                 <td>
-                    <form >
-                        <button id="block_{{forloop.counter}}" type="button">Block</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("block_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:block_user' tk.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="manage_user/0_{{tk.id}}" class="block" type="button">Block</button>
                 </td>
                 {% endif %}
             </tr>
             {% endfor%}
 		</table>
     </div>
+<script>
+   $(document).ready(function(){
+       $("#info_user").on('click', '.unblock', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+       $("#info_user").on('click', '.block', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+   });
+</script>
 {% endblock %}
