@@ -28,17 +28,7 @@
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
-                    <form>
-                        <button id="cancel_{{forloop.counter}}" type="button">Cancel</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("cancel_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:cancel_forward' tk.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="outbox/0_{{tk.ticketid.id}}" class="cancel_forward" type="button">Cancel</button>
                 </td>
             </tr>
             <div class="modal fade" id="{{tk.ticketid.id}}content1" role="dialog">
@@ -98,17 +88,7 @@
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
-                    <form>
-                        <button id="cancel1_{{forloop.counter}}" type="button">Cancel</button>
-                    </form>
-                    <script type="text/javascript">
-                        var btn = document.getElementById("cancel1_{{forloop.counter}}");
-                        btn.onclick = function(){
-                            if(confirm("Are you sure ?")){
-                                location.href="{% url 'agent:cancel_add' tk.id %}"
-                            }
-                        };
-                    </script>
+                    <button id="outbox/1_{{tk.ticketid.id}}" class="cancel_add" type="button">Cancel</button>
                 </td>
             </tr>
             <div class="modal fade" id="{{tk.ticketid.id}}content" role="dialog">
@@ -135,4 +115,20 @@
             {% endfor%}
 		</table>
     </div>
+<script>
+   $(document).ready(function(){
+       $("#info_user").on('click', '.cancel_forward', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+       $("#info_user").on('click', '.cancel_add', function(){
+           var id = $(this).attr('id');
+           if(confirm("Are you sure ?")){
+               location.href="/agent/"+id;
+           }
+       });
+   });
+</script>
 {% endblock %}

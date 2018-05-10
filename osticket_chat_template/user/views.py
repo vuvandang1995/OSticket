@@ -20,6 +20,7 @@ from .forms import *
 import string
 import datetime
 from random import *
+from django.template.defaulttags import register
 min_char = 8
 max_char = 12
 allchar = string.ascii_letters + string.digits
@@ -27,6 +28,42 @@ allchar = string.ascii_letters + string.digits
 MAX_UPLOAD_SIZE = 10485760
 dic = {}
 dic_time = {}
+
+
+def history(request,id):
+    if request.session.has_key('user'):
+        tems = TicketLog.objects.filter(ticketid=id)
+        result = []
+        for tem in tems:
+            if tem.userid is not None:
+                action = "<b>" + str(tem.action) + "</b>" + "<br/> by user "+str(tem.userid.fullname)
+            else:
+                action = "<b>" + str(tem.action) + "</b>" + "<br/> by agent "+str(tem.agentid.fullname)
+            result.append({"id": tem.id,
+                           "content": action,
+                           "group": "period",
+                           "start": str(tem.date)+"T"+str(tem.time)[:-7]})
+        maxtime = TicketLog.objects.filter(ticketid=id).latest('time')
+        mintime = TicketLog.objects.filter(ticketid=id).earliest('time')
+        if maxtime != mintime:
+            if maxtime.ticketid.status == 1:
+                status = 'processing'
+            elif maxtime.ticketid.status == 2:
+                status = 'done'
+            else:
+                status = 'close'
+            tim = str(timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
+                mintime.date, mintime.time))[:-7]
+            result.append({"id": 0,
+                           "content": "Ticket no."+str(id)+" (status: " + status + ") (exits time " + tim + ")",
+                           "className": "expected",
+                           "group": "overview",
+                           "start": str(mintime.date) + "T" + str(mintime.time)[:-7],
+                           "end": str(maxtime.date) + "T" + str(maxtime.time)[:-7]})
+        tk = json.loads(json.dumps(result))
+        return render(request, 'user/history.html', {'tk': tk, 'id': str(id)})
+    else:
+        return redirect("/")
 
 
 def homeuser(request):
@@ -38,20 +75,11 @@ def homeuser(request):
         ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
         atic = TicketAgent.objects.filter(ticketid__in=ticket)
         receiver = Agents.objects.all()
-        htic = TicketLog.objects.filter(ticketid__in=ticket)
-        timeticket = {}
-        for tk in ticket:
-            maxtime = TicketLog.objects.filter(ticketid=tk).latest('time')
-            mintime = TicketLog.objects.filter(ticketid=tk).earliest('time')
-            timeticket[tk.id] = timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
-                mintime.date, mintime.time)
         content = {'ticket': ticket,
                    'form': form,
                    'user': user,
                    'atic': atic,
                    'topic': topic,
-                   'htic': htic,
-                   'timeticket': timeticket,
                    'username': mark_safe(json.dumps(user.username))
                    }
         if request.method == 'POST':
