@@ -51,7 +51,9 @@ def homeuser(request):
                    'atic': atic,
                    'topic': topic,
                    'htic': htic,
-                   'timeticket': timeticket}
+                   'timeticket': timeticket,
+                   'username': mark_safe(json.dumps(user.username))
+                   }
         if request.method == 'POST':
             form = CreateNewTicketForm(request.POST,request.FILES)
             if form.is_valid():

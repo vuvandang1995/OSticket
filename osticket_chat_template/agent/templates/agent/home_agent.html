@@ -53,10 +53,31 @@
                       </div>
                     </div>
                   </div>
+                <input id="user_name" type="hidden" value="{{ tk.sender.username}}">
                 <script type="text/javascript">
                 var btn = document.getElementById("assign_{{forloop.counter}}");
                 btn.onclick = function(){
                     if(confirm("Are you sure ?")){
+                        var userName = document.getElementById('user_name').value;
+                        var chatSocket = new WebSocket(
+                            'ws://' + window.location.host +
+                            '/ws/user/' + userName + '/');
+                    
+                        message = 'ticket '+{{tk.id}}+' dang duoc xu ly';
+                        tkid = {{tk.id}};
+                        chatSocket.onopen = function (event) {
+                            chatSocket.send(JSON.stringify({
+                                'message' : message,
+                                'ticketid': tkid
+                            }));
+                            };
+
+                        chatSocket.onclose = function(e) {
+                            console.error('Chat socket closed unexpectedly');
+                        };
+
+                        
+
                         location.href="{% url 'agent:assign_ticket' tk.id %}"
                     }
                 };
