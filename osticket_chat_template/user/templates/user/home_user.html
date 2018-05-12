@@ -56,12 +56,20 @@
             {% else %}
             <td>closed</td>
             {% endif %}
-            <td>{% for tic in atic %}
-                {% if tic.ticketid == tk %}
-                {{tic.agentid.fullname}},
-                {% endif %}
-                {% endfor %}
-            </td>
+
+            {% if tk.status == 0 %}
+                <td>Nobody</td>
+            {% else %}
+                <td>
+                    {% for hd in handler %}
+                        {% if hd.ticketid == tk %}
+                            {{hd.agentid.username}}<br>
+                        {% endif%}
+                    {% endfor%}
+                </td>
+            {% endif %}
+
+
             {% if tk.status < 3 %}
             <td>
                 <form >
@@ -127,6 +135,9 @@
         $("#info_user").on('click', '.close_ticket', function(){
             var id = $(this).attr('id');
             if(confirm("Are you sure ?")){
+
+
+
                 location.href="/user/"+id;
             }
         });
@@ -166,7 +177,7 @@
                      <br/>
                      <div><font id="invalid-msg" color="red" size="5"></font></div>
                      <br /><br />
-                     <button type="submit" value="OK" id="i_submit">Send</button>
+                     <button type="submit" value="OK" id="i_submit" onsubmit="return validateSize()">Send</button>
                  </form>
              </div>
         <div class="modal-footer">
@@ -181,14 +192,29 @@
                 }
                 return true;
             }
+
+            $(document).ready(function(){
+                // sau khi submit thanh cong thi send message tu websocket len server
+                $("#id02").submit(function() {
+                    var chatSocket1 = new WebSocket(
+                    'ws://' + window.location.host +
+                    '/ws/agent/group_agent_Socket/');
+                    var message = 'new_ticket';
+                    chatSocket1.onopen = function (event) {
+                        chatSocket1.send(JSON.stringify({
+                            'message' : message,
+                        }));
+                    };
+                });
+            });
         </script>
     </div>
 </div>
-<audio id="myAudio">
+<audio id="myAudio" controls="controls" onloadeddata="audioSoundFunction()">
     <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
 </audio>
 
-<input value="Click me" id="sound">
+{% comment %} <input value="Click me" id="sound"> {% endcomment %}
 </body>
 
 <script>
@@ -197,25 +223,22 @@
             'ws://' + window.location.host +
             '/ws/user/' + userName + '/');
         
+        
+        // nhan message tu server
         chatSocket.onmessage = function(e) {
-            
             var data = JSON.parse(e.data);
-            var message = data['aaa'];
-            document.getElementById('sound').click();
+            var message = data['message'];
+            //document.getElementById('sound').click();
             document.getElementById('noti').innerHTML = message;
-            //document.getElementById("myAudio").autoplay = true;
+            function audioSoundFunction() {
+                var audioSound = this; 
+                audioSound.play(); 
+              }
+
             $("#info_user").load(location.href + " #info_user");
             //var snd='<audio autoplay=true> <source src="{% static 'ping.mp3' %}"> </audio>';
             //$('body').append(snd);
         };
-
-
-        /*message = 'aaa';
-        chatSocket.onopen = function (event) {
-            chatSocket.send(JSON.stringify({
-                'message' : message
-            }));
-          };*/
     
 
         chatSocket.onclose = function(e) {

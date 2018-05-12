@@ -73,12 +73,12 @@ def homeuser(request):
         form = CreateNewTicketForm()
         topic = Topics.objects.all()
         ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
-        atic = TicketAgent.objects.filter(ticketid__in=ticket)
+        handler = TicketAgent.objects.all()
         receiver = Agents.objects.all()
         content = {'ticket': ticket,
                    'form': form,
                    'user': user,
-                   'atic': atic,
+                   'handler': handler,
                    'topic': topic,
                    'username': mark_safe(json.dumps(user.username))
                    }

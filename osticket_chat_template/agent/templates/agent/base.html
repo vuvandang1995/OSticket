@@ -19,6 +19,7 @@
     <div class="header">
         <nav class="main-menu">
 				<ul>
+                    <li><a class="list-group-item" href=""><i class="fa fa-bell" aria-hidden="true"></i>&nbsp;  <span id="noti" class="badge badge-light noti"></span></a></li>
                     <li><a href="{% url 'agent:home_agent' %}">Home</a></li>
                     <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
                     <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
@@ -40,4 +41,32 @@
     <script src="{% static 'js/login.js' %}"></script>
     <script src="{% static 'js/validate.js' %}"></script>
 </body>
+<script>
+        var agentName = document.getElementById('agent_name').value;
+        var chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/agent/' + agentName + '/');
+        
+        var group_agent_Socket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/agent/group_agent_Socket/');
+
+        /*chatSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            if (message == 'new_ticket'){
+                $("#list_ticket").load(location.href + " #list_ticket");
+            }
+            //document.getElementById('noti').innerHTML = message;
+        };*/
+
+        group_agent_Socket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            if (message == 'new_ticket'){
+                $("#list_ticket").load(location.href + " #list_ticket");
+            }
+            //document.getElementById('noti').innerHTML = message;
+        };
+</script>
 </html>
