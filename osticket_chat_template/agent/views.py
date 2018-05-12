@@ -37,10 +37,13 @@ def home_admin(request):
                 if tk.status == 3:
                     if not TicketAgent.objects.filter(ticketid=tk):
                         tk.status = 0
+                        action = "re-open ticket"
                     else:
                         tk.status = 1
+                        action = "re-process ticket"
                 else:
                     tk.status = 3
+                    action = "close ticket"
                 tk.save()
             elif 'delete' in request.POST:
                 ticketid = request.POST['delete']
@@ -52,11 +55,12 @@ def home_admin(request):
                 ticketid = request.POST['ticketid']
                 for agentid in list_agent:
                     agent = Agents.objects.get(username=agentid)
-                    ticket = Tickets.objects.get(id=ticketid)
-                    tkag = TicketAgent(agentid=agent, ticketid=ticket)
+                    tk = Tickets.objects.get(id=ticketid)
+                    tkag = TicketAgent(agentid=agent, ticketid=tk)
                     tkag.save()
-                    ticket.status = 1
-                    ticket.save()
+                    tk.status = 1
+                    tk.save()
+                    action = agent.fullname + " received ticket forward from " + admin.fullname
                     if agent.receive_email == 1:
                         email = EmailMessage(
                             'Forward ticket',
@@ -67,6 +71,11 @@ def home_admin(request):
                             to=[agent.email],
                         )
                         email.send()
+            TicketLog.objects.create(agentid=admin, ticketid=tk,
+                                     action=action,
+                                     date=timezone.now().date(),
+                                     weekday=get_weekday(),
+                                     time=timezone.now().time())
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
@@ -333,8 +342,8 @@ def history(request,id):
                            "content": action,
                            "group": "period",
                            "start": str(tem.date)+"T"+str(tem.time)[:-7]})
-        maxtime = TicketLog.objects.filter(ticketid=id).latest('time')
-        mintime = TicketLog.objects.filter(ticketid=id).earliest('time')
+        maxtime = TicketLog.objects.filter(ticketid=id).latest('id')
+        mintime = TicketLog.objects.filter(ticketid=id).earliest('id')
         if maxtime != mintime:
             if maxtime.ticketid.status == 1:
                 status = 'processing'
@@ -361,8 +370,8 @@ def history_all_ticket(request):
         tickets = Tickets.objects.all()
         result = []
         for ticket in tickets:
-            maxtime = TicketLog.objects.filter(ticketid=ticket).latest('time')
-            mintime = TicketLog.objects.filter(ticketid=ticket).earliest('time')
+            maxtime = TicketLog.objects.filter(ticketid=ticket).latest('id')
+            mintime = TicketLog.objects.filter(ticketid=ticket).earliest('id')
             tim = str(timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
                 mintime.date, mintime.time))[:-7]
             if maxtime != mintime:
