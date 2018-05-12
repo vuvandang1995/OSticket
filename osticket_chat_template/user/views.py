@@ -43,8 +43,8 @@ def history(request,id):
                            "content": action,
                            "group": "period",
                            "start": str(tem.date)+"T"+str(tem.time)[:-7]})
-        maxtime = TicketLog.objects.filter(ticketid=id).latest('time')
-        mintime = TicketLog.objects.filter(ticketid=id).earliest('time')
+        maxtime = TicketLog.objects.filter(ticketid=id).latest('id')
+        mintime = TicketLog.objects.filter(ticketid=id).earliest('id')
         if maxtime != mintime:
             if maxtime.ticketid.status == 1:
                 status = 'processing'
@@ -55,7 +55,7 @@ def history(request,id):
             tim = str(timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
                 mintime.date, mintime.time))[:-7]
             result.append({"id": 0,
-                           "content": "Ticket no."+str(id)+" (status: " + status + ") (exits time " + tim + ")",
+                           "content": "Ticket no."+str(id)+" (status: " + status + ") (exist time " + tim + ")",
                            "className": "expected",
                            "group": "overview",
                            "start": str(mintime.date) + "T" + str(mintime.time)[:-7],

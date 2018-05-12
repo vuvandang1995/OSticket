@@ -35,7 +35,6 @@
 <div class="container">
 
     <h3>History of ticket no.{{ id }}</h3>
-    <!--<textarea cols="100" rows="100" id="txtdata">"{{tk}}"</textarea>-->
     <div id="visualization"></div>
     <br/>
     <div class="btn-group btn-group-lg">
@@ -58,7 +57,6 @@
             content:'period'
         }
     ]);
-    var tem = document.getElementById('txtdata');
     var tem = JSON.stringify({{tk|safe}});
     var data = JSON.parse(tem);
     var items = new vis.DataSet();

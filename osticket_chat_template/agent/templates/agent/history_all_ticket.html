@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+  <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'history/style.css' %}" rel="stylesheet" type="text/css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>{{ admin.fullname}}</title>
+</head>
+<body>
+<div class="header">
+    <nav class="main-menu">
+            <ul>
+                <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
+                <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
+                <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
+                <li><a href="{% url 'agent:history_all_ticket' %}">History all ticket</a></li>
+                <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
+            </ul>
+    </nav>
+</div>
+<br />
+<br />
+<div class="container">
+
+        <h3>History of ticket</h3>
+    <div id="visualization"></div>
+    <br/>
+    <div class="btn-group btn-group-lg">
+        <button class="btn btn-primary" onclick="reset()">Reset</button>
+        <button class="btn btn-primary" onclick="month()">Month</button>
+        <button class="btn btn-primary" onclick="day()">Day</button>
+        <button class="btn btn-primary" onclick="hour()">Hour</button>
+        <button class="btn btn-primary" onclick="minute()">Minute</button>
+    </div>
+    <script type="text/javascript">
+        var tem = JSON.stringify({{tk|safe}});
+        var data = JSON.parse(tem);
+        var items = new vis.DataSet();
+        items.add(data);
+        var container = document.getElementById('visualization');
+        var options = {
+          height: '500px',
+          min: new Date(2018, 0, 1),                // lower limit of visible range
+          max: new Date(2020, 0, 1),                // upper limit of visible range
+          zoomMin: 1000 * 60  ,                     // a min in milliseconds
+          zoomMax: 1000 * 60 * 60 * 24 * 31 ,     // about a months in milliseconds
+        };
+        var timeline = new vis.Timeline(container, items, options);
+        timeline.fit();
+        function reset(){
+            timeline.fit();
+        }
+        function month(){
+            timeline.zoom(1);
+        }
+        function day(){
+            timeline.zoom(2);
+        }
+        function hour(){
+            timeline.zoom(3);
+        }
+        function min(){
+            timeline.zoom(4);
+        }
+    </script>
+</div>
+</body>
+</html>
