@@ -1,17 +1,23 @@
-Install python3
+## Install python3
+
 ```
 sudo apt-get update
 sudo apt-get -y upgrade
 ```
 
-Intall pip3
+## Intall pip3
+
 `sudo apt-get install -y python3-pip`
 
-Install mysql
+## Install mysql
+
 `sudo apt-get install mysql-server`
 
-Install git
+## Install git
+
 `sudo apt-get install git`
+
+## Clone repo and run requirements.txt file
 
 ```
 git clone https://github.com/vuvandang1995/OSticket.git
@@ -21,6 +27,7 @@ export LC_CTYPE="en_US.UTF-8"
 sudo pip3 install -r requirements.txt
 ```
 
-Install redis-server
+## Install redis-server
+
 `sudo apt install redis-server`
 
