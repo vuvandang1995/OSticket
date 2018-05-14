@@ -32,3 +32,13 @@ sudo pip3 install -r requirements.txt
 `sudo apt install redis-server`
 
 *You need to VPN to Meditech network to use the system.*
+
+## Run server OSticket
+
+```
+cd OSticket
+cd osticket_chat_template
+python3 manage.py runserver 0.0.0.0:8080
+```
+
+## You can use the system via browser: IP_your_server:8080
