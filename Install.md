@@ -31,3 +31,4 @@ sudo pip3 install -r requirements.txt
 
 `sudo apt install redis-server`
 
+*You need to VPN to Meditech network to use the system.*
