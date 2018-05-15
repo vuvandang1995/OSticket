@@ -58,9 +58,9 @@
             {% endif %}
 
             {% if tk.status == 0 %}
-                <td>Nobody</td>
+                <td id="hd{{tk.id}}">Nobody</td>
             {% else %}
-                <td>
+                <td id="hd{{tk.id}}">
                     {% for hd in handler %}
                         {% if hd.ticketid == tk %}
                             {{hd.agentid.username}}<br>
@@ -73,7 +73,7 @@
             {% if tk.status < 3 %}
             <td>
                 <form >
-                    <button id="close_{{tk.id}}" class="close_ticket" type="button">close</button>
+                    <button id="{{tk.id}}" class="close_ticket" type="button">close</button>
                 </form>
             </td>
             {% else %}
@@ -134,11 +134,44 @@
     $(document).ready(function(){
         $("#info_user").on('click', '.close_ticket', function(){
             var id = $(this).attr('id');
+            var message = 'close_ticket';
+            var Sockets = [];
             if(confirm("Are you sure ?")){
+                /*var array = $('#hd'+id).html().split("<br>");
+                for (i = 0; i < array.length-1; i++) {
+                    var agentName = array[i].replace(/\s/g,'');
+                    
+                    var Socket1 = new WebSocket(
+                    'ws://' + window.location.host +
+                    '/ws/agent/' + agentName + '/');
 
+                    Sockets.push(Socket1);
 
+                    Socket1.onopen = function (event) {
+                        setTimeout(function(){
+                            Socket1.send(JSON.stringify({
+                                'message' : message,
+                            }));
+                        }, 1000);
+                    };
+                    //Socket1.close();
+                    
+                    //alert(agentName)
+                    /*Socket1.onopen = function (event) {
+                        Socket1.send(JSON.stringify({
+                            'message' : message,
+                        }));
+                        alert(agentName)
+                        //Socket1.close();
+                    };*/
+                //}
 
-                location.href="/user/"+id;
+                /*for(s in Sockets){
+                    setTimeout(function(){
+                        Sockets[s].close();
+                    }, 1000);
+                }*/
+                location.href="/user/close_"+id;
             }
         });
 

@@ -34,8 +34,8 @@ def home_admin(request):
                    'handler': TicketAgent.objects.all(),
                    'admin': admin,
                    'list_other': list_other.items(),
-                   'today': timezone.now().date()},
-                    'agent': agent
+                   'today': timezone.now().date(),
+                   'agent': agent}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
