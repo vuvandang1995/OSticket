@@ -35,7 +35,7 @@ def home_admin(request):
                    'admin': admin,
                    'list_other': list_other.items(),
                    'today': timezone.now().date(),
-                    'agent': agent}
+                   'agent': agent}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
@@ -215,9 +215,10 @@ def logout(request):
 
 def home_agent(request):
     if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session.get('agent'))
         topic = Topics.objects.exclude(Q(name='Other') | Q(type_send=0))
         content = {'ticket': Tickets.objects.filter(status=0,topicid__in=topic).order_by('dateend'),
-                   'agent': Agents.objects.get(username=request.session.get('agent'))}
+                   'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username))}
         return render(request,'agent/home_agent.html',content)
     else:
         return redirect("/")
@@ -270,7 +271,7 @@ def processing_ticket(request):
                 gua[tk.id] = 'no'
             agc[tk.id] = tem
             agk[tk.id] = [x.fullname for x in Agents.objects.exclude(Q(id__in=agt) | Q(admin=1))]
-        content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1, 'gua': gua}
+        content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1, 'gua': gua, 'agent': mark_safe(json.dumps(sender.username))}
         if request.method == 'POST':
             if request.POST['type'] == 'forward':
                 form = ForwardForm(request.POST)
@@ -429,7 +430,7 @@ def inbox(request):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session.get('agent'))
         content = {'forwardin': ForwardTickets.objects.filter(receiverid=agent),
-                   'addin': AddAgents.objects.filter(receiverid=agent)}
+                   'addin': AddAgents.objects.filter(receiverid=agent), 'agent': mark_safe(json.dumps(agent.username))}
         return render(request, 'agent/inbox.html', content)
     else:
         return redirect("/")
@@ -592,10 +593,10 @@ def conversation(request,id):
         agent = Agents.objects.get(username=request.session['agent'])
         ticket = get_object_or_404(Tickets, pk=id)
         try:
-            hd = TicketAgent.objects.get(ticketid=ticket)
+            hd = TicketAgent.objects.filter(ticketid=ticket)
         except:
             hd = None
-        if hd is not None and hd.agentid == agent:
+        if hd is not None:
             if ticket.chat is None:
                 room_name = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
                 ticket.chat = room_name
@@ -604,13 +605,7 @@ def conversation(request,id):
         else:
             return redirect('/agent')
         
-        comments = Comments.objects.filter(ticketid=ticket).order_by('date')
-        content = {'agent': agent, 'ticket': ticket, 'comments': comments, 'room_name_json': tk, 'who': 'you'}
-        if request.method == 'POST':
-            Comments.objects.create(ticketid=ticket,
-                                    agentid=agent,
-                                    content=request.POST['content'],
-                                    date=timezone.now())
+        content = {'agent': agent, 'ticket': ticket, 'room_name_json': tk, 'who': 'you'}
         return render(request, 'user/conversation.html', content)
     else:
         return redirect("/")
