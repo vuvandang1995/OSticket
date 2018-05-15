@@ -6,30 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/home_admin.js' %}"></script>
     {% block lib %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
     <div class="header">
         <nav class="main-menu">
-				<ul>
-                    <li><a class="list-group-item" href=""><i class="fa fa-bell" aria-hidden="true"></i>&nbsp;  <span id="noti" class="badge badge-light noti"></span></a></li>
-                    <li><a href="{% url 'agent:home_agent' %}">Home</a></li>
-                    <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
-                    <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
-                    <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
-                    <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
-                    <li><a href="{% url 'agent:manage_user' %}">Manage user</a></li>
-                    <li><a href="{% url 'agent:profile' %}">Profile</a></li>
-                    <li><a href="{% url 'agent:logout' %}">Logout</a></li>
-				</ul>
-		</nav>
+            <ul>
+                <li><a class="list-group-item" href=""><i class="fa fa-bell" aria-hidden="true"></i>&nbsp;  <span id="noti" class="badge badge-light noti"></span></a></li>
+                <li><a href="{% url 'agent:home_agent' %}">Home</a></li>
+                <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
+                <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
+                <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
+                <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
+                <li><a href="{% url 'agent:manage_user' %}">Manage user</a></li>
+                <li><a href="{% url 'agent:profile' %}">Profile</a></li>
+                <li><a href="{% url 'agent:logout' %}">Logout</a></li>
+            </ul>
+        </nav>
     </div>
     <br />
     <br />
@@ -38,7 +35,5 @@
     {% block content %}
     {% endblock %}
     </div>
-    <script src="{% static 'js/login.js' %}"></script>
-    <script src="{% static 'js/validate.js' %}"></script>
 </body>
 </html>

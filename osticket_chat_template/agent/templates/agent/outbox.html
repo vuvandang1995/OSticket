@@ -12,12 +12,12 @@
                 <td>Message</td>
                 <td>Ticket Status</td>
                 <td>Date expired</td>
-                <td>Cancel</td>
+                <td>Option</td>
 			</tr>
             {% for tk in forwardout %}
             <tr>
                 <td>
-                    <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#{{tk.ticketid.id}}content1">{{tk.ticketid.id}}</button>
+                    <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content1">{{tk.ticketid.id}}</button>
                 </td>
                 <td>{{tk.receiverid.fullname}}</td>
                 <td>{{tk.content}}</td>
@@ -28,8 +28,9 @@
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
-                    <button id="outbox/0_{{tk.ticketid.id}}" class="cancel_forward" type="button">Cancel</button>
-                </td>
+                    <button id="outbox/0_{{tk.ticketid.id}}" class="cancel_forward btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
+                        <span class="glyphicon glyphicon-remove" ></span>
+                    </button>
             </tr>
             <div class="modal fade" id="{{tk.ticketid.id}}content1" role="dialog">
                     <div class="modal-dialog">
@@ -77,18 +78,20 @@
             {% for tk in addout %}
             <tr>
                 <td>
-                    <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
+                    <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
                 </td>
                 <td>{{tk.receiverid.fullname}}</td>
                 <td>{{tk.content}}</td>
                 {% if tk.ticketid.status == 1 %}
-                <td>processing...</td>
+                <td><span class="label label-warning">processing</span></td>
                 {% else %}
-                <td>done</td>
+                <td><span class="label label-success">done</span></td>
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
-                    <button id="outbox/1_{{tk.ticketid.id}}" class="cancel_add" type="button">Cancel</button>
+                    <button id="outbox/1_{{tk.ticketid.id}}" class="cancel_add btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
+                        <span class="glyphicon glyphicon-remove" ></span>
+                    </button>
                 </td>
             </tr>
             <div class="modal fade" id="{{tk.ticketid.id}}content" role="dialog">

@@ -272,7 +272,7 @@ def login_user(request):
                         return redirect('/submitadmin')
                     elif authenticate_agent(agentname=agentname, agentpass=agentpass) == 0:
                         request.session['agent'] = agentname
-                        return redirect('/agent/')
+                        return redirect('/agent')
                 else:
                     return render(request, 'user/index.html',{'mess': mess_login_error})
             # User đăng nhập

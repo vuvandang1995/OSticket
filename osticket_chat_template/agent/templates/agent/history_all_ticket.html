@@ -27,7 +27,9 @@
 <br />
 <div class="container">
     <h2>Timeline</h2>
-    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#filter">Filter</button>
+    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#filter">
+        <span class="glyphicon glyphicon-search"></span> Filter
+    </button>
     {% for key, value in tickets.items %}
     <table class="table table-bordered"> <h3>{{key}}</h3>
         <thead>
@@ -65,10 +67,12 @@
       </div>
       <div class="modal-body">
           <label for="content">View changes from</label><br/>
-             <input id="date" class="form-control" type="text" value="{{today|safe}}"><br/>
+             <input id="date" class="form-control" type="date" value="{{today|safe}}"><br/>
+            <div id="invalid-date"><font color="red"></font></div>
             <br/>
          <label>going back</label><br/>
-          <input id="num" class="form-control" type="text" value="3"><br/>
+          <input id="num"  class="form-control" type="number" value="3" min="1" max="1000"><br/>
+          <div id="invalid-num"><font color="red"></font></div>
       </div>
       <div class="modal-footer">
          <button type="submit" class="btn btn-primary" id="update">Update</button>
@@ -79,8 +83,27 @@
 </div>
 <script>
     $(document).ready(function(){
+        function isValidDate(dateString) {
+            var regEx = /^\d{4}-\d{2}-\d{2}$/;
+            if(!dateString.match(regEx)) return false;
+            var d = new Date(dateString);
+            if(!d.getTime() && d.getTime() !== 0) return false;
+            return d.toISOString().slice(0,10) === dateString;
+        }
         $('#update').click(function(){
-            location.href="/agent/history_all_ticket/"+$('#date').val()+"_"+$('#num').val();
+            var date = $("#date").val();
+            var num = $("#num").val();
+            if (!isValidDate(date)){
+                $("#invalid-date").html("invalid date");
+            }
+            else{
+                if (num ==''){
+                    $("#invalid-num").html("not empty");
+                }
+                else{
+                   location.href="/agent/history_all_ticket/"+$('#date').val()+"_"+$('#num').val();
+                }
+            }
         });
     });
 </script>
