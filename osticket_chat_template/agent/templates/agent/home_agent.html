@@ -60,6 +60,37 @@
             </table>
         </div>
         <script>
+                var agentName = {{ agent_name }};
+                var chatSocket = new WebSocket(
+                    'ws://' + window.location.host +
+                    '/ws/agent/' + agentName + '/');
+                
+                var group_agent_Socket = new WebSocket(
+                    'ws://' + window.location.host +
+                    '/ws/agent/group_agent_Socket/');
+                    
+                /*chatSocket.onmessage = function(e) {
+                    var data = JSON.parse(e.data);
+                    var message = data['message'];
+                    if (message == 'close_ticket'){
+                        setTimeout(function(){
+                            $("#list_ticket").load(location.href + " #list_ticket");
+                        }, 1000);
+                    }
+                    //document.getElementById('noti').innerHTML = message;
+                };*/
+            
+                group_agent_Socket.onmessage = function(e) {
+                    var data = JSON.parse(e.data);
+                    var message = data['message'];
+                    setTimeout(function(){
+                        $("#list_ticket").load(location.href + " #list_ticket");
+                    }, 2000);
+                    //document.getElementById('noti').innerHTML = message;
+                };
+            
+
+
             $(document).ready(function(){
                 $("#list_ticket").on('click', '.assign_ticket', function(){
                     var id = $(this).attr('id');
@@ -75,6 +106,9 @@
                                 'message' : message,
                             }));
                         };
+                        group_agent_Socket.send(JSON.stringify({
+                            'message' : 'ticket da duoc xu ly',
+                        }));
                         location.href="/agent/assign/"+id;
                     }
                 });

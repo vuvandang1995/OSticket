@@ -29,21 +29,30 @@
     <h2>Timeline</h2>
     <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#filter">Filter</button>
     {% for key, value in tickets.items %}
-    <ul class="list-group"> <h3>{{key}}</h3>
+    <table class="table table-bordered"> <h3>{{key}}</h3>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Ticket</th>
+                <th>Action</th>
+                <th>Who</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for v in value %}
-        <li class="list-group-item">
-            {{v.time}} Ticket
-            <a target="_blank" href="{% url 'agent:home_admin' %}">#{{v.ticketid.id}}</a>
-            {% if v.userid is not None %}
-            (user) {{v.userid.fullname}}</a>
-            {% else %}
-            (agent)
-            <a target="_blank" href="{% url 'agent:manager_agent' %}">{{v.agentid.fullname}}</a>
-            {% endif %}
-            <a target="_blank" href="{% url 'agent:history' v.ticketid.id %}"> {{v.action}}</a>
-        </li>
+            <tr>
+                <td>{{v.time}}</td>
+                <td><a target="_blank" href="{% url 'agent:home_admin' %}">#{{v.ticketid.id}}</a></td>
+                <td><a target="_blank" href="{% url 'agent:history' v.ticketid.id %}"> {{v.action}}</a></td>
+                {% if v.userid is not None %}
+                <td>(user) {{v.userid.fullname}}</td>
+                {% else %}
+                <td>(agent) <a target="_blank" href="{% url 'agent:manager_agent' %}">{{v.agentid.fullname}}</a></td>
+                {% endif %}
+            </tr>
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
     {% endfor %}
 </div>
 <div id="filter" class="modal fade" role="dialog">
@@ -56,7 +65,8 @@
       </div>
       <div class="modal-body">
           <label for="content">View changes from</label><br/>
-          <input id="date" class="form-control" type="text" value="{{today|safe}}"><br/>
+             <input id="date" class="form-control" type="text" value="{{today|safe}}"><br/>
+            <br/>
          <label>going back</label><br/>
           <input id="num" class="form-control" type="text" value="3"><br/>
       </div>

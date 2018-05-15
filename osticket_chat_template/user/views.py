@@ -272,7 +272,7 @@ def login_user(request):
                         return redirect('/submitadmin')
                     elif authenticate_agent(agentname=agentname, agentpass=agentpass) == 0:
                         request.session['agent'] = agentname
-                        return redirect('/agent')
+                        return redirect('/agent/')
                 else:
                     return render(request, 'user/index.html',{'mess': mess_login_error})
             # User đăng nhập
@@ -354,7 +354,7 @@ def conversation(request,id):
         user = Users.objects.get(username=request.session['user'])
         ticket = get_object_or_404(Tickets, pk=id)
         try:
-            hd = TicketAgent.objects.get(ticketid=ticket)
+            hd = TicketAgent.objects.filter(ticketid=ticket)
         except:
             hd = None
         if hd is not None and ticket.sender == user:
