@@ -25,7 +25,7 @@ allchar = string.ascii_letters + string.digits
 def home_admin(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        agent = Agents.objects.all()
+        agent = Agents.objects.exclude(username=request.session['admin'])
         list_other = {}
         tk = Tickets.objects.all()
         for tk in tk:
@@ -34,8 +34,8 @@ def home_admin(request):
                    'handler': TicketAgent.objects.all(),
                    'admin': admin,
                    'list_other': list_other.items(),
-                   'today': timezone.now().date()},
-                    'agent': agent
+                   'today': timezone.now().date(),
+                    'agent': agent}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
@@ -59,7 +59,6 @@ def home_admin(request):
             elif 'delete' in request.POST:
                 ticketid = request.POST['delete']
                 tk = Tickets.objects.get(id=ticketid)
-                print(request.POST)
                 tk.delete()
             elif 'ticketid' in request.POST:
                 list_agent = request.POST['list_agent[]']
@@ -68,17 +67,24 @@ def home_admin(request):
                 if not list_agent:
                     try:
                         tk = Tickets.objects.get(id=ticketid)
-                        tkag1 = TicketAgent.objects.get(ticketid=tk)
+                        tkag1 = TicketAgent.objects.filter(ticketid=tk)
                         tkag1.delete()
                         tk.status = 0
                         tk.save()
+                        action = "received ticket forward from (admin)" + admin.fullname
+                        tklog = TicketLog.objects.filter(action=action)
+                        tklog.delete()
                     except:
                         tk.status = 0
                         tk.save()
                 else:
                     try:
+                        tk = Tickets.objects.get(id=ticketid)
                         tkag1 = TicketAgent.objects.filter(ticketid=tk)
                         tkag1.delete()
+                        action = "received ticket"
+                        tklog = TicketLog.objects.filter(action=action)
+                        tklog.delete()
                     except:
                         pass
                     for agentid in list_agent:
@@ -88,7 +94,7 @@ def home_admin(request):
                         tkag.save()
                         tk.status = 1
                         tk.save()
-                        action = agent.fullname + " received ticket forward from " + admin.fullname
+                        action = "received ticket"
                         if agent.receive_email == 1:
                             email = EmailMessage(
                                 'Forward ticket',
@@ -99,11 +105,12 @@ def home_admin(request):
                                 to=[agent.email],
                             )
                             email.send()
-                    TicketLog.objects.create(agentid=admin, ticketid=tk,
-                                        action=action,
-                                        date=timezone.now().date(),
-                                        weekday=get_weekday(),
-                                        time=timezone.now().time())
+                        TicketLog.objects.create(agentid=agent, ticketid=tk,
+                                                 action=action,
+                                                 date=timezone.now().date(),
+                                                 weekday=get_weekday(),
+                                                 time=timezone.now().time())
+
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
@@ -256,8 +263,8 @@ def processing_ticket(request):
         agc = {}
         for tk in tksdpr:
             agt = TicketAgent.objects.filter(ticketid=tk).values('agentid')
-            agc[tk.id] =[ x.fullname for x in Agents.objects.filter(id__in=agt, admin=0)]
-            agk[tk.id] =[ x.fullname for x in Agents.objects.exclude(Q(id__in=agt) | Q(admin=1))]
+            agc[tk.id] = [x.fullname for x in Agents.objects.filter(id__in=agt, admin=0)]
+            agk[tk.id] = [x.fullname for x in Agents.objects.exclude(Q(id__in=agt) | Q(admin=1))]
         content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1}
         if request.method == 'POST':
             if request.POST['type'] == 'forward':
@@ -449,7 +456,7 @@ def inbox_interaction(request, foa, choose, id):
                 except TicketAgent.DoesNotExist:
                     agticket.agentid = agent
                     agticket.save()
-                    action = ' accept ticket forward from ' + sender.fullname
+                    action = 'receive ticket'
                     TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
                                              date=timezone.now().date(),
                                              weekday=get_weekday(),
