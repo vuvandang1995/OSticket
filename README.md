@@ -10,17 +10,4 @@ pip9.0.2
 ## Install
 -------
 
-Clone and install dependences :
-
-```
-git clone git@github.com:vuvandang1995/OSticket.git
-cd OSticket
-cd osticket_v1
-sudo apt-get install libmysqlclient-dev
-sudo pip3 install mysqlclient
-sudo pip3 install simplejson
-```
-
-## Runserver: 
-
-`python manage.py runserver`
+Để cài đặt và sử dụng hệ thống OSticket, vui lòng làm theo các bước trong file Install.md

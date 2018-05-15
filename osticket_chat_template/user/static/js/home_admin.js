@@ -51,11 +51,11 @@ $(document).ready(function(){
         }
     });
 
-    $("#list_ticket").on('click', '.forward_ticket', function(){
+    $(".forward_ticket").click(function(){
         var token = $("input[name=csrfmiddlewaretoken]").val();
-        var id = $(this).attr('id');
+        var id = $("input[name=ticketid]").val();
         var list_agent = [];
-        $("#forward"+id+' input:checkbox').each(function() {
+        $('#forward_modal input:checkbox').each(function() {
             if ($(this).is(":checked")){
                 list_agent.push(this.name);
             }
@@ -66,20 +66,33 @@ $(document).ready(function(){
             data: {'list_agent[]': JSON.stringify(list_agent),'csrfmiddlewaretoken':token, 'ticketid': id},
             success: function(){
                 // window.location.reload();
-                $("#list_ticket").load(location.href + "#list_ticket");
+                document.getElementById("forward_ticket_close").click();
+                $("#list_ticket").load(location.href + " #list_ticket");
+                // $('#list_ticket'+' #forward'+id+' #forward_ticket_close').click();
             }
         });
     });
 
 
 
-    // $('.fw').on('show.bs.modal', function(event){
-    //     var button = $(event.relatedTarget);
-    //     var title = button.data('title');
-    //     if (title === 'forward'){
-    //         var ticketid = button.attr('id');
-    //         $("input[name=ticketid]").val(ticketid);
-    //     }
-    // });
+    $('#forward_modal').on('show.bs.modal', function(event){
+        var button = $(event.relatedTarget);
+        var ticketid = button.attr('id');
+        $("input[name=ticketid]").val(ticketid);
+        var array = $('#hd'+ticketid).html().split("<br>");
+        var list_agent = [];
+        $('#forward_modal input:checkbox').each(function() {
+            list_agent.push(this.name);
+            $(this).prop('checked', false);
+        });
+        for (i = 0; i < array.length-1; i++) {
+            var value = $.inArray(array[i].replace(/\s/g,''), list_agent)
+            if (value > -1){
+                $('input[name='+array[i].replace(/\s/g,'')+']').prop('checked', true);
+                // $('#forward input:checkbox').prop('checked', true);
+            }
+        }
+        
+    });
     
 });

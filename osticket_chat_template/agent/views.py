@@ -25,6 +25,7 @@ allchar = string.ascii_letters + string.digits
 def home_admin(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
+        agent = Agents.objects.all()
         list_other = {}
         tk = Tickets.objects.all()
         for tk in tk:
@@ -33,7 +34,8 @@ def home_admin(request):
                    'handler': TicketAgent.objects.all(),
                    'admin': admin,
                    'list_other': list_other.items(),
-                   'today': timezone.now().date()}
+                   'today': timezone.now().date()},
+                    'agent': agent
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
@@ -49,37 +51,59 @@ def home_admin(request):
                     tk.status = 3
                     action = "close ticket"
                 tk.save()
+                TicketLog.objects.create(agentid=admin, ticketid=tk,
+                                     action=action,
+                                     date=timezone.now().date(),
+                                     weekday=get_weekday(),
+                                     time=timezone.now().time())
             elif 'delete' in request.POST:
                 ticketid = request.POST['delete']
                 tk = Tickets.objects.get(id=ticketid)
+                print(request.POST)
                 tk.delete()
             elif 'ticketid' in request.POST:
                 list_agent = request.POST['list_agent[]']
                 list_agent = json.loads(list_agent)
                 ticketid = request.POST['ticketid']
-                for agentid in list_agent:
-                    agent = Agents.objects.get(username=agentid)
-                    tk = Tickets.objects.get(id=ticketid)
-                    tkag = TicketAgent(agentid=agent, ticketid=tk)
-                    tkag.save()
-                    tk.status = 1
-                    tk.save()
-                    action = agent.fullname + " received ticket forward from " + admin.fullname
-                    if agent.receive_email == 1:
-                        email = EmailMessage(
-                            'Forward ticket',
-                            render_to_string('agent/mail/forward_mail_leader.html',
-                                                {'receiver': agent,
-                                                'domain': (get_current_site(request)).domain,
-                                                'sender': 'Leader'}),
-                            to=[agent.email],
-                        )
-                        email.send()
-            TicketLog.objects.create(agentid=admin, ticketid=tk,
-                                     action=action,
-                                     date=timezone.now().date(),
-                                     weekday=get_weekday(),
-                                     time=timezone.now().time())
+                if not list_agent:
+                    try:
+                        tk = Tickets.objects.get(id=ticketid)
+                        tkag1 = TicketAgent.objects.get(ticketid=tk)
+                        tkag1.delete()
+                        tk.status = 0
+                        tk.save()
+                    except:
+                        tk.status = 0
+                        tk.save()
+                else:
+                    try:
+                        tkag1 = TicketAgent.objects.filter(ticketid=tk)
+                        tkag1.delete()
+                    except:
+                        pass
+                    for agentid in list_agent:
+                        agent = Agents.objects.get(username=agentid)
+                        tk = Tickets.objects.get(id=ticketid)
+                        tkag = TicketAgent(agentid=agent, ticketid=tk)
+                        tkag.save()
+                        tk.status = 1
+                        tk.save()
+                        action = agent.fullname + " received ticket forward from " + admin.fullname
+                        if agent.receive_email == 1:
+                            email = EmailMessage(
+                                'Forward ticket',
+                                render_to_string('agent/mail/forward_mail_leader.html',
+                                                    {'receiver': agent,
+                                                    'domain': (get_current_site(request)).domain,
+                                                    'sender': 'Leader'}),
+                                to=[agent.email],
+                            )
+                            email.send()
+                    TicketLog.objects.create(agentid=admin, ticketid=tk,
+                                        action=action,
+                                        date=timezone.now().date(),
+                                        weekday=get_weekday(),
+                                        time=timezone.now().time())
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')

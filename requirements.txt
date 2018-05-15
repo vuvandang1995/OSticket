@@ -1,0 +1,5 @@
+Django==2.0.5
+channels==2.1.1
+mysqlclient
+simplejson
+channels_redis
