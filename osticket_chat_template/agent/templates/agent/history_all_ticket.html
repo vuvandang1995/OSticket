@@ -5,11 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
-  <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'history/style.css' %}" rel="stylesheet" type="text/css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>{{ admin.fullname}}</title>
@@ -17,60 +14,65 @@
 <body>
 <div class="header">
     <nav class="main-menu">
-            <ul>
-                <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
-                <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
-                <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
-                <li><a href="{% url 'agent:history_all_ticket' %}">History all ticket</a></li>
-                <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
-            </ul>
+        <ul>
+            <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
+            <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
+            <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
+            <li><a href="{% url 'agent:history_all_ticket' today|safe 3 %}">History all ticket</a></li>
+            <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
+        </ul>
     </nav>
 </div>
 <br />
 <br />
 <div class="container">
-
-        <h3>History of ticket</h3>
-    <div id="visualization"></div>
-    <br/>
-    <div class="btn-group btn-group-lg">
-        <button class="btn btn-primary" onclick="reset()">Reset</button>
-        <button class="btn btn-primary" onclick="month()">Month</button>
-        <button class="btn btn-primary" onclick="day()">Day</button>
-        <button class="btn btn-primary" onclick="hour()">Hour</button>
-        <button class="btn btn-primary" onclick="minute()">Minute</button>
-    </div>
-    <script type="text/javascript">
-        var tem = JSON.stringify({{tk|safe}});
-        var data = JSON.parse(tem);
-        var items = new vis.DataSet();
-        items.add(data);
-        var container = document.getElementById('visualization');
-        var options = {
-          height: '500px',
-          min: new Date(2018, 0, 1),                // lower limit of visible range
-          max: new Date(2020, 0, 1),                // upper limit of visible range
-          zoomMin: 1000 * 60  ,                     // a min in milliseconds
-          zoomMax: 1000 * 60 * 60 * 24 * 31 ,     // about a months in milliseconds
-        };
-        var timeline = new vis.Timeline(container, items, options);
-        timeline.fit();
-        function reset(){
-            timeline.fit();
-        }
-        function month(){
-            timeline.zoom(1);
-        }
-        function day(){
-            timeline.zoom(2);
-        }
-        function hour(){
-            timeline.zoom(3);
-        }
-        function min(){
-            timeline.zoom(4);
-        }
-    </script>
+    <h2>Timeline</h2>
+    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#filter">Filter</button>
+    {% for key, value in tickets.items %}
+    <ul class="list-group"> <h3>{{key}}</h3>
+        {% for v in value %}
+        <li class="list-group-item">
+            {{v.time}} Ticket
+            <a target="_blank" href="{% url 'agent:home_admin' %}">#{{v.ticketid.id}}</a>
+            {% if v.userid is not None %}
+            (user) {{v.userid.fullname}}</a>
+            {% else %}
+            (agent)
+            <a target="_blank" href="{% url 'agent:manager_agent' %}">{{v.agentid.fullname}}</a>
+            {% endif %}
+            <a target="_blank" href="{% url 'agent:history' v.ticketid.id %}"> {{v.action}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
 </div>
+<div id="filter" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Filter</h4>
+      </div>
+      <div class="modal-body">
+          <label for="content">View changes from</label><br/>
+          <input id="date" class="form-control" type="text" value="{{today|safe}}"><br/>
+         <label>going back</label><br/>
+          <input id="num" class="form-control" type="text" value="3"><br/>
+      </div>
+      <div class="modal-footer">
+         <button type="submit" class="btn btn-primary" id="update">Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('#update').click(function(){
+            location.href="/agent/history_all_ticket/"+$('#date').val()+"_"+$('#num').val();
+        });
+    });
+</script>
 </body>
 </html>
