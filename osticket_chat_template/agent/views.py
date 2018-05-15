@@ -110,7 +110,6 @@ def home_admin(request):
                                                  date=timezone.now().date(),
                                                  weekday=get_weekday(),
                                                  time=timezone.now().time())
-
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
@@ -261,11 +260,17 @@ def processing_ticket(request):
         tksdpr = Tickets.objects.filter(id__in=tksd.values('ticketid'),status__in=[1, 2])
         agk = {}
         agc = {}
+        gua = {}
         for tk in tksdpr:
             agt = TicketAgent.objects.filter(ticketid=tk).values('agentid')
-            agc[tk.id] = [x.fullname for x in Agents.objects.filter(id__in=agt, admin=0)]
+            tem = [x.fullname for x in Agents.objects.filter(id__in=agt, admin=0)]
+            if len(tem) > 1:
+                gua[tk.id] = 'yes'
+            else:
+                gua[tk.id] = 'no'
+            agc[tk.id] = tem
             agk[tk.id] = [x.fullname for x in Agents.objects.exclude(Q(id__in=agt) | Q(admin=1))]
-        content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1}
+        content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1, 'gua': gua}
         if request.method == 'POST':
             if request.POST['type'] == 'forward':
                 form = ForwardForm(request.POST)

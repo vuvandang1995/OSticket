@@ -5,16 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
 	<link rel="stylesheet" href="{% static 'timeline/css/style.css' %}"> <!-- Resource style -->
-    <!--<link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/home_admin.js' %}"></script>
     <title>{{ user.fullname }}</title>
 </head>
 <body>
@@ -28,33 +25,38 @@
         </ul>
     </nav>
 </div>
-
+<br/>
+<br/>
 <div class="container" id="info_user">
     <h2>Your tickets</h2>
+    <br/>
+    <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#id02">
+        <span class="glyphicon glyphicon-plus"></span> Create new ticket
+    </button>
+    <br/>
+    <br/>
     <table class="table table-striped table-bordered">
         <tr>
             <td>ID</td>
             <td>Title</td>
             <td>Status</td>
             <td>Handler</td>
-            <td>Close ticket</td>
-            <td>Conversation</td>
-            <th>History</th>
+            <td>Option</td>
         </tr>
         {% for tk in ticket %}
         <tr>
             <td>
-                <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#{{tk.id}}content">{{tk.id}}</button>
+                <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.id}}content">{{tk.id}}</button>
             </td>
             <td>{{tk.title}}</td>
             {% if tk.status == 0 %}
-            <td>pending...</td>
+            <td><span class="label label-danger">pending</span></td>
             {% elif tk.status == 1 %}
-            <td>processing...</td>
+            <td><span class="label label-warning">processing</span></td>
             {% elif tk.status == 2 %}
-            <td>done</td>
+            <td><span class="label label-success">done</span></td>
             {% else %}
-            <td>closed</td>
+            <td><span class="label label-default">closed</span></td>
             {% endif %}
 
             {% if tk.status == 0 %}
@@ -69,27 +71,28 @@
                 </td>
             {% endif %}
 
-
-            {% if tk.status < 3 %}
             <td>
-                <form >
-                    <button id="close_{{tk.id}}" class="close_ticket" type="button">close</button>
-                </form>
-            </td>
+            {% if tk.status < 3 %}
+                <a href="{% url 'user:close_ticket' tk.id %}" type="button" class="btn btn-danger" data-toggle="tooltip" title="close">
+                    <span class="glyphicon glyphicon-off"></span>
+                </a>
             {% else %}
-            <td></td>
+                <a href="{% url 'user:close_ticket' tk.id %}" disabled type="button" class="btn btn-danger" data-toggle="tooltip" title="close">
+                    <span class="glyphicon glyphicon-off"></span>
+                </a>
             {% endif %}
             {% if 0 < tk.status and tk.status < 3 %}
-            <td>
-                <form >
-                    <button id="{{tk.id}}" class="conversation_user" type="button">Conversation</button>
-                </form>
-            </td>
+                <a href="{% url 'user:conversation' tk.id %}" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation">
+                    <span class="glyphicon glyphicon-comment"></span>
+                </a>
             {% else %}
-            <td></td>
+                <a href="{% url 'user:conversation' tk.id %}" disabled type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation">
+                    <span class="glyphicon glyphicon-comment"></span>
+                </a>
             {% endif %}
-            <td>
-                <a href="{% url 'user:history' tk.id %}" class="btn btn-lg">history</a>
+                <a href="{% url 'user:history' tk.id %}" type="button" class="btn btn-warning" data-toggle="tooltip" title="history">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>
+                </a>
             </td>
         </tr>
 
@@ -127,33 +130,15 @@
         </div>
         {% endfor %}
     </table>
-    <button style="width:auto;" data-toggle="modal" data-target="#id02">Create new ticket</button>
+
 </div>
 
-<script>
-    $(document).ready(function(){
-        $("#info_user").on('click', '.close_ticket', function(){
-            var id = $(this).attr('id');
-            if(confirm("Are you sure ?")){
-
-
-
-                location.href="/user/"+id;
-            }
-        });
-
-        $("#info_user").on('click', '.conversation_user', function(){
-            var id = $(this).attr('id');
-            location.href="/user/"+id;
-        });
-    });
-</script>
-
-<div class="modal fade" id="id02" >
-    <div class="modal-content">
-        <div class="modal-header">
-            <h4 class="modal-title">New ticket</h4>
-        </div>
+<div class="modal fade" id="id02" role="dialog" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">New ticket</h4>
+            </div>
              <div class="modal-body form-group">
                  <form method="POST" enctype="multipart/form-data" onsubmit="return validateSize()">
                      {% csrf_token %}
@@ -162,8 +147,8 @@
                      {% endfor%}
                      <label for="title"><b>Title</b></label>
                      {{form.title}}
-                     <label for="topic"><b>Topic</b></label><br />
-                     <select name="topic" >
+                     <br /><label for="topic"><b>Topic</b></label><br />
+                     <select name="topic" class="form-control">
                          {% for tp in topic %}
                          <option value="{{tp.id}}">{{tp.name}}</option>
                          {% endfor %}
@@ -171,45 +156,43 @@
                      <br /><br />
                      <label for="content"><b>Content</b></label><br /><br />
                      {{form.content}}
-                     <br /><br />
+                     <br />
                      <label for="attach"><b>Attach</b></label><br />
                      <input type="file" name="attach" id="attach">
                      <br/>
                      <div><font id="invalid-msg" color="red" size="5"></font></div>
-                     <br /><br />
-                     <button type="submit" value="OK" id="i_submit" onsubmit="return validateSize()">Send</button>
+                     <button type="submit" class="btn btn-primary" value="OK" id="i_submit" onsubmit="return validateSize()">Send</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                  </form>
              </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
-        <script type="text/javascript" >
-            $('#invalid-msg').html("");
-            function validateSize(){
-                if(($("#attach"))[0].files[0].size > 10485760){
-                    $('#invalid-msg').html("maximum size is 10MB");
-                    return false;
-                }
-                return true;
-            }
-
-            $(document).ready(function(){
-                // sau khi submit thanh cong thi send message tu websocket len server
-                $("#id02").submit(function() {
-                    var chatSocket1 = new WebSocket(
-                    'ws://' + window.location.host +
-                    '/ws/agent/group_agent_Socket/');
-                    var message = 'new_ticket';
-                    chatSocket1.onopen = function (event) {
-                        chatSocket1.send(JSON.stringify({
-                            'message' : message,
-                        }));
-                    };
-                });
-            });
-        </script>
     </div>
 </div>
+<script type="text/javascript" >
+    $('#invalid-msg').html("");
+    function validateSize(){
+        if(($("#attach"))[0].files[0].size > 10485760){
+            $('#invalid-msg').html("maximum size is 10MB");
+            return false;
+        }
+        return true;
+    }
+
+    $(document).ready(function(){
+        // sau khi submit thanh cong thi send message tu websocket len server
+        $("#id02").submit(function() {
+            var chatSocket1 = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/agent/group_agent_Socket/');
+            var message = 'new_ticket';
+            chatSocket1.onopen = function (event) {
+                chatSocket1.send(JSON.stringify({
+                    'message' : message,
+                }));
+            };
+        });
+    });
+</script>
 <audio id="myAudio" controls="controls" onloadeddata="audioSoundFunction()">
     <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
 </audio>

@@ -39,7 +39,7 @@
                     <th>Sender</th>
                     <th>Status</th>
                     <th>Handler</th>
-                    <th>Tùy chọn</th>
+                    <th>Option</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -57,13 +57,13 @@
                     <td>{{tk.sender.username}}</td>
                     
                     {% if tk.status == 0 %}
-                        <td>Pending</td>
+                    <td><span class="label label-danger">pending</span></td>
                     {% elif tk.status == 1 %}
-                        <td>Processing</td>
+                    <td><span class="label label-warning">processing</span></td>
                     {% elif tk.status == 2 %}
-                        <td>Done</td>
+                    <td><span class="label label-success">done</span></td>
                     {% else %}
-                        <td>Closed</td>
+                    <td><span class="label label-default">closed</span></td>
                     {% endif %}
                     
                     {% if tk.status == 0 %}
@@ -80,17 +80,21 @@
 
                     <td>
                         
-                        <button type="button" class="btn btn-primary" id="{{tk.id}}">
+                        <button type="button" class="btn btn-primary" id="{{tk.id}}" data-toggle="tooltip" title="open/close">
                             <span class="glyphicon glyphicon-off"></span>
                         </button>
                         
-                        <button type="button" class="btn btn-danger" id="{{tk.id}}">
+                        <button type="button" class="btn btn-danger" id="{{tk.id}}" data-toggle="tooltip" title="delete">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
 
-                        <button type="button" class="btn btn-info" data-title="forward" id="{{tk.id}}" data-toggle="modal" data-target="#forward_modal">
-                            <span class="glyphicon glyphicon-share"></span>
+                        <button type="button" class="btn btn-info" data-title="forward" id="{{tk.id}}"data-toggle="modal" data-target="#forward_modal">
+                            <span class="glyphicon glyphicon-share" data-toggle="tooltip" title="forward"></span>
                         </button>
+
+                        <a type="button" class="btn btn-warning" href="{% url 'agent:history' tk.id %}" data-toggle="tooltip" title="history">
+                            <span class="glyphicon glyphicon-floppy-disk"></span>
+                        </a>
                     </td>
                     
                 </tr>
@@ -148,6 +152,10 @@
                 </div>
             </div>
         </div>
-
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 </body>
 </html>

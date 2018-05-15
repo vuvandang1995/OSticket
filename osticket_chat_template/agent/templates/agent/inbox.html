@@ -10,8 +10,7 @@
                 <td>Agent order</td>
                 <td>Message</td>
                 <td>Ticket Status</td>
-                <td>Accept</td>
-                <td>Deny</td>
+                <td>Option</td>
 			</tr>
             {% for tk in forwardin %}
             <tr>
@@ -26,10 +25,12 @@
                 <td>done</td>
                 {% endif %}
                 <td>
-                    <button id="inbox/0_1_{{tk.ticketid.id}}" class="accept_forward" type="button">Accept</button>
-                </td>
-                <td>
-                    <button id="inbox/0_0_{{tk.ticketid.id}}" class="deny_forward" type="button">Deny</button>
+                    <button id="inbox/0_1_{{tk.ticketid.id}}" class="accept_forward btn btn-success" type="button" data-toggle="tooltip" title="accept" >
+                        <span class="glyphicon glyphicon-ok" ></span>
+                    </button>
+                    <button id="inbox/0_0_{{tk.ticketid.id}}" class="deny_forward btn btn-danger" type="button" data-toggle="tooltip" title="deny" >
+                        <span class="glyphicon glyphicon-remove" ></span>
+                    </button>
                 </td>
             </tr>
             <div class="modal fade" id="{{tk.ticketid.id}}content1" role="dialog">
@@ -72,26 +73,27 @@
                 <td>Agent order</td>
                 <td>Message</td>
                 <td>Ticket Status</td>
-                <td>Accept</td>
-                <td>Deny</td>
+                <td>Option</td>
 			</tr>
             {% for tk in addin %}
             <tr>
                 <td>
-                    <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
+                    <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
                 </td>
                 <td>{{tk.senderid.fullname}}</td>
                 <td>{{tk.content}}</td>
-                {% if tk.ticketid.status == 1 %}
-                <td>processing...</td>
+                {% if tk.status == 1 %}
+                <td><span class="label label-warning">processing</span></td>
                 {% else %}
-                <td>done</td>
+                <td><span class="label label-success">done</span></td>
                 {% endif %}
                 <td>
-                    <button id="inbox/1_1_{{tk.ticketid.id}}" class="accept_add" type="button">Accept</button>
-                </td>
-                <td>
-                    <button id="inbox/1_0_{{tk.ticketid.id}}" class="deny_add" type="button">Deny</button>
+                    <button id="inbox/1_1_{{tk.ticketid.id}}" class="accept_add btn btn-success" type="button" data-toggle="tooltip" title="accept" >
+                        <span class="glyphicon glyphicon-ok" ></span>
+                    </button>
+                    <button id="inbox/1_0_{{tk.ticketid.id}}" class="deny_add btn btn-danger" type="button" data-toggle="tooltip" title="deny" >
+                        <span class="glyphicon glyphicon-remove" ></span>
+                    </button>
                 </td>
             </tr>
             <div class="modal fade" id="{{tk.ticketid.id}}content" role="dialog">

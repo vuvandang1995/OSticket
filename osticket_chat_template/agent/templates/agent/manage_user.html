@@ -11,7 +11,7 @@
                 <td>Username</td>
                 <td>Status</td>
                 <td>Created</td>
-                <td>Block</td>
+                <td>Option</td>
 			</tr>
             {% for tk in user %}
             <tr>
@@ -23,13 +23,17 @@
                 <td>inactive</td>
                 <td>{{tk.created}}</td>
                 <td>
-                    <button id="manage_user/1_{{tk.id}}" class="unblock" type="button">Unblock</button>
+                    <button id="manage_user/1_{{tk.id}}" class="unblock btn btn-success" type="button" data-toggle="tooltip" title="unblock" >
+                        <span class="glyphicon glyphicon glyphicon-ok" ></span> Unblock
+                    </button>
                 </td>
                 {% else %}
                 <td>active</td>
                 <td>{{tk.created}}</td>
                 <td>
-                    <button id="manage_user/0_{{tk.id}}" class="block" type="button">Block</button>
+                    <button id="manage_user/0_{{tk.id}}" class="block btn btn-danger" type="button" data-toggle="tooltip" title="block" >
+                        <span class="glyphicon glyphicon-lock" ></span> Block
+                    </button>
                 </td>
                 {% endif %}
             </tr>
