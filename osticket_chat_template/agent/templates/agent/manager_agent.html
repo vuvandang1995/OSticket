@@ -20,7 +20,7 @@
                     <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
                     <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
                     <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
-                    <li><a href="{% url 'agent:history_all_ticket' %}">History all ticket</a></li>
+                    <li><a href="{% url 'agent:history_all_ticket' today|safe 3 %}">History all ticket</a></li>
                     <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
 				</ul>
 		</nav>

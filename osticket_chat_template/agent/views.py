@@ -30,7 +30,12 @@ def home_admin(request):
         tk = Tickets.objects.all()
         for tk in tk:
             list_other[tk.id] = list_hd(tk.id)
-        content = {'ticket': Tickets.objects.all(), 'handler': TicketAgent.objects.all(), 'admin': admin, 'list_other': list_other.items(), 'agent': agent}
+        content = {'ticket': Tickets.objects.all(),
+                   'handler': TicketAgent.objects.all(),
+                   'admin': admin,
+                   'list_other': list_other.items(),
+                   'today': timezone.now().date()},
+                    'agent': agent
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
@@ -107,7 +112,7 @@ def home_admin(request):
 def manager_topic(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'topic': Topics.objects.all(), 'admin': admin}
+        content = {'topic': Topics.objects.all(), 'admin': admin,'today': timezone.now().date()}
         if request.method == 'POST':
             if 'close' in request.POST:
                 topictid = request.POST['close']
@@ -151,7 +156,10 @@ def manager_agent(request):
         ag = Agents.objects.all()
         for ag in ag:
             list_tk[ag.username] = count_tk(ag.username)
-        content = {'agent': Agents.objects.all(), 'admin': admin, 'list_tk': list_tk.items()}
+        content = {'agent': Agents.objects.all(),
+                   'admin': admin,
+                   'list_tk': list_tk.items(),
+                   'today': timezone.now().date()}
         if request.method == 'POST':
             if 'close' in request.POST:
                 agentid = request.POST['close']
@@ -353,14 +361,14 @@ def processing_ticket_interaction(request, option, choose, id):
 
 
 def history(request,id):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent') or request.session.has_key('admin'):
         tems = TicketLog.objects.filter(ticketid=id)
         result = []
         for tem in tems:
             if tem.userid is not None:
-                action = "<b>" + str(tem.action) + "</b>" + "<br/> by user "+str(tem.userid.fullname)
+                action = "<small>User " + str(tem.userid.fullname) + "<br/>"+str(tem.action) + "</small>"
             else:
-                action = "<b>" + str(tem.action) + "</b>" + "<br/> by agent "+str(tem.agentid.fullname)
+                action = "<small>Agent " + str(tem.agentid.fullname) + "<br/> "+str(tem.action) + "</small>"
             result.append({"id": tem.id,
                            "content": action,
                            "group": "period",
@@ -383,38 +391,24 @@ def history(request,id):
                            "start": str(mintime.date) + "T" + str(mintime.time)[:-7],
                            "end": str(maxtime.date) + "T" + str(maxtime.time)[:-7]})
         tk = json.loads(json.dumps(result))
-        return render(request, 'agent/history.html', {'tk': tk, 'id': str(id)})
+        if request.session.has_key('agent'):
+            return render(request, 'agent/history_for_agent.html', {'tk': tk, 'id': str(id)})
+        else:
+            return render(request, 'agent/history_for_admin.html', {'tk': tk, 'id': str(id), 'today': timezone.now().date()})
     else:
         return redirect("/")
 
 
-def history_all_ticket(request):
+def history_all_ticket(request, date, nday):
     if request.session.has_key('admin'):
-        tickets = Tickets.objects.all()
-        result = []
-        for ticket in tickets:
-            maxtime = TicketLog.objects.filter(ticketid=ticket).latest('id')
-            mintime = TicketLog.objects.filter(ticketid=ticket).earliest('id')
-            tim = str(timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
-                mintime.date, mintime.time))[:-7]
-            if maxtime != mintime:
-                if ticket.status == 1:
-                    status = 'processing'
-                elif ticket.status == 2:
-                    status = 'done'
-                else:
-                    status = 'close'
-                result.append({"id": ticket.id,
-                               "content": "Ticket no." + str(ticket.id)+" (status: " + status + ") (exist time " + tim + ")",
-                               "start": str(mintime.date) + "T" + str(mintime.time)[:-7],
-                               "end": str(maxtime.date) + "T" + str(maxtime.time)[:-7]})
-            else:
-                result.append({"id": ticket.id,
-                               "type": 'point',
-                               "content": "Ticket no." + str(ticket.id) + " (status: waiting)",
-                               "start": str(mintime.date) + "T" + str(mintime.time)[:-7]})
-        tk = json.loads(json.dumps(result))
-        return render(request, 'agent/history_all_ticket.html', {'tk': tk})
+        tdate = timezone.datetime.strptime(date, "%Y-%m-%d").date()
+        tickets = {}
+        for x in range(0, nday):
+            thisDate = str(tdate-timezone.timedelta(days=x))
+            tk = TicketLog.objects.filter(date=thisDate).order_by('id').reverse()
+            if tk:
+                tickets[thisDate] = tk
+        return render(request, 'agent/history_all_ticket.html', {'tickets': tickets, 'today': timezone.now().date()})
     else:
         return redirect("/")
 
@@ -422,9 +416,9 @@ def history_all_ticket(request):
 def inbox(request):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session.get('agent'))
-        content ={'forwardin': ForwardTickets.objects.filter(receiverid=agent),
-                  'addin': AddAgents.objects.filter(receiverid=agent)}
-        return render(request,'agent/inbox.html',content)
+        content = {'forwardin': ForwardTickets.objects.filter(receiverid=agent),
+                   'addin': AddAgents.objects.filter(receiverid=agent)}
+        return render(request, 'agent/inbox.html', content)
     else:
         return redirect("/")
 
@@ -455,7 +449,7 @@ def inbox_interaction(request, foa, choose, id):
                 except TicketAgent.DoesNotExist:
                     agticket.agentid = agent
                     agticket.save()
-                    action = agent.fullname + ' accept ticket forward from ' + sender.fullname
+                    action = ' accept ticket forward from ' + sender.fullname
                     TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
                                              date=timezone.now().date(),
                                              weekday=get_weekday(),
@@ -492,7 +486,7 @@ def inbox_interaction(request, foa, choose, id):
                     TicketAgent.objects.get(ticketid=ticket, agentid=agent)
                 except TicketAgent.DoesNotExist:
                     TicketAgent.objects.create(ticketid=ticket, agentid=agent)
-                    action = agent.fullname + ' join to handler ticket '
+                    action = 'join to handler ticket'
                     TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
                                              date=timezone.now().date(),
                                              weekday=get_weekday(),
