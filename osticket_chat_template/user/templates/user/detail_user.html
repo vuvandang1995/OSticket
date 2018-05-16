@@ -52,11 +52,11 @@
                 <td id="rc_email">No</td>
           {% endif%}
 
-          {% if user.status == 1 %}
-                <td>Enable</td>
+          {% if user.status == 0 %}
+            <td><span class="label label-danger">inactive</span></td>
             {% else %}
-                <td>Disable</td>
-          {% endif%}
+            <td><span class="label label-success">active</span></td>
+            {% endif %}
         
           <td>{{ user.created }}</td>
         </tr>      

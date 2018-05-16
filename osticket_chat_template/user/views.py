@@ -36,30 +36,45 @@ def history(request,id):
         result = []
         for tem in tems:
             if tem.userid is not None:
-                action = "<b>" + str(tem.action) + "</b>" + "<br/> by user "+str(tem.userid.fullname)
+                action = "<b>User " + str(tem.userid.fullname) + "</b><br/>" + str(tem.action)
             else:
-                action = "<b>" + str(tem.action) + "</b>" + "<br/> by agent "+str(tem.agentid.fullname)
+                action = "<b>Agent " + str(tem.agentid.fullname) + "</b><br/>" + str(tem.action)
+            if tem.action == 'create ticket':
+                cont = "<span class='glyphicon glyphicon-plus' ></span>"
+            elif tem.action == 'close ticket':
+                cont = "<span class='glyphicon glyphicon-off' ></span>"
+            elif tem.action == 'assign ticket':
+                cont = "<span class='glyphicon glyphicon-pushpin' ></span>"
+            elif tem.action == 'done ticket':
+                cont = "<span class='glyphicon glyphicon-ok' ></span>"
+            elif tem.action == 're-process ticket':
+                cont = "<span class='glyphicon glyphicon-refresh' ></span>"
+            elif tem.action == 're-open ticket':
+                cont = "<span class='glyphicon glyphicon-repeat' ></span>"
+            else:
+                cont = "<span class='glyphicon glyphicon-user' ></span>"
             result.append({"id": tem.id,
-                           "content": action,
+                           "title": action,
+                           "content": cont,
                            "group": "period",
                            "start": str(tem.date)+"T"+str(tem.time)[:-7]})
         maxtime = TicketLog.objects.filter(ticketid=id).latest('id')
         mintime = TicketLog.objects.filter(ticketid=id).earliest('id')
-        if maxtime != mintime:
-            if maxtime.ticketid.status == 1:
-                status = 'processing'
-            elif maxtime.ticketid.status == 2:
-                status = 'done'
-            else:
-                status = 'close'
-            tim = str(timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
-                mintime.date, mintime.time))[:-7]
-            result.append({"id": 0,
-                           "content": "Ticket no."+str(id)+" (status: " + status + ") (exist time " + tim + ")",
-                           "className": "expected",
-                           "group": "overview",
-                           "start": str(mintime.date) + "T" + str(mintime.time)[:-7],
-                           "end": str(maxtime.date) + "T" + str(maxtime.time)[:-7]})
+        if maxtime.ticketid.status == 0:
+            status = '<font color="red">pending</font>'
+        elif maxtime.ticketid.status == 1:
+            status = '<font color="orange">processing</font>'
+        elif maxtime.ticketid.status == 2:
+            status = '<font color="green">done</font>'
+        else:
+            status = '<font color="gray">close</font>'
+        tim = str(timezone.datetime.combine(maxtime.date, maxtime.time) - timezone.datetime.combine(
+            mintime.date, mintime.time))[:-7]
+        result.append({"id": 0,
+                       "content": "Ticket no." + str(id) + " " + status + " (exist time " + tim + ")",
+                       "type": "point",
+                       "group": "overview",
+                       "start": str(mintime.date) + "T" + str(mintime.time)[:-7]})
         tk = json.loads(json.dumps(result))
         return render(request, 'user/history.html', {'tk': tk, 'id': str(id)})
     else:

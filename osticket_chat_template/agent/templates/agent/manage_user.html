@@ -20,7 +20,7 @@
                 <td>{{tk.email}}</td>
                 <td>{{tk.username}}</td>
                 {% if tk.status == 0 %}
-                <td>inactive</td>
+                <td><span class="label label-danger">inactive</span></td>
                 <td>{{tk.created}}</td>
                 <td>
                     <button id="manage_user/1_{{tk.id}}" class="unblock btn btn-success" type="button" data-toggle="tooltip" title="unblock" >
@@ -28,7 +28,7 @@
                     </button>
                 </td>
                 {% else %}
-                <td>active</td>
+                <td><span class="label label-success">active</span></td>
                 <td>{{tk.created}}</td>
                 <td>
                     <button id="manage_user/0_{{tk.id}}" class="block btn btn-danger" type="button" data-toggle="tooltip" title="block" >
