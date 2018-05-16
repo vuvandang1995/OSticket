@@ -218,7 +218,7 @@ def home_agent(request):
         agent = Agents.objects.get(username=request.session.get('agent'))
         topic = Topics.objects.exclude(Q(name='Other') | Q(type_send=0))
         content = {'ticket': Tickets.objects.filter(status=0,topicid__in=topic).order_by('dateend'),
-                   'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username))}
+                   'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
         return render(request,'agent/home_agent.html',content)
     else:
         return redirect("/")
@@ -271,7 +271,7 @@ def processing_ticket(request):
                 gua[tk.id] = 'no'
             agc[tk.id] = tem
             agk[tk.id] = [x.fullname for x in Agents.objects.exclude(Q(id__in=agt) | Q(admin=1))]
-        content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1, 'gua': gua, 'agent': mark_safe(json.dumps(sender.username))}
+        content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1, 'gua': gua, 'agent_name': mark_safe(json.dumps(sender.username)), 'fullname': mark_safe(json.dumps(sender.fullname))}
         if request.method == 'POST':
             if request.POST['type'] == 'forward':
                 form = ForwardForm(request.POST)
@@ -430,7 +430,7 @@ def inbox(request):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session.get('agent'))
         content = {'forwardin': ForwardTickets.objects.filter(receiverid=agent),
-                   'addin': AddAgents.objects.filter(receiverid=agent), 'agent': mark_safe(json.dumps(agent.username))}
+                   'addin': AddAgents.objects.filter(receiverid=agent), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
         return render(request, 'agent/inbox.html', content)
     else:
         return redirect("/")
@@ -523,7 +523,7 @@ def outbox(request):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session.get('agent'))
         content ={'forwardout':ForwardTickets.objects.filter(senderid=agent),
-                  'addout': AddAgents.objects.filter(senderid=agent)}
+                  'addout': AddAgents.objects.filter(senderid=agent), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
         return render(request,'agent/outbox.html',content)
     else:
         return redirect("/")
@@ -555,7 +555,7 @@ def profile(request):
             elif 'pwd' in request.POST:
                 agent.password = request.POST['pwd']
                 agent.save()
-        return render(request,"agent/profile.html",{'agent':agent})
+        return render(request,"agent/profile.html",{'agent':agent, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
     else:
         return redirect("/")
 
@@ -564,7 +564,7 @@ def closed_ticket(request):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session['agent'])
         tem = Tickets.objects.filter(status=3)
-        content = {'ticket': TicketAgent.objects.filter(agentid=agent, ticketid__in=tem)}
+        content = {'ticket': TicketAgent.objects.filter(agentid=agent, ticketid__in=tem), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
         return render(request,'agent/closed_ticket.html', content)
     else:
         return redirect("/")
@@ -572,8 +572,9 @@ def closed_ticket(request):
 
 def manager_user(request):
     if request.session.has_key('agent'):
+        agent = Agents.objects.get(username=request.session['agent'])
         users = Users.objects.all()
-        return render(request,"agent/manage_user.html",{'user':users})
+        return render(request,"agent/manage_user.html",{'user':users, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
     else:
         return redirect("/")
 

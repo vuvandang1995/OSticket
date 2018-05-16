@@ -106,7 +106,7 @@
                   </div>
                 </div>
               </div>
-    <div class="modal fade" id="id01_{{forloop.counter}}" >
+    <div class="modal fade forward" id="id01_{{forloop.counter}}" >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -141,7 +141,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="id02_{{forloop.counter}}" >
+    <div class="modal fade add" id="id02_{{forloop.counter}}" >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -186,10 +186,16 @@
             var chatSocket1 = new WebSocket(
             'ws://' + window.location.host +
             '/ws/agent/group_agent_Socket/');
-            var message = 'forward_ticket';
+            var list_agent = [];
+            $('#list_ticket .forward input:checkbox').each(function() {
+                if ($(this).is(":checked")){
+                    list_agent.push($(this).val());
+                }
+            });
+            list_agent.push('forward');
             chatSocket1.onopen = function (event) {
                 chatSocket1.send(JSON.stringify({
-                    'message' : message,
+                    'message' : list_agent,
                 }));
             };
         });
@@ -198,25 +204,22 @@
             var chatSocket1 = new WebSocket(
             'ws://' + window.location.host +
             '/ws/agent/group_agent_Socket/');
-            var message = 'add_ticket';
+            var list_agent = [];
+            $('#list_ticket .add input:checkbox').each(function() {
+                if ($(this).is(":checked")){
+                    list_agent.push($(this).val());
+                }
+            });
+            list_agent.push('add');
             chatSocket1.onopen = function (event) {
                 chatSocket1.send(JSON.stringify({
-                    'message' : message,
+                    'message' : list_agent,
                 }));
             };
         });
     });
 </script>
 <script>
-    var agentName = {{ agent }};
-    var chatSocket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/agent/' + agentName + '/');
-    
-    var group_agent_Socket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/agent/group_agent_Socket/');
-        
     chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         var message = data['message'];

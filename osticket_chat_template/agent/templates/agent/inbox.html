@@ -67,7 +67,7 @@
             {% endfor%}
 		</table>
         <h2>Add in request</h2>
-        <table class="table table-striped table-bordered" >
+        <table class="table table-striped table-bordered" id="list_ticket2">
 			<tr>
 				<td>ID ticket</td>
                 <td>Agent order</td>
@@ -121,61 +121,49 @@
 		</table>
     </div>
 <script>
-    var agentName = {{ agent }};
-    var chatSocket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/agent/' + agentName + '/');
-    
-    var group_agent_Socket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/agent/group_agent_Socket/');
-        
-    chatSocket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        if (message == 'close_ticket'){
-            setTimeout(function(){
-                $("#list_ticket").load(location.href + " #list_ticket");
-            }, 2000);
-        }
-        //document.getElementById('noti').innerHTML = message;
-    };
-
-    group_agent_Socket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        setTimeout(function(){
-            $("#list_ticket").load(location.href + " #list_ticket");
-        }, 2000);
-        //document.getElementById('noti').innerHTML = message;
-    };
-
-
    $(document).ready(function(){
        $("#info_user").on('click', '.accept_forward', function(){
            var id = $(this).attr('id');
            if(confirm("Are you sure ?")){
-               location.href="/agent/"+id;
+                message = fullname+' agreed your ticket you forwarding';
+                group_agent_Socket.send(JSON.stringify({
+                    'message' : message,
+                }));
+                location.href="/agent/"+id;
            }
        });
        $("#info_user").on('click', '.deny_forward', function(){
            var id = $(this).attr('id');
            if(confirm("Are you sure ?")){
-               location.href="/agent/"+id;
+                message = 'Your ticket you forwarding refused by '+fullname;
+                group_agent_Socket.send(JSON.stringify({
+                    'message' : message,
+                }));
+                location.href="/agent/"+id;
            }
        });
        $("#info_user").on('click', '.accept_add', function(){
            var id = $(this).attr('id');
            if(confirm("Are you sure ?")){
+                message = fullname+' agreed your ticket you adding';
+                group_agent_Socket.send(JSON.stringify({
+                    'message' : message,
+                }));
                location.href="/agent/"+id;
            }
        });
        $("#info_user").on('click', '.deny_add', function(){
            var id = $(this).attr('id');
            if(confirm("Are you sure ?")){
+                message = 'Your ticket you adding refused by '+fullname;
+                group_agent_Socket.send(JSON.stringify({
+                    'message' : message,
+                }));
                location.href="/agent/"+id;
            }
        });
    });
 </script>
+{% endblock %}
+{% block js %}
 {% endblock %}

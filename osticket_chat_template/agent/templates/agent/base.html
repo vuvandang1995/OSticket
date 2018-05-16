@@ -7,6 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     {% block lib %}{% endblock %}
@@ -16,7 +18,30 @@
     <div class="header">
         <nav class="main-menu">
             <ul>
-                <li><a class="list-group-item" href=""><i class="fa fa-bell" aria-hidden="true"></i>&nbsp;  <span id="noti" class="badge badge-light noti"></span></a></li>
+                <li class="dropdown nav-item">
+                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-bell"></i>
+                        <div class="notify"> 
+                            <span class="point"></span>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
+                        <ul>
+                            <li>
+                                <div class="drop-title">Notifications</div>
+                            </li>
+                            <li>
+                                <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
+                                    <div class="message-center" style="overflow: hidden; width: auto; height: 250px;">
+                                            
+                                    </div>
+                                </div>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                    
+                </li>
                 <li><a href="{% url 'agent:home_agent' %}">Home</a></li>
                 <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
                 <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
@@ -35,5 +60,75 @@
     {% block content %}
     {% endblock %}
     </div>
+    {% block js %}
+    {% endblock %}
+<script>
+    var fullname = {{ fullname }};
+    var agentName = {{ agent_name }};
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/agent/' + agentName + '/');
+    
+    var group_agent_Socket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/agent/group_agent_Socket/');
+        
+        
+    $(".point").hide();
+
+    $(".fa-bell").click(function(){
+        $(".point").hide();
+    });
+
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        /*if (message == 'close_ticket'){
+            setTimeout(function(){
+                $("#list_ticket").load(location.href + " #list_ticket");
+            }, 1000);
+        }*/
+        document.getElementById('noti').innerHTML = message;
+    };
+
+    group_agent_Socket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        switch(message) {
+            case 'new_ticket':
+                var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">You have a new ticket</span></div></a>';
+                $('.message-center').prepend(noti);
+                $(".point").show();
+                setTimeout(function(){
+                    $("#list_ticket").load(location.href + " #list_ticket");
+                }, 1000);
+                break;
+            case 'ticket da duoc xu ly':
+                setTimeout(function(){
+                    $("#list_ticket").load(location.href + " #list_ticket");
+                }, 1000);
+                break;
+        }
+
+        if (message.includes(fullname) && message.includes('forward')) {
+            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span></div></a>';
+            $('.message-center').prepend(noti);
+            $(".point").show();
+            setTimeout(function(){
+                $("#list_ticket").load(location.href + " #list_ticket");
+            }, 2000);
+        }
+
+        if (message.includes(fullname) && message.includes('add')) {
+            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(add)</span></div></a>';
+            $('.message-center').prepend(noti);
+            $(".point").show();
+            setTimeout(function(){
+                $("#list_ticket2").load(location.href + " #list_ticket2");
+            }, 2000);
+        }
+    };
+</script>
 </body>
 </html>
