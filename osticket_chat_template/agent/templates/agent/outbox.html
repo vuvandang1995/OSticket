@@ -21,10 +21,14 @@
                 </td>
                 <td>{{tk.receiverid.fullname}}</td>
                 <td>{{tk.content}}</td>
-                {% if tk.ticketid.status == 1 %}
-                <td>processing...</td>
+                {% if tk.ticketid.status == 0 %}
+                <td><span class="label label-danger">pending</span></td>
+                {% elif tk.ticketid.status == 1 %}
+                <td><span class="label label-warning">processing</span></td>
+                {% elif tk.ticketid.status == 2 %}
+                <td><span class="label label-success">done</span></td>
                 {% else %}
-                <td>done</td>
+                <td><span class="label label-default">closed</span></td>
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
@@ -82,10 +86,14 @@
                 </td>
                 <td>{{tk.receiverid.fullname}}</td>
                 <td>{{tk.content}}</td>
-                {% if tk.ticketid.status == 1 %}
+                {% if tk.ticketid.status == 0 %}
+                <td><span class="label label-danger">pending</span></td>
+                {% elif tk.ticketid.status == 1 %}
                 <td><span class="label label-warning">processing</span></td>
-                {% else %}
+                {% elif tk.ticketid.status == 2 %}
                 <td><span class="label label-success">done</span></td>
+                {% else %}
+                <td><span class="label label-default">closed</span></td>
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>

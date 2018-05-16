@@ -67,15 +67,15 @@
                     <td id="phone_agent{{ag.id}}">{{ag.phone}}</td>
 
                     {% if ag.admin == 0 %}
-                        <td>No</td>
+                        <td><span class="label label-danger">no</span></td>
                     {% else %}
-                        <td>Yes</td>
+                        <td><span class="label label-success">yes</span></td>
                     {% endif %}
 
                     {% if ag.status == 0 %}
-                        <td>No</td>
+                        <td><span class="label label-danger">inactive</span></td>
                     {% else %}
-                        <td>Yes</td>
+                        <td><span class="label label-success">active</span></td>
                     {% endif %}
 
                     {% for key, value in list_tk %}

@@ -74,16 +74,18 @@
             </tr>
             <tr>
                 <td>Status</td>
-                {% if agent.status == 1 %}
-                <td>Enable</td>
+                {% if agent.status == 0 %}
+                <td><span class="label label-danger">inactive</span></td>
+                {% else %}
+                <td><span class="label label-success">active</span></td>
                 {% endif %}
             </tr>
             <tr>
                 <td>Receive email</td>
                 {% if agent.receive_email == 0 %}
-                <td>No</td>
+                 <td><span class="label label-danger">no</span></td>
                 {% else %}
-                <td>Yes</td>
+                <td><span class="label label-success">yes</span></td>
                 {% endif %}
             </tr>
     </table>

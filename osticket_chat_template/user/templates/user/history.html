@@ -36,10 +36,6 @@
     <br/>
     <div class="btn-group btn-group-lg">
         <button class="btn btn-primary" onclick="reset()">Reset</button>
-        <button class="btn btn-primary" onclick="month()">Month</button>
-        <button class="btn btn-primary" onclick="day()">Day</button>
-        <button class="btn btn-primary" onclick="hour()">Hour</button>
-        <button class="btn btn-primary" onclick="minute()">Minute</button>
     </div>
 
 </div>
@@ -60,7 +56,7 @@
     items.add(data);
     var container = document.getElementById('visualization');
     var options = {
-      height: '500px',
+      height: '400px',
       min: new Date(2018, 0, 1),                // lower limit of visible range
       max: new Date(2019, 0, 1),                // upper limit of visible range
       zoomMin: 1000 * 60 * 10 ,                     // a min in milliseconds
@@ -70,18 +66,6 @@
     timeline.fit();
     function reset(){
         timeline.fit();
-    }
-    function month(){
-        timeline.zoom(1);
-    }
-    function day(){
-        timeline.zoom(2);
-    }
-    function hour(){
-        timeline.zoom(3);
-    }
-    function min(){
-        timeline.zoom(4);
     }
 </script>
 </body>

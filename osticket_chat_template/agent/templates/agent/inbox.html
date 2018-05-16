@@ -15,14 +15,18 @@
             {% for tk in forwardin %}
             <tr>
                 <td>
-                    <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#{{tk.ticketid.id}}content1">{{tk.ticketid.id}}</button>
+                    <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content1">{{tk.ticketid.id}}</button>
                 </td>
                 <td>{{tk.senderid.fullname}}</td>
                 <td>{{tk.content}}</td>
-                {% if tk.ticketid.status == 1 %}
-                <td>processing...</td>
+                {% if tk.ticketid.status == 0 %}
+                <td><span class="label label-danger">pending</span></td>
+                {% elif tk.ticketid.status == 1 %}
+                <td><span class="label label-warning">processing</span></td>
+                {% elif tk.ticketid.status == 2 %}
+                <td><span class="label label-success">done</span></td>
                 {% else %}
-                <td>done</td>
+                <td><span class="label label-default">closed</span></td>
                 {% endif %}
                 <td>
                     <button id="inbox/0_1_{{tk.ticketid.id}}" class="accept_forward btn btn-success" type="button" data-toggle="tooltip" title="accept" >
@@ -82,10 +86,14 @@
                 </td>
                 <td>{{tk.senderid.fullname}}</td>
                 <td>{{tk.content}}</td>
-                {% if tk.status == 1 %}
+                {% if tk.status == 0 %}
+                <td><span class="label label-danger">pending</span></td>
+                {% elif tk.status == 1 %}
                 <td><span class="label label-warning">processing</span></td>
-                {% else %}
+                {% elif tk.status == 2 %}
                 <td><span class="label label-success">done</span></td>
+                {% else %}
+                <td><span class="label label-default">closed</span></td>
                 {% endif %}
                 <td>
                     <button id="inbox/1_1_{{tk.ticketid.id}}" class="accept_add btn btn-success" type="button" data-toggle="tooltip" title="accept" >
