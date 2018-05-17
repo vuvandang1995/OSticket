@@ -128,6 +128,16 @@
                 $("#list_ticket2").load(location.href + " #list_ticket2");
             }, 2000);
         }
+
+        if (message.includes(fullname) && message.includes('agreed your ticket you forwarding')) {
+            var message1 = message - fullname;
+            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+            $('.message-center').prepend(noti);
+            $(".point").show();
+            setTimeout(function(){
+                $("#list_ticket").load(location.href + " #list_ticket");
+            }, 2000);
+        }
     };
 </script>
 </body>

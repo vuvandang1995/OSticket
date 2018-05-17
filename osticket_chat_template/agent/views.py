@@ -546,11 +546,10 @@ def outbox(request):
 
 def outbox_interaction(request, foa, id):
     if request.session.has_key('agent'):
-        ticket = Tickets.objects.get(id=id)
         if foa == 0:
-            fwticket = ForwardTickets.objects.get(ticketid=ticket)
+            fwticket = ForwardTickets.objects.get(id=id)
         else:
-            fwticket = AddAgents.objects.get(ticketid=ticket)
+            fwticket = AddAgents.objects.get(id=id)
         fwticket.delete()
         return redirect("/agent/outbox")
     else:
