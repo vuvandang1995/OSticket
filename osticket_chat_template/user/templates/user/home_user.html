@@ -110,7 +110,7 @@
         $(document).ready(function(){
             $("#info_user").on('click', '.close_ticket', function(){
                 var id = $(this).attr('id');
-                var message = 'close_ticket';
+                var message = 'Ticket ' +id+' is closed by '+userName;
                 if(confirm("Are you sure ?")){
                     var array = $('#hd'+id).html().split("<br>");
                     for (i = 0; i < array.length-1; i++) {
@@ -206,9 +206,4 @@
         });
     });
 </script>
-<audio id="myAudio" controls="controls" onloadeddata="audioSoundFunction()">
-    <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
-</audio>
-
-{% comment %} <input value="Click me" id="sound"> {% endcomment %}
 {% endblock %}

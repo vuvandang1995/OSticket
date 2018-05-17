@@ -4,7 +4,7 @@
 {% block title %}Inbox{% endblock %}
 {% block content %}
 <h2>Forward in request</h2>
-        <table class="table table-striped table-bordered" id="list_ticket">
+        <table class="table table-striped table-bordered" id="list_ticket_forward">
 			<tr>
 				<td>ID ticket</td>
                 <td>Agent order</td>
@@ -32,7 +32,7 @@
                     <button id="{{tk.ticketid.id}}" class="accept_forward btn btn-success" type="button" data-toggle="tooltip" title="accept" >
                         <span class="glyphicon glyphicon-ok" ></span>
                     </button>
-                    <button id="inbox/0_0_{{tk.ticketid.id}}" class="deny_forward btn btn-danger" type="button" data-toggle="tooltip" title="deny" >
+                    <button id="{{tk.ticketid.id}}" class="deny_forward btn btn-danger" type="button" data-toggle="tooltip" title="deny" >
                         <span class="glyphicon glyphicon-remove" ></span>
                     </button>
                 </td>
@@ -71,7 +71,7 @@
             {% endfor%}
 		</table>
         <h2>Add in request</h2>
-        <table class="table table-striped table-bordered" id="list_ticket2">
+        <table class="table table-striped table-bordered" id="list_ticket_add">
 			<tr>
 				<td>ID ticket</td>
                 <td>Agent order</td>
@@ -84,7 +84,7 @@
                 <td>
                     <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
                 </td>
-                <td>{{tk.senderid.fullname}}</td>
+                <td id="sender_{{tk.ticketid.id}}">{{tk.senderid.fullname}}</td>
                 <td>{{tk.content}}</td>
                 {% if tk.ticketid.status == 0 %}
                 <td><span class="label label-danger">pending</span></td>
@@ -96,10 +96,10 @@
                 <td><span class="label label-default">closed</span></td>
                 {% endif %}
                 <td>
-                    <button id="inbox/1_1_{{tk.ticketid.id}}" class="accept_add btn btn-success" type="button" data-toggle="tooltip" title="accept" >
+                    <button id="{{tk.ticketid.id}}" class="accept_add btn btn-success" type="button" data-toggle="tooltip" title="accept" >
                         <span class="glyphicon glyphicon-ok" ></span>
                     </button>
-                    <button id="inbox/1_0_{{tk.ticketid.id}}" class="deny_add btn btn-danger" type="button" data-toggle="tooltip" title="deny" >
+                    <button id="{{tk.ticketid.id}}" class="deny_add btn btn-danger" type="button" data-toggle="tooltip" title="deny" >
                         <span class="glyphicon glyphicon-remove" ></span>
                     </button>
                 </td>
@@ -134,7 +134,7 @@
            var id = $(this).attr('id');
            if(confirm("Are you sure ?")){
                 var sender = $('#sender'+id).html();
-                message = fullname+' agreed your ticket you forwarding '+sender;
+                message = fullname+' agreed your ticket you forwarding +'+sender;
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
                 }));
@@ -144,31 +144,34 @@
        $("#info_user").on('click', '.deny_forward', function(){
            var id = $(this).attr('id');
            if(confirm("Are you sure ?")){
-                message = 'Your ticket you forwarding refused by '+fullname;
+                var sender = $('#sender'+id).html();
+                message = 'Your ticket you forwarding refused by '+fullname+' +'+sender;
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
                 }));
-                location.href="/agent/"+id;
+                location.href="/agent/inbox/0_0_"+id;
            }
        });
        $("#info_user").on('click', '.accept_add', function(){
            var id = $(this).attr('id');
            if(confirm("Are you sure ?")){
-                message = fullname+' agreed your ticket you adding';
+                var sender = $('#sender_'+id).html();
+                message = fullname+' agreed your ticket you adding +'+sender;
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
                 }));
-               location.href="/agent/"+id;
+               location.href="/agent/inbox/1_1_"+id;
            }
        });
        $("#info_user").on('click', '.deny_add', function(){
            var id = $(this).attr('id');
            if(confirm("Are you sure ?")){
-                message = 'Your ticket you adding refused by '+fullname;
+                var sender = $('#sender_'+id).html();
+                message = 'Your ticket you adding refused by '+fullname+' +'+sender;
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
                 }));
-               location.href="/agent/"+id;
+               location.href="/agent/inbox/1_0_"+id;
            }
        });
    });

@@ -55,7 +55,11 @@
 <div class="container" id="info_user">
     {% block content %}{% endblock %}
 </div>
+<audio id="myAudio">
+    <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
+</audio>
 <script>
+        var x = document.getElementById("myAudio");
         var userName = {{ username }};
         var chatSocket = new WebSocket(
             'ws://' + window.location.host +
@@ -68,11 +72,10 @@
             var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
             $('.message-center').prepend(noti);
             $(".point").show();
+            x.play();
             setTimeout(function(){
                 $("#info_user").load(location.href + " #info_user");
             }, 2000);
-            //var snd='<audio autoplay=true> <source src="{% static 'ping.mp3' %}"> </audio>';
-            //$('body').append(snd);
         };
     
 

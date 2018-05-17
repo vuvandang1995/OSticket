@@ -6,7 +6,7 @@
     <div >
             <h2>Hi {{agent.fullname}}({{agent.id}})</h2>
             <h2>Open tickets</h2>
-            <table class="table table-striped table-bordered" id="list_ticket">
+            <table class="table table-striped table-bordered" id="list_ticket_home">
                 <tr>
                     <td>ID</td>
                     <td>Title</td>
@@ -65,7 +65,7 @@
                 
             $(document).ready(function(){
                 $('[data-toggle="tooltip"]').tooltip();
-                $("#list_ticket").on('click', '.assign_ticket', function(){
+                $("#list_ticket_home").on('click', '.assign_ticket', function(){
                     var id = $(this).attr('id');
                     if(confirm("Are you sure ?")){
                         var userName = document.getElementById('user_name').value;
