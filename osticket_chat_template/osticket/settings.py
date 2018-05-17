@@ -26,7 +26,7 @@ SECRET_KEY = 'mc14247v#36l=$+gtg@p9nk!3yoi5_z%n*kf9b1ueepb5njwca'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 ASGI_APPLICATION = 'osticket.routing.application'
 
 # Application definition

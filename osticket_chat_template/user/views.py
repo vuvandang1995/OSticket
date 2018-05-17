@@ -119,7 +119,6 @@ def homeuser(request):
                                          ticketid=ticket,
                                          action='create ticket',
                                          date=timezone.now().date(),
-                                         weekday=get_weekday(),
                                          time=timezone.now().time())
                 # if topicA.type_send == 1:
                 #     for rc in receiver:
@@ -158,7 +157,6 @@ def close_ticket(request,id):
                                  ticketid=ticket,
                                  action='close ticket',
                                  date=timezone.now().date(),
-                                 weekday=get_weekday(),
                                  time=timezone.now().time())
         try:
             tkag = TicketAgent.objects.filter(ticketid=id).values('agentid')
