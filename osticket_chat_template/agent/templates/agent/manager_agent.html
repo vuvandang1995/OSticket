@@ -29,7 +29,7 @@
     <br />
         <div class="container" id="list_agent">
             <h2>All Agent</h2>
-            <p>Đây là bảng danh sách tất cả Agent trên hệ thống:</p>
+            <br/>
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-title="add" data-target="#topicModal" >
                 <span class="glyphicon glyphicon-plus"></span> Create new agent
             </button>
@@ -86,16 +86,25 @@
                     {% endfor %}
                     <td>
                         {% csrf_token %}
-                        <button type="button" class="btn btn-primary close_" id="{{ag.id}}">
+                        {% if ag.admin == 0 %}
+                        <button type="button" class="btn btn-primary close_"  id="{{ag.id}}" data-toggle="tooltip" title="block/unblock">
                             <span class="glyphicon glyphicon-off"></span>
                         </button>
 
-                        <button type="button" class="btn btn-danger" id="{{ag.id}}">
+                        <button type="button" class="btn btn-danger" id="{{ag.id}}" data-toggle="tooltip" title="delete">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
+                        {% else %}
+                        <button type="button" disabled class="btn btn-primary close_" id="{{ag.id}}" data-toggle="tooltip" title="block/unblock" >
+                            <span class="glyphicon glyphicon-off"></span>
+                        </button>
 
+                        <button type="button" disabled class="btn btn-danger" id="{{ag.id}}" data-toggle="tooltip" title="delete">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        {% endif %}
                         <button type="button" class="btn btn-info" data-title="edit" id="{{ag.id}}" data-toggle="modal" data-target="#topicModal">
-                            <span class="glyphicon glyphicon-wrench"></span>
+                            <span class="glyphicon glyphicon-wrench" data-toggle="tooltip" title="change info"></span>
                         </button>
                     </td>
                 </tr>

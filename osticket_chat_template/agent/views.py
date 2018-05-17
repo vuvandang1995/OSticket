@@ -170,8 +170,10 @@ def manager_agent(request):
                 ag = Agents.objects.get(id=agentid)
                 if ag.status == 0:
                     ag.status = 1
+                    ag.username = ag.username[:-1]
                 else:
                     ag.status = 0
+                    ag.username += "_"
                 ag.save()
             elif 'delete' in request.POST:
                 agentid = request.POST['delete']
@@ -230,7 +232,6 @@ def assign_ticket(request, id):
         ticket.save()
         TicketLog.objects.create(agentid=agent, ticketid=ticket, action='assign ticket',
                                  date=timezone.now().date(),
-                                 weekday=get_weekday(),
                                  time=timezone.now().time())
         TicketAgent.objects.create(agentid=agent, ticketid=ticket)
         user = Users.objects.get(id=ticket.sender.id)
@@ -591,13 +592,17 @@ def manager_user_interaction(request, choose, id):
     if request.session.has_key('agent'):
         user = Users.objects.get(id=id)
         user.status = choose
+        if choose == 0:
+            user.username += "_"
+        else:
+            user.username = user.username[:-1]
         user.save()
         return redirect("/agent/manage_user")
     else:
         return redirect("/")
 
 
-def conversation(request,id):
+def conversation(request, id):
     if request.session.has_key('agent'):
         agent = Agents.objects.get(username=request.session['agent'])
         ticket = get_object_or_404(Tickets, pk=id)
@@ -618,3 +623,4 @@ def conversation(request,id):
         return render(request, 'user/conversation.html', content)
     else:
         return redirect("/")
+

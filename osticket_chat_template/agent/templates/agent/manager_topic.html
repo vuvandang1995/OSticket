@@ -29,7 +29,7 @@
     <br />
     <div class="container" id="list_topic">
         <h2>All Topic</h2>
-        <p>Đây là bảng danh sách tất cả Topic trên hệ thống:</p>
+        <br/>
         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-title="add" data-target="#topicModal" >
             <span class="glyphicon glyphicon-plus"></span> Create new topic
         </button>
@@ -56,9 +56,9 @@
                 <td>{{tp.name}}</td>
 
                 {% if tp.status == 0 %}
-                    <td>Enable</td>
+                <td><span class="label label-success">enable</span></td>
                 {% else %}
-                    <td>Disable</td>
+                <td><span class="label label-danger">disable</span></td>
                 {% endif %}
 
                 <td id="description_topic{{tp.id}}">{{ tp.description}}</td>
@@ -74,16 +74,16 @@
                 {% else %}
                     <td>
                         
-                        <button type="button" class="btn btn-primary close_" id="{{tp.id}}">
+                        <button type="button" class="btn btn-primary close_" id="{{tp.id}}" data-toggle="tooltip" title="enable/disable">
                             <span class="glyphicon glyphicon-off"></span>
                         </button>
 
-                        <button type="button" class="btn btn-danger" id="{{tp.id}}">
+                        <button type="button" class="btn btn-danger" id="{{tp.id}}" data-toggle="tooltip" title="delete">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
 
                         <button type="button" class="btn btn-info" data-name="{{tp.name}}" data-title="edit" id="{{tp.id}}" data-toggle="modal" data-target="#topicModal">
-                            <span class="glyphicon glyphicon-wrench"></span>
+                            <span class="glyphicon glyphicon-wrench" data-toggle="tooltip" title="change"></span>
                         </button>
                     </td>
                 {% endif%}
