@@ -54,7 +54,6 @@ def home_admin(request):
                 TicketLog.objects.create(agentid=admin, ticketid=tk,
                                      action=action,
                                      date=timezone.now().date(),
-                                     weekday=get_weekday(),
                                      time=timezone.now().time())
             elif 'delete' in request.POST:
                 ticketid = request.POST['delete']
@@ -108,7 +107,6 @@ def home_admin(request):
                         TicketLog.objects.create(agentid=agent, ticketid=tk,
                                                  action=action,
                                                  date=timezone.now().date(),
-                                                 weekday=get_weekday(),
                                                  time=timezone.now().time())
         return render(request, 'agent/home_admin.html', content)
     else:
@@ -356,7 +354,6 @@ def processing_ticket_interaction(request, option, choose, id):
             TicketLog.objects.create(agentid=agent, ticketid=ticket,
                                      action=action,
                                      date=timezone.now().date(),
-                                     weekday=get_weekday(),
                                      time=timezone.now().time())
         elif option == 4:
             try:
@@ -366,7 +363,6 @@ def processing_ticket_interaction(request, option, choose, id):
                 tk.delete()
                 TicketLog.objects.create(agentid=agent, ticketid=ticket, action='give up ticket',
                                          date=timezone.now().date(),
-                                         weekday=get_weekday(),
                                          time=timezone.now().time())
         return redirect("/agent/processing_ticket")
     else:
@@ -480,7 +476,6 @@ def inbox_interaction(request, foa, choose, id):
                     action = "received ticket forward from (agent)" + sender.fullname
                     TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
                                              date=timezone.now().date(),
-                                             weekday=get_weekday(),
                                              time=timezone.now().time())
                     if sender.receive_email == 1:
                         email = EmailMessage(
@@ -517,7 +512,6 @@ def inbox_interaction(request, foa, choose, id):
                     action = 'join to handler ticket'
                     TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
                                              date=timezone.now().date(),
-                                             weekday=get_weekday(),
                                              time=timezone.now().time())
                     if sender.receive_email == 1:
                         email = EmailMessage(

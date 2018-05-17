@@ -134,31 +134,12 @@ def count_tk(agentname):
         return None
 
 
-def get_weekday():
-    weekday = timezone.now().weekday()
-    if weekday == 0:
-        return 'Monday'
-    elif weekday == 1:
-        return 'Tuesday'
-    elif weekday == 2:
-        return 'Wednesday'
-    elif weekday == 3:
-        return 'Thursday'
-    elif weekday == 4:
-        return 'Friday'
-    elif weekday == 5:
-        return 'Saturday'
-    else:
-        return 'Sunday'
-
-
 class TicketLog(models.Model):
     userid = models.ForeignKey(Users, models.CASCADE, null=True, db_column='userid', related_name='usertl')
     agentid = models.ForeignKey(Agents, models.CASCADE, null=True, db_column='agentid', related_name='agenttl')
     ticketid = models.ForeignKey(Tickets, models.CASCADE, db_column='ticketid', related_name='tickettl')
     action = models.TextField()
     date = models.DateField()
-    weekday = models.TextField()
     time = models.TimeField()
 
     class Meta:
