@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $("#list_agent").on('click', '.btn-primary', function(){
+    $("#list_agent").on('click', '.close_', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
@@ -85,6 +85,8 @@ $(document).ready(function(){
             $("input[name=phone]").val("");
             $("input[name=username]").val("");
             $("input[name=email]").val("");
+            $("input[name=password]").val("");
+            $("input[name=password2]").val("");
             $('#user_agent').show();
             $('#pwd').show();
         }

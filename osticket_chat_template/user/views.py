@@ -121,18 +121,18 @@ def homeuser(request):
                                          date=timezone.now().date(),
                                          weekday=get_weekday(),
                                          time=timezone.now().time())
-                if topicA.type_send == 1:
-                    for rc in receiver:
-                        if rc.receive_email == 1:
-                            email = EmailMessage('New ticket',
-                                                render_to_string('user/new_ticket.html', {}),
-                                                to=[rc.email],)
-                            email.send()
-                else:
-                    email = EmailMessage('New ticket',
-                                        render_to_string('user/new_ticket.html', {}),
-                                        to=[admin.email],)
-                    email.send()
+                # if topicA.type_send == 1:
+                #     for rc in receiver:
+                #         if rc.receive_email == 1:
+                #             email = EmailMessage('New ticket',
+                #                                 render_to_string('user/new_ticket.html', {}),
+                #                                 to=[rc.email],)
+                #             email.send()
+                # else:
+                #     email = EmailMessage('New ticket',
+                #                         render_to_string('user/new_ticket.html', {}),
+                #                         to=[admin.email],)
+                #     email.send()
             return redirect("/user")
         else:
             return render(request, 'user/home_user.html', content)
@@ -196,7 +196,7 @@ def detail_user(request):
                 u = Users.objects.get(id=request.POST['userid'])
                 u.password = request.POST['pwd']
                 u.save()
-        return render(request, 'user/detail_user.html', {'user': user})
+        return render(request, 'user/detail_user.html', {'user': user, 'username': mark_safe(json.dumps(user.username))}, )
     else:
         return redirect("/")
 

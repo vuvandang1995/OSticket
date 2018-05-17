@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $("#list_topic").on('click', '.btn-primary', function(){
+    $("#list_topic").on('click', '.close_', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');

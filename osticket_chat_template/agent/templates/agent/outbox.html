@@ -32,7 +32,7 @@
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
-                    <button id="outbox/0_{{tk.ticketid.id}}" class="cancel_forward btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
+                    <button id="outbox/0_{{tk.id}}" class="cancel_forward btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
                         <span class="glyphicon glyphicon-remove" ></span>
                     </button>
             </tr>
@@ -97,7 +97,7 @@
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
-                    <button id="outbox/1_{{tk.ticketid.id}}" class="cancel_add btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
+                    <button id="outbox/1_{{tk.id}}" class="cancel_add btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
                         <span class="glyphicon glyphicon-remove" ></span>
                     </button>
                 </td>
@@ -126,7 +126,8 @@
             {% endfor%}
 		</table>
     </div>
-<script>
+<script>    
+
    $(document).ready(function(){
        $("#info_user").on('click', '.cancel_forward', function(){
            var id = $(this).attr('id');
