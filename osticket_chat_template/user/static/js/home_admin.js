@@ -1,9 +1,16 @@
 $(document).ready(function(){
 
-    $("#list_ticket").on('click', '.btn-primary', function(){
+    $("#list_ticket_leader").on('click', '.btn-primary', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
+        var array = $('#hd'+id).html().split("<br>");
+        var stt = $('#leader'+id).html();
+        var array2 = [];
+        for (i = 0; i < array.length-1; i++) {
+            array2.push(array[i].replace(/\s/g,''));
+        }
+        
         if (r == true){
             $.ajax({
                 type:'POST',
@@ -11,30 +18,54 @@ $(document).ready(function(){
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     // window.location.reload();
-                    $("#list_ticket").load(location.href + " #list_ticket");
+                    $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+                    if (stt != 'closed'){
+                        array2.push('admin_close_ticket');
+                        array2.push(id);
+                        var sender = $('#sender'+id).html();
+                        group_agent_Socket.send(JSON.stringify({
+                            'message' : array2,
+                        }));
+
+                        var Socket1 = new WebSocket(
+                        'ws://' + window.location.host +
+                        '/ws/user/' + sender + '/');
+        
+                        message = 'Ticket '+id+' is closed by admin!' 
+                        Socket1.onopen = function (event) {
+                            setTimeout(function(){
+                                Socket1.send(JSON.stringify({
+                                    'message' : message,
+                                }));
+                            }, 1000);
+                        };
+                    }else{
+                        array2.push('admin_open_ticket');
+                        array2.push(id);
+                        group_agent_Socket.send(JSON.stringify({
+                            'message' : array2,
+                        }));
+                        var sender = $('#sender'+id).html();
+                        var Socket1 = new WebSocket(
+                        'ws://' + window.location.host +
+                        '/ws/user/' + sender + '/');
+        
+                        message = 'Ticket '+id+' is opened by admin!' 
+                        Socket1.onopen = function (event) {
+                            setTimeout(function(){
+                                Socket1.send(JSON.stringify({
+                                    'message' : message,
+                                }));
+                            }, 1000);
+                        };
+                    }
                 }
            });
         }
     });
 
-    // $(".close_ticket").click(function() {
-    //     var id = $(this).attr('id');
-    //     if(confirm("Are you sure ?")){
-    //         alert(id);
-    //     }
-    // });
 
-    // $(".conversation_user").click(function() {
-    //     var id = $(this).attr('id');
-    //     alert(id);
-    // });
-
-    $("#sound").click(function() {
-        var x = document.getElementById("myAudio");
-        x.play(); 
-    });
-
-    $("#list_ticket").on('click', '.btn-danger', function(){
+    $("#list_ticket_leader").on('click', '.btn-danger', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
@@ -45,7 +76,7 @@ $(document).ready(function(){
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     // window.location.reload();
-                    $("#list_ticket").load(location.href + " #list_ticket");
+                    $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
                 }
            });
         }
@@ -67,8 +98,12 @@ $(document).ready(function(){
             success: function(){
                 // window.location.reload();
                 document.getElementById("forward_ticket_close").click();
-                $("#list_ticket").load(location.href + " #list_ticket");
-                // $('#list_ticket'+' #forward'+id+' #forward_ticket_close').click();
+                $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+                list_agent.push('leader_forward');
+                list_agent.push(id);
+                group_agent_Socket.send(JSON.stringify({
+                    'message' : list_agent,
+                }));
             }
         });
     });

@@ -18,9 +18,9 @@ $(document).ready(function(){
                         url:location.href,
                         data: {'csrfmiddlewaretoken':token, 'userid': userid, 'pwd': pwd1},
                         success: function(){
-                            window.location.reload();
-                            // $("#list_agent").load(location.href + "#list_agent");
-                            // document.getElementById("add_agent_close").click();
+                            // window.location.reload();
+                            document.getElementById("change_user_close").click();
+                            $("#info-user").load(location.href + " #info-user");
                         }
                     });
                 }else{
@@ -41,9 +41,9 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'change_user': fullname, 'email': email, 'phone': phone, 'csrfmiddlewaretoken':token, 'userid': userid, 'receive_mail': receive_mail},
                 success: function(){
-                    window.location.reload();
-                    // $("#info_user").load(location.href + "#info_user");
-                    // document.getElementById("change_user_close").click();
+                    // window.location.reload();
+                    document.getElementById("change_user_close").click();
+                    $("#info-user").load(location.href + " #info-user");
                 }
             });
         }

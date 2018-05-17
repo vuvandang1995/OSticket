@@ -35,7 +35,9 @@ def home_admin(request):
                    'admin': admin,
                    'list_other': list_other.items(),
                    'today': timezone.now().date(),
-                   'agent': agent}
+                   'agent': agent,
+                   'agent_name': mark_safe(json.dumps(admin.username)),
+                   'fullname': mark_safe(json.dumps(admin.fullname))}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
@@ -116,7 +118,8 @@ def home_admin(request):
 def manager_topic(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'topic': Topics.objects.all(), 'admin': admin,'today': timezone.now().date()}
+        content = {'topic': Topics.objects.all(), 'admin': admin,'today': timezone.now().date(), 'agent_name': mark_safe(json.dumps(admin.username)),
+                   'fullname': mark_safe(json.dumps(admin.fullname))}
         if request.method == 'POST':
             if 'close' in request.POST:
                 topictid = request.POST['close']
@@ -163,7 +166,9 @@ def manager_agent(request):
         content = {'agent': Agents.objects.all(),
                    'admin': admin,
                    'list_tk': list_tk.items(),
-                   'today': timezone.now().date()}
+                   'today': timezone.now().date(),
+                   'agent_name': mark_safe(json.dumps(admin.username)),
+                   'fullname': mark_safe(json.dumps(admin.fullname))}
         if request.method == 'POST':
             if 'close' in request.POST:
                 agentid = request.POST['close']
