@@ -156,7 +156,9 @@ class UserLoginForm(forms.Form):
             username = self.cleaned_data['username']
             password = self.cleaned_data['password']
             if authenticate_user(username=username, password=password) is None:
-                raise forms.ValidationError('')
+                raise forms.ValidationError('Tài khoản không tồn tại!')
+        else:
+            raise forms.ValidationError('Tài khoản không tồn tại!')
 
 
 # form Agent đăng nhập
