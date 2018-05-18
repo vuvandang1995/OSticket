@@ -55,12 +55,12 @@
                     <span class="glyphicon glyphicon-off"></span>
                 </button>
             {% endif %}
-            {% if 0 < tk.status and tk.status < 3 %}
+            {% if 1 == tk.status or tk.status == 2 %}
                 <a href="{% url 'user:conversation' tk.id %}" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation">
                     <span class="glyphicon glyphicon-comment"></span>
                 </a>
             {% else %}
-                <a href="{% url 'user:conversation' tk.id %}" disabled type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation">
+                <a href="{% url 'user:conversation' tk.id %}"  type="button" disabled class="btn btn-primary not-active" data-toggle="tooltip" title="conversation">
                     <span class="glyphicon glyphicon-comment"></span>
                 </a>
             {% endif %}

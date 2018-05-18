@@ -84,12 +84,10 @@ def history(request,id):
 def homeuser(request):
     if request.session.has_key('user'):
         user = Users.objects.get(username=request.session['user'])
-        admin = Agents.objects.get(admin=1)
         form = CreateNewTicketForm()
         topic = Topics.objects.all()
         ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
         handler = TicketAgent.objects.all()
-        receiver = Agents.objects.all()
         content = {'ticket': ticket,
                    'form': form,
                    'user': user,
