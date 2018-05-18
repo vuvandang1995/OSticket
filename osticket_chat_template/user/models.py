@@ -127,7 +127,7 @@ def count_tk(agentname):
         for count in tkag:
             if count.ticketid.status == 3:
                 done = done + 1
-            elif count.ticketid.status == 1:
+            elif count.ticketid.status == 1 or count.ticketid.status == 2:
                 processing = processing + 1
         return done, processing
     except Agents.DoesNotExist:
@@ -174,10 +174,10 @@ def get_user_email(email1):
 
 
 def active(user):
-        if user.status == 0:
-            return False
-        else:
-            return True
+    if user.status == 0:
+        return False
+    else:
+        return True
 
 
 def authenticate_user(username, password):
