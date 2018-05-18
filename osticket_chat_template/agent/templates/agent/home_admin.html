@@ -1,36 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load staticfiles %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/home_admin.js' %}"></script>
-    <title>{{ admin.fullname}}</title>
-</head>
-<body>
-<div class="header">
-        <nav class="main-menu">
-				<ul>
-                    <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
-                    <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
-                    <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
-                    <li><a href="{% url 'agent:history_all_ticket' today|safe 3 %}">History all ticket</a></li>
-                    <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
-				</ul>
-		</nav>
-    </div>
-    <br />
-    <br />
+{% extends 'agent/base_leader.html' %}
+{% block title %}Leader{% endblock %}
+{% load static %}
+{% block js %}
+<script src="{% static 'js/home_admin.js' %}"></script>
+{% endblock %}
+{% block content %}
         <div class="container">
             <h2>All Ticket</h2>
-           <br/>
-            <table class="table table-striped table-bordered" id="list_ticket">
+            <p>Đây là bảng danh sách tất cả Ticket trên hệ thống:</p>         
+            <table class="table table-striped table-bordered" id="list_ticket_leader">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -54,16 +32,16 @@
 
                     <td>{{tk.topicid.name}}</td>
 
-                    <td>{{tk.sender.username}}</td>
+                    <td id="sender{{tk.id}}">{{tk.sender.username}}</td>
                     
                     {% if tk.status == 0 %}
-                    <td><span class="label label-danger">pending</span></td>
+                    <td><span class="label label-danger" id="leader{{tk.id}}">pending</span></td>
                     {% elif tk.status == 1 %}
-                    <td><span class="label label-warning">processing</span></td>
+                    <td><span class="label label-warning" id="leader{{tk.id}}">processing</span></td>
                     {% elif tk.status == 2 %}
-                    <td><span class="label label-success">done</span></td>
+                    <td><span class="label label-success" id="leader{{tk.id}}">done</span></td>
                     {% else %}
-                    <td><span class="label label-default">closed</span></td>
+                    <td><span class="label label-default" id="leader{{tk.id}}">closed</span></td>
                     {% endif %}
                     
                     {% if tk.status == 0 %}
@@ -152,5 +130,9 @@
                 </div>
             </div>
         </div>
-</body>
-</html>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+{% endblock %}

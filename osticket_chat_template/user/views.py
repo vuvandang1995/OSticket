@@ -203,7 +203,7 @@ def login_user(request):
     mess_register_error = 'Thông tin đăng kí không hợp lệ'
     mess_register_ok = 'Please confirm your email address to complete the registration'
     mess_admin_ok = 'Please confirm your email address to complete the login admin'
-    mess_login_error = 'Thông tin đăng nhập không hợp lệ'
+    mess_login_error = 'Tài khoản hoặc mật khẩu không đúng'
     if request.session.has_key('user'):
         return redirect("/user")
     elif request.session.has_key('agent'):
@@ -233,7 +233,10 @@ def login_user(request):
                     email.send()
                     return render(request, 'user/index.html',{'mess': mess_resetpwd_ok})
                 else:
-                    return render(request, 'user/index.html',{'mess': mess_resetpwd_error})
+                    error = ''
+                    for field in form:
+                        error += field.errors
+                    return render(request, 'user/index.html',{'mess': mess_resetpwd_error, 'error':error})
             # Post form User đăng kí tài khoản, gửi link xác nhận về mail
             elif 'fullname' and 'email' and 'password2' in request.POST:
                 form = RegistrationForm(request.POST)
@@ -254,7 +257,11 @@ def login_user(request):
                     email.send()
                     return render(request, 'user/index.html',{'mess': mess_register_ok})
                 else:
-                    return render(request, 'user/index.html',{'mess': mess_register_error})
+                    # form.non_field_errors()
+                    error = ''
+                    for field in form:
+                        error += field.errors
+                    return render(request, 'user/index.html',{'mess': mess_register_error,'error':error})
             # Agent đăng nhập, nếu là agent thường thì login bình thường, Maser-admin thì cần code xác thực
             elif 'agentname' and 'agentpass' in request.POST:
                 form = AgentLoginForm(request.POST)
@@ -285,7 +292,10 @@ def login_user(request):
                         request.session['agent'] = agentname
                         return redirect('/agent')
                 else:
-                    return render(request, 'user/index.html',{'mess': mess_login_error})
+                    error = ''
+                    for field in form:
+                        error += field.errors
+                    return render(request, 'user/index.html',{'mess': mess_login_error,'error':error})
             # User đăng nhập
             else:
                 form = UserLoginForm(request.POST)

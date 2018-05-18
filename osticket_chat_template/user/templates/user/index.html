@@ -7,12 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="{% static 'js/mess.js' %}"></script>
     <script src="{% static 'js/validate.js' %}"></script>
     <title>Home</title>
 </head>
 <body>
     <i> {{ mess }}</i> <br>
+    {{error}}
     <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
     <button onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Register</button>
     <button onclick="document.getElementById('id04').style.display='block'" style="width:auto;">Are you Admin?</button>
@@ -166,7 +166,7 @@
                     <button type="submit" value="OK" id="register">Register</button>
                     {% comment %} <input type="submit" value="Đăng ký" /> {% endcomment %}
                     <p>By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
-              
+                    
                     <div class="clearfix">
                       <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
                     </div>

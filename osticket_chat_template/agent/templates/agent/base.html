@@ -185,6 +185,41 @@
                 $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
             }, 2000);
         }
+
+        if (message.includes(agentName) && message.includes('leader_forward')) {
+            var message1 = 'Leader have just forwarded for you ticket '+message[message.length-1];
+            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+            $('.message-center').prepend(noti);
+            $(".point").show();
+            x.play();
+            setTimeout(function(){
+                $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+            }, 2000);
+        }
+
+        if (message.includes(agentName) && message.includes('admin_close_ticket')) {
+            var len = message.length;
+            var message1 = 'Leader have just closed ticket '+message[len-1];
+            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+            $('.message-center').prepend(noti);
+            $(".point").show();
+            x.play();
+            setTimeout(function(){
+                $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+            }, 2000);
+        }
+
+        if (message.includes(agentName) && message.includes('admin_open_ticket')) {
+            var len = message.length;
+            var message1 = 'Leader have just opend ticket '+message[len-1];
+            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+            $('.message-center').prepend(noti);
+            $(".point").show();
+            x.play();
+            setTimeout(function(){
+                $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+            }, 2000);
+        }
     };
 </script>
 </body>

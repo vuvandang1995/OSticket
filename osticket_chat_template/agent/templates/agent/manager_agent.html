@@ -1,32 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load staticfiles %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/manager_agent.js' %}"></script>
-    <title>{{ admin.fullname}}</title>
-</head>
-<body>
-<div class="header">
-        <nav class="main-menu">
-				<ul>
-                    <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
-                    <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
-                    <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
-                    <li><a href="{% url 'agent:history_all_ticket' today|safe 3 %}">History all ticket</a></li>
-                    <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
-				</ul>
-		</nav>
-    </div>
-    <br />
-    <br />
+{% extends 'agent/base_leader.html' %}
+{% block title %}Leader{% endblock %}
+{% load static %}
+{% block js %}
+<script src="{% static 'js/manager_agent.js' %}"></script>
+{% endblock %}
+{% block content %}
         <div class="container" id="list_agent">
             <h2>All Agent</h2>
             <br/>
@@ -155,6 +133,4 @@
             </div>
         </div>
     </div>
-
-</body>
-</html>
+{% endblock %}

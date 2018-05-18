@@ -16,7 +16,8 @@ $(document).ready(function(){
                         url:location.href,
                         data: {'csrfmiddlewaretoken':token, 'pwd': pwd1},
                         success: function(){
-                            window.location.reload();
+                            $("#info_user").load(location.href + " #info_user");
+                            document.getElementById("change_user_close").click();
                         }
                     });
                 }else{
