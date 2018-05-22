@@ -277,15 +277,17 @@
 
 
 
-       var list_ws = [];
+       var dict_ws = {};
         $("body").on('click', '#chat_with_user', function(){
             var tkid = $(this).children('input').val();
             var roomName = makeid();
             
-            list_ws[tkid] = new WebSocket(
-            'ws://' + window.location.host +
-            '/ws/' + tkid + '/');
 
+            if (dict_ws[tkid] == undefined){
+                dict_ws[tkid] = new WebSocket(
+                'ws://' + window.location.host +
+                '/ws/' + tkid + '/');
+            }
 
             var me = {};
             me.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/22885865_1722296451175676_8315630450281336486_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeF3N32BRG1HfiI6wYFOD0syQnWULRna1ynbA4X_9isP5U9OTYpX393weyHM7i53ld34rFsOa0PdREWLJij8FWXIF0EfX1p8u3GUsxq_xcyEsw&oh=733c482517a19a82689b73cea0f35a4e&oe=5B58D2E3";
@@ -340,14 +342,13 @@
             }
 
             
-            list_ws[tkid].onmessage = function(e) {
+            dict_ws[tkid].onmessage = function(e) {
                 var data = JSON.parse(e.data);
                 var message = data['message'];
                 var who = data['who'];
                 insertChat(who, message, 0);
             };
 
-            
             
         });
 
@@ -369,17 +370,20 @@
         $('body').on('click', '.xxx', function(){
             var message = $(this).parent().parent().children().children().children('input').val();
             var tk_id = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('h4').html();
-            list_ws[tk_id].send(JSON.stringify({
+            dict_ws[tk_id].send(JSON.stringify({
                 'message' : message,
                 'who' : 'you',
             }));
             $(this).parent().parent().children().children().children('input').val('');
         })
 
+
         $('body').on('click', '.chat-close', function(){
             var tk_id = $(this).parent().next().children('h4').html();
-            list_ws[tk_id].close();
+            dict_ws[tk_id].close();
+            delete dict_ws[tk_id];
         })
+             
    });
 </script>
 {% endblock %}
