@@ -7,19 +7,46 @@
      <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
     <title>{{ admin.fullname}}</title>
 </head>
 <body>
 <div class="header">
     <nav class="main-menu">
         <ul>
-            <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
-            <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
-            <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
-            <li><a href="{% url 'agent:history_all_ticket' today|safe 3 %}">History all ticket</a></li>
-            <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
+            <li class="dropdown nav-item">
+                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-bell"></i>
+                    <div class="notify">
+                        <span class="point"></span>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
+                    <ul>
+                        <li>
+                            <div class="drop-title">Notifications</div>
+                        </li>
+                        <li>
+                            <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
+                                <div class="message-center" style="overflow: hidden; width: auto; height: 250px;">
+
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+            <li><a class="list-group-item" href="{% url 'agent:home_admin' %}">Ticket</a></li>
+            <li><a class="list-group-item" href="{% url 'agent:manager_agent' %}">Agent</a></li>
+            <li><a class="list-group-item" href="{% url 'agent:manager_topic' %}">Topic</a></li>
+            <li><a class="list-group-item" href="{% url 'agent:history_all_ticket' today|safe today|safe %}">History all ticket</a></li>
+            <li><a class="list-group-item" href="{% url 'agent:logout_admin' %}">Logout</a></li>
         </ul>
     </nav>
 </div>
@@ -31,7 +58,7 @@
         <span class="glyphicon glyphicon-search"></span> Filter
     </button>
     {% for key, value in tickets.items %}
-    <table class="table table-bordered"> <h3>{{key}}</h3>
+    <table class="table table-bordered dtt"> <h3>{{key}}</h3>
         <thead>
             <tr>
                 <th>Time</th>
@@ -66,13 +93,13 @@
         <h4 class="modal-title">Filter</h4>
       </div>
       <div class="modal-body">
-          <label for="content">View changes from</label><br/>
+          <label for="content">View from</label><br/>
              <input id="date" class="form-control" type="date" value="{{today|safe}}"><br/>
-            <div id="invalid-date"><font color="red"></font></div>
+          <div id="invalid-date"><font color="red"></font></div>
+         <label for="content2">to</label>
+             <input id="date2" class="form-control" type="date" value="{{today|safe}}"><br/>
+          <div id="invalid-date2"><font color="red"></font></div>
             <br/>
-         <label>going back</label><br/>
-          <input id="num"  class="form-control" type="number" value="3" min="1" max="1000"><br/>
-          <div id="invalid-num"><font color="red"></font></div>
       </div>
       <div class="modal-footer">
          <button type="submit" class="btn btn-primary" id="update">Update</button>
@@ -83,6 +110,7 @@
 </div>
 <script>
     $(document).ready(function(){
+        $('.dtt').DataTable();
         function isValidDate(dateString) {
             var regEx = /^\d{4}-\d{2}-\d{2}$/;
             if(!dateString.match(regEx)) return false;
@@ -92,20 +120,56 @@
         }
         $('#update').click(function(){
             var date = $("#date").val();
-            var num = $("#num").val();
+            var date2 = $("#date2").val();
             if (!isValidDate(date)){
                 $("#invalid-date").html("invalid date");
             }
+            else if(!isValidDate(date2)){
+                $("#invalid-date2").html("invalid date");
+            }
             else{
-                if (num ==''){
-                    $("#invalid-num").html("not empty");
-                }
-                else{
-                   location.href="/agent/history_all_ticket/"+$('#date').val()+"_"+$('#num').val();
-                }
+                location.href="/agent/history_all_ticket/"+$('#date').val()+"_"+$('#date2').val();
             }
         });
     });
+</script>
+<script>
+    var fullname = {{ fullname }};
+    var agentName = {{ agent_name }};
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/agent/' + agentName + '/');
+
+    var group_agent_Socket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/agent/group_agent_Socket/');
+
+
+    $(".point").hide();
+
+    $(".fa-bell").click(function(){
+        $(".point").hide();
+    });
+
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        $(".point").show();
+        setTimeout(function(){
+            $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+        }, 1000);
+    };
+
+    group_agent_Socket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
+        $(".point").show();
+        setTimeout(function(){
+            $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+        }, 1000);
+    };
 </script>
 </body>
 </html>

@@ -95,7 +95,7 @@ def home_admin(request):
                         tkag.save()
                         tk.status = 1
                         tk.save()
-                        action = "received ticket"
+                        action = "received ticket forward from (admin)" + admin.fullname
                         if agent.receive_email == 1:
                             email = EmailMessage(
                                 'Forward ticket',
@@ -396,6 +396,8 @@ def history(request,id):
                 cont = "<span class='glyphicon glyphicon-refresh' ></span>"
             elif tem.action == 're-open ticket':
                 cont = "<span class='glyphicon glyphicon-repeat' ></span>"
+            elif tem.action == 'give up ticket':
+                cont = "<span class='glyphicon glyphicon-log-out' ></span>"
             else:
                 cont = "<span class='glyphicon glyphicon-user' ></span>"
             result.append({"id": tem.id,
@@ -429,16 +431,27 @@ def history(request,id):
         return redirect("/")
 
 
-def history_all_ticket(request, date, nday):
+def history_all_ticket(request, date, date2):
     if request.session.has_key('admin'):
-        tdate = timezone.datetime.strptime(date, "%Y-%m-%d").date()
+        admin = Agents.objects.get(admin=1)
+        time = timezone.now().time()
+        tdate1 = timezone.datetime.strptime(date, "%Y-%m-%d").date()
+        tdate2 = timezone.datetime.strptime(date2, "%Y-%m-%d").date()
+        nday = str(timezone.datetime.combine(tdate2, time) - timezone.datetime.combine(tdate1, time))[:-13]
+        if nday == '':
+            nday = 1
+        else:
+            nday = int(nday)+1
         tickets = {}
         for x in range(0, nday):
-            thisDate = str(tdate-timezone.timedelta(days=x))
+            thisDate = str(tdate2-timezone.timedelta(days=x))
             tk = TicketLog.objects.filter(date=thisDate).order_by('id').reverse()
             if tk:
                 tickets[thisDate] = tk
-        return render(request, 'agent/history_all_ticket.html', {'tickets': tickets, 'today': timezone.now().date()})
+
+        return render(request, 'agent/history_all_ticket.html', {'tickets': tickets, 'today': timezone.now().date(),
+                                                                 'agent_name': mark_safe(json.dumps(admin.username)),
+                                                                 'fullname': mark_safe(json.dumps(admin.fullname))})
     else:
         return redirect("/")
 

@@ -51,6 +51,8 @@ def history(request,id):
                 cont = "<span class='glyphicon glyphicon-refresh' ></span>"
             elif tem.action == 're-open ticket':
                 cont = "<span class='glyphicon glyphicon-repeat' ></span>"
+            elif tem.action == 'give up ticket':
+                cont = "<span class='glyphicon glyphicon-log-out' ></span>"
             else:
                 cont = "<span class='glyphicon glyphicon-user' ></span>"
             result.append({"id": tem.id,
@@ -200,12 +202,11 @@ def detail_user(request):
 
 
 def login_user(request):
-    mess_resetpwd_error = 'Email chưa được đăng kí hoặc không đúng định dạng'
+    mess_resetpwd_error = 'Email is not registered or invalid'
     mess_resetpwd_ok = 'Please confirm your email address to reset your account'
-    mess_register_error = 'Thông tin đăng kí không hợp lệ'
+    mess_register_error = 'Register information is invalid'
     mess_register_ok = 'Please confirm your email address to complete the registration'
-    mess_admin_ok = 'Please confirm your email address to complete the login admin'
-    mess_login_error = 'Tài khoản hoặc mật khẩu không đúng'
+    mess_login_error = 'username or password incorrect'
     if request.session.has_key('user'):
         return redirect("/user")
     elif request.session.has_key('agent'):
@@ -326,8 +327,10 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.status = 1
         user.save()
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-        mess = 'Thank you for your email confirmation. Now you can login your account.'
+        return render(request,
+                      'user/index.html', {'mess': "Success",'error': 'Thank you for your email confirmation.'})
+        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        # mess = 'Thank you for your email confirmation. Now you can login your account.'
         # return render(request, 'user/index.html',{'mess': mess})
         # return redirect('/', {'mess': mess})
     else:
@@ -356,8 +359,8 @@ def resetpwd(request, uidb64, token):
 
 def submitadmin(request):
     mess = 'Please confirm your email address to complete the login admin'
-    mess_code_error = 'Code sai rồi bạn ơi'
-    mess_time_error = 'Code hết hạn rồi bạn ơi'
+    mess_code_error = 'Code is incorrect'
+    mess_time_error = 'Code was expired'
     if request.method == 'POST':
         if request.POST['code'] in dic.values():
             if datetime.datetime.now() < dic_time[request.POST['code']]:
