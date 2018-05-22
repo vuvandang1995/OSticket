@@ -1,6 +1,5 @@
 {% extends 'agent/base.html' %}
-{% block lib %}
-{% endblock%}
+{% load static %}
 {% block title %}Agent{% endblock %}
 {% block content %}
     <div >
@@ -88,4 +87,13 @@
                 });
             });
         </script>
+        <script>
+            $(document).ready(function(){
+                $('header').on('click', function() {
+                    $(this).next().slideToggle(300, 'swing');
+                    //$('.chat-message-counter').fadeToggle(300, 'swing');
+                });
+            });
+        </script>
+
 {% endblock %}

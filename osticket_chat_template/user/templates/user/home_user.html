@@ -1,5 +1,11 @@
 {% extends 'user/base.html' %}
     {% load staticfiles %}
+    {% block lib %}
+    <link rel="stylesheet" href="{% static 'css/home_user.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700">
+    <script src="{% static 'js/home_user.js' %}"></script>
+    {% endblock%}
     {% block content %}
     <h2>Your tickets</h2>
     <br/>
@@ -8,7 +14,7 @@
     </button>
     <br/>
     <br/>
-    <table class="table table-striped table-bordered" id="info_user">
+    <table class="table table-striped table-bordered">
         <tr>
             <td>ID</td>
             <td>Title</td>
@@ -44,7 +50,6 @@
                     {% endfor%}
                 </td>
             {% endif %}
-
             <td>
             {% if tk.status < 3 %}
                 <button type="button" class="btn btn-danger close_ticket" data-toggle="tooltip" title="close" id="{{tk.id}}" >
@@ -55,13 +60,15 @@
                     <span class="glyphicon glyphicon-off"></span>
                 </button>
             {% endif %}
+            
             {% if 1 == tk.status or tk.status == 2 %}
-                <a href="{% url 'user:conversation' tk.id %}" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation">
-                    <span class="glyphicon glyphicon-comment"></span>
+                <a href="javascript:register_popup('chat{{tk.id}}', {{tk.id}});" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_agent">
+                    <span class="glyphicon glyphicon-comment" ></span>
+                    <input type="hidden" value="{{tk.id}}"/>
                 </a>
             {% else %}
-                <a href="{% url 'user:conversation' tk.id %}"  type="button" disabled class="btn btn-primary not-active" data-toggle="tooltip" title="conversation">
-                    <span class="glyphicon glyphicon-comment"></span>
+                <a href="javascript:register_popup('chat{{tk.id}}', {{tk.id}});"  type="button" disabled class="btn btn-primary not-active" data-toggle="tooltip" title="conversation">
+                    <span class="glyphicon glyphicon-comment" ></span>
                 </a>
             {% endif %}
                 <a href="{% url 'user:history' tk.id %}" type="button" class="btn btn-warning" data-toggle="tooltip" title="history">
@@ -108,42 +115,183 @@
 </div>
 <script>
         $(document).ready(function(){
-            $("#info_user").on('click', '.close_ticket', function(){
+            $('body').on('click', '.close_ticket', function(){
                 var id = $(this).attr('id');
-                var message = 'Ticket ' +id+' is closed by '+userName;
+                var mgs = 'Ticket ' +id+' is closed by '+userName;
+                var message = []
                 if(confirm("Are you sure ?")){
+                    
                     var array = $('#hd'+id).html().split("<br>");
                     for (i = 0; i < array.length-1; i++) {
                         var agentName = array[i].replace(/\s/g,'');
-                        
-                        var Socket1 = new WebSocket(
-                        'ws://' + window.location.host +
-                        '/ws/agent/' + agentName + '/');
-    
-                        Socket1.onopen = function (event) {
-                            setTimeout(function(){
-                                Socket1.send(JSON.stringify({
-                                    'message' : message,
-                                }));
-                            }, 2000);
-                        };
-                        
+                        message.push(agentName);
                     }
+
+                    message.push(mgs);
+                    var chatSocket1 = new WebSocket(
+                    'ws://' + window.location.host +
+                    '/ws/agent/group_agent_Socket/');
+                    chatSocket1.onopen = function (event) {
+                        chatSocket1.send(JSON.stringify({
+                            'message' : message,
+                        }));
+                    };
                     
                     setTimeout(function(){
                         location.href="/user/close_"+id;
-                    }, 2000);
+                    }, 1000);
                     
                 }
                 
             });
             
-    
-            $("#info_user").on('click', '.conversation_user', function(){
-                var id = $(this).attr('id');
-                location.href="/user/"+id;
+            var list_ws = [];
+            $("body").on('click', '#chat_with_agent', function(){
+                var tkid = $(this).children('input').val();
+                var roomName = makeid();
+                
+                list_ws[tkid] = new WebSocket(
+                'ws://' + window.location.host +
+                '/ws/' + tkid + '/');
+
+
+                var me = {};
+                me.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/22885865_1722296451175676_8315630450281336486_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeF3N32BRG1HfiI6wYFOD0syQnWULRna1ynbA4X_9isP5U9OTYpX393weyHM7i53ld34rFsOa0PdREWLJij8FWXIF0EfX1p8u3GUsxq_xcyEsw&oh=733c482517a19a82689b73cea0f35a4e&oe=5B58D2E3";
+
+                var you = {};
+                you.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/14732373_1224510360954290_7402332525860387467_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeHKXwDy_s1iK9FoOwayfi1qoOsIZlCm_H_ILhjIlp7LpK_1UzL2lTNdV6hbvFqTDhhJngiHagzjXZdsq1veAd6UGPEJKNXC4eyjPt-BNHGNUA&oh=6e9c0ee4c9352e7446fdef79a9037cd7&oe=5B5799DF";
+
+                function formatAMPM(date) {
+                    var hours = date.getHours();
+                    var minutes = date.getMinutes();
+                    var ampm = hours >= 12 ? 'PM' : 'AM';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12; // the hour '0' should be '12'
+                    minutes = minutes < 10 ? '0'+minutes : minutes;
+                    var strTime = hours + ':' + minutes + ' ' + ampm;
+                    return strTime;
+                }            
+
+                //-- No use time. It is a javaScript effect.
+                function insertChat(who, text, time){
+                    if (time === undefined){
+                        time = 0;
+                    }
+                    var control = "";
+                    var date = formatAMPM(new Date());
+                    
+                    if (who == "me"){
+                        control = '<li style="width:100%">' +
+                                        '<div class="msj macro">' +
+                                        '<div class="avatar"><img class="img-circle" style="width:100%;" src="'+ me.avatar +'" /></div>' +
+                                            '<div class="text text-l">' +
+                                                '<p>'+ text +'</p>' +
+                                                '<p><small>'+date+'</small></p>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</li>';                    
+                    }else{
+                        control = '<li style="width:100%;">' +
+                                        '<div class="msj-rta macro">' +
+                                            '<div class="text text-r">' +
+                                                '<p>'+text+'</p>' +
+                                                '<p><small>'+date+'</small></p>' +
+                                            '</div>' +
+                                        '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="'+you.avatar+'" /></div>' +                                
+                                '</li>';
+                    }
+                    setTimeout(
+                        function(){                        
+                            $("body #chat"+tkid+" .frame > ul").append(control).scrollTop($("ul").prop('scrollHeight'));
+                        }, time);
+                    
+                }
+
+                
+                list_ws[tkid].onmessage = function(e) {
+                    var data = JSON.parse(e.data);
+                    var message = data['message'];
+                    var who = data['who'];
+                    //document.querySelector('#chat-log').value += (message + '\n');
+                    insertChat(who, message, 0);
+                };
+
+                //-- Print Messages
+                
+                /*chatSocket.onmessage = function(e) {
+                    var data = JSON.parse(e.data);
+                    var message = data['message'];
+                    var who = data['who'];
+                    //document.querySelector('#chat-log').value += (message + '\n');
+                    insertChat(who, message, 0);
+                };
+
+                chatSocket.onclose = function(e) {
+                    console.error('Chat socket closed unexpectedly');
+                };*/
+
+                
             });
+
+            /*$('body').on('click', 'header', function(){
+                $(this).next().slideToggle(300, 'swing');
+            })*/
+
+            $('body').on('click', '.xxx', function(){
+                $("body .mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
+            })
+
+            $("body .mytext").focus();
+            $('body').on('keyup', '.mytext', function(e){
+                if (e.keyCode === 13) {
+                    $(this).parent().parent().next().children('span').click();
+                }
+            })
+
+            $('body').on('click', '.xxx', function(){
+                var message = $(this).parent().parent().children().children().children('input').val();
+                var tk_id = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('h4').html();
+                list_ws[tk_id].send(JSON.stringify({
+                    'message' : message,
+                    'who' : 'me',
+                }));
+                $(this).parent().parent().children().children().children('input').val('');
+            })
+
+            $('body').on('click', '.chat-close', function(){
+                var tk_id = $(this).parent().next().children('h4').html();
+                list_ws[tk_id].close();
+            })
+             /*$("body #chat-message-input"+tkid).focus(function){
+                    alert('ok')
+                }
+                $("body #chat-message-input"+tkid).onkeyup = function(e) {
+                    if (e.keyCode === 13) {  // enter, return
+                        $("body #chat-message-submit"+tkid).click();
+                    }
+                };
+                
+                
+                $("body #chat-message-submit"+tkid).onclick = function(e) {
+                    alert($("body #chat-message-input"+tkid))
+                    var messageInputDom = $("body #chat-message-input"+tkid).val();
+                    alert(messageInputDom)
+                    var message = messageInputDom.value;
+                    var hi = document.querySelector('#who');
+                    var who = hi.value;
+
+                    if (message != ""){
+                        chatSocket.send(JSON.stringify({
+                            'message' : message,
+                            'who' : who
+                        }));
+                
+                    }
+                    messageInputDom.value = '';
+                };*/
+                
         });
+        
 </script>
 
 <div class="modal fade" id="id02" role="dialog" >
@@ -206,4 +354,5 @@
         });
     });
 </script>
+
 {% endblock %}

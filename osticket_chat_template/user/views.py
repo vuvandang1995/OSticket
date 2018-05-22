@@ -84,6 +84,7 @@ def history(request,id):
 def homeuser(request):
     if request.session.has_key('user'):
         user = Users.objects.get(username=request.session['user'])
+        admin = Agents.objects.get(admin=1)
         form = CreateNewTicketForm()
         topic = Topics.objects.all()
         ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
@@ -93,7 +94,8 @@ def homeuser(request):
                    'user': user,
                    'handler': handler,
                    'topic': topic,
-                   'username': mark_safe(json.dumps(user.username))
+                   'username': mark_safe(json.dumps(user.username)),
+                   'admin': mark_safe(json.dumps(admin.username))
                    }
         if request.method == 'POST':
             form = CreateNewTicketForm(request.POST,request.FILES)

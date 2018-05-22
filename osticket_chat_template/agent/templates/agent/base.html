@@ -69,9 +69,9 @@
     var x = document.getElementById("myAudio"); 
     var fullname = {{ fullname }};
     var agentName = {{ agent_name }};
-    var chatSocket = new WebSocket(
+    /*var chatSocket = new WebSocket(
         'ws://' + window.location.host +
-        '/ws/agent/' + agentName + '/');
+        '/ws/agent/' + agentName + '/');*/
     
     var group_agent_Socket = new WebSocket(
         'ws://' + window.location.host +
@@ -85,7 +85,7 @@
     });
 
 
-    chatSocket.onmessage = function(e) {
+    /*chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         var message = data['message'];
         if (message.includes('is closed by')){
@@ -97,7 +97,7 @@
                 $("#info_user").load(location.href + " #info_user");
             }, 1000);
         }
-    };
+    };*/
 
     group_agent_Socket.onmessage = function(e) {
         var data = JSON.parse(e.data);
@@ -218,6 +218,18 @@
             x.play();
             setTimeout(function(){
                 $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+            }, 2000);
+        }
+
+        if (message.includes(agentName) && message.includes('is closed by')) {
+            var len = message.length;
+            var message1 = message[len-1];
+            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+            $('.message-center').prepend(noti);
+            $(".point").show();
+            x.play();
+            setTimeout(function(){
+                $("#info_user").load(location.href + " #info_user");
             }, 2000);
         }
     };
