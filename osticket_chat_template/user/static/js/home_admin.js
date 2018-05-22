@@ -83,6 +83,10 @@ $(document).ready(function(){
     });
 
     $(".forward_ticket").click(function(){
+        $('.loading').show();
+        $(this).prop('disabled', true);
+        $(".inputText").prop('disabled', true);
+        $(".closefd").prop('disabled', true);
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var id = $("input[name=ticketid]").val();
         var list_agent = [];
@@ -104,6 +108,10 @@ $(document).ready(function(){
                 group_agent_Socket.send(JSON.stringify({
                     'message' : list_agent,
                 }));
+                $(".loading").hide();
+                $(".forward_ticket").prop('disabled', false);
+                $(".inputText").prop('disabled', false);
+                $(".closefd").prop('disabled', false);
             }
         });
     });

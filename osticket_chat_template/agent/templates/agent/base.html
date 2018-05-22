@@ -33,23 +33,20 @@
                             <li>
                                 <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
                                     <div class="message-center" style="overflow: hidden; width: auto; height: 250px;">
-                                            
                                     </div>
                                 </div>
                             </li>
-                            
                         </ul>
                     </div>
-                    
                 </li>
-                <li><a href="{% url 'agent:home_agent' %}">Home</a></li>
-                <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
-                <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
-                <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
-                <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
-                <li><a href="{% url 'agent:manage_user' %}">Manage user</a></li>
-                <li><a href="{% url 'agent:profile' %}">Profile</a></li>
-                <li><a href="{% url 'agent:logout' %}">Logout</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:home_agent' %}">Home</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:inbox' %}">Inbox</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:outbox' %}">Outbox</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:manage_user' %}">Manage user</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:profile' %}">Profile</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:logout' %}">Logout</a></li>
             </ul>
         </nav>
     </div>
@@ -57,6 +54,7 @@
     <br />
     <br />
     <div class="container" id="info_user">
+        <h2> </h2>
     {% block content %}
     {% endblock %}
     </div>

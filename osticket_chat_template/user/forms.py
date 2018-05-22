@@ -26,12 +26,7 @@ class RegistrationForm(forms.Form):
     })
     )
 
-    phone = forms.CharField(widget=forms.TextInput(
-        attrs={               
-            'class': 'form-control',
-            'placeholder': 'Your phone number',
-        }
-    ))
+    phone = forms.RegexField(regex=r'^\+?1?\d{9,15}$', error_messages={"invalid": "invalid phone number"})
 
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={               
@@ -55,26 +50,26 @@ class RegistrationForm(forms.Form):
             if password == password2 and password:
                 return password2
             else:
-                raise forms.ValidationError("Mật khẩu không hợp lệ")
-        raise forms.ValidationError("Mật khẩu không hợp lệ")
+                raise forms.ValidationError("Re-password doesn't match")
+        raise forms.ValidationError("Password is invalid")
 
 
     # check xem user name đã tồn tại hay chưa
     def clean_username(self):
         username =  self.cleaned_data['username']
         if get_user(username) is not None:
-            raise forms.ValidationError("Tài khoản đã tồn tại")
+            raise forms.ValidationError("Username was existed")
         return username
 
     # check email có đúng định dạng không, đã tồn tại chưa
     def clean_email(self):
         email = self.cleaned_data['email']
         if get_user_email(email) is not None:
-            raise forms.ValidationError("Email đã được đăng kí")
+            raise forms.ValidationError("Email was registered")
         try:
             validate_email(email)
         except:
-            raise forms.ValidationError("Email không hợp lệ")
+            raise forms.ValidationError("Email is invalid")
         return email
 
 
@@ -97,12 +92,12 @@ class UserResetForm(forms.Form):
     # check email xem đã tồn tại chưa, đúng định dạng không
     def clean_uemail(self):
         uemail = self.cleaned_data['uemail']
-        if get_user_email(uemail) is None:
-            raise forms.ValidationError("Email đã chưa được đăng kí")
         try:
             validate_email(uemail)
         except:
-            raise forms.ValidationError("Email không hợp lệ")
+            raise forms.ValidationError("Email is invalid")
+        if get_user_email(uemail) is None:
+            raise forms.ValidationError("Email isn't registered")
         return uemail
 
 
@@ -130,8 +125,8 @@ class ResetForm(forms.Form):
             if pwd1 == pwd2 and pwd1:
                 return pwd1
             else:
-                raise forms.ValidationError("Mật khẩu không hợp lệ")
-        raise forms.ValidationError("Mật khẩu không hợp lệ")
+                raise forms.ValidationError("re-password doesn't match")
+        raise forms.ValidationError("password is invalid")
     
     
 # form User đăng nhập
@@ -189,8 +184,6 @@ class CreateNewTicketForm(forms.Form):
     # topic = forms.ChoiceField(choices=[(x.id,x.name) for x in Topics.objects.all()])
 
     content = forms.CharField(widget=forms.Textarea(attrs={
-        'cols': '100',
-        'rows': '20',
         'class': 'form-control',
         'placeholder': 'content',
     })

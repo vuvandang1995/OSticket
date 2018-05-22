@@ -148,12 +148,12 @@
 
 <div class="modal fade" id="id02" role="dialog" >
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">New ticket</h4>
-            </div>
-             <div class="modal-body form-group">
-                 <form method="POST" enctype="multipart/form-data" onsubmit="return validateSize()">
+        <div class="modal-content ">
+            <form method="POST" enctype="multipart/form-data" onsubmit="return validateSize()">
+                <div class="modal-header">
+                    <h4 class="modal-title">New ticket</h4>
+                </div>
+                 <div class="modal-body form-group">
                      {% csrf_token %}
                      {% for key, value in form.error.items %}
                      {{value}}
@@ -166,18 +166,19 @@
                          <option value="{{tp.id}}">{{tp.name}}</option>
                          {% endfor %}
                      </select>
-                     <br /><br />
+                     <br />
                      <label for="content"><b>Content</b></label><br /><br />
                      {{form.content}}
                      <br />
                      <label for="attach"><b>Attach</b></label><br />
-                     <input type="file" name="attach" id="attach">
-                     <br/>
+                     <input type="file" class="form-control" accept="image/*" name="attach" id="attach">
                      <div><font id="invalid-msg" color="red" size="5"></font></div>
+                 </div>
+                <div class="modal-footer">
                      <button type="submit" class="btn btn-primary" value="OK" id="i_submit" onsubmit="return validateSize()">Send</button>
                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                 </form>
-             </div>
+                 </div>
+          </form>
         </div>
     </div>
 </div>

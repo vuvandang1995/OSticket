@@ -43,14 +43,14 @@
                             </div>
                             
                         </li>
-                        <li><a href="{% url 'agent:home_agent' %}">Home</a></li>
-                        <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
-                        <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
-                        <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
-                        <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
-                        <li><a href="{% url 'agent:manage_user' %}">Manage user</a></li>
-                        <li><a href="{% url 'agent:profile' %}">Profile</a></li>
-                        <li><a href="{% url 'agent:logout' %}">Logout</a></li>
+                        <li><a class="list-group-item" href="{% url 'agent:home_agent' %}">Home</a></li>
+                        <li><a class="list-group-item" href="{% url 'agent:inbox' %}">Inbox</a></li>
+                        <li><a class="list-group-item" href="{% url 'agent:outbox' %}">Outbox</a></li>
+                        <li><a class="list-group-item" href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
+                        <li><a class="list-group-item" href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
+                        <li><a class="list-group-item" href="{% url 'agent:manage_user' %}">Manage user</a></li>
+                        <li><a class="list-group-item" href="{% url 'agent:profile' %}">Profile</a></li>
+                        <li><a class="list-group-item" href="{% url 'agent:logout' %}">Logout</a></li>
                     </ul>
                 </nav>
             </div>
@@ -108,27 +108,31 @@
                 <div class="modal-body form-group">
                     <div id="info">
                         <label for="fullname"><b>Full name</b></label>
-                        <input class="inputText" type="text" placeholder="Full name" name="fullname" >
+                        <input class="inputText form-control" type="text" placeholder="Full name" name="fullname" >
 
                         <label for="email"><b>Email</b></label>
-                        <input class="inputText" type="text" placeholder="Enter Email" name="email">
+                        <input class="inputText form-control" type="text" placeholder="Enter Email" name="email">
 
                         <label for="phone"><b>Phone</b></label>
-                        <input class="inputText" type="text" placeholder="Enter your phone number" name="phone">
+                        <input class="inputText form-control" type="text" placeholder="Enter your phone number" name="phone">
 
                         <label for="phone"><b>Receive email:</b></label><br/>
+                        {% if agent.receive_email == 0 %}
                         <input style="transform: scale(2)" type="checkbox" name="receive_email"> <b>Yes</b>
+                        {% else %}
+                        <input style="transform: scale(2)" type="checkbox" name="receive_email" checked> <b>Yes</b>
+                        {% endif %}
                     </div>
 
                     <div id="pwd">
                         <label for="psw-current"><b>Current Password</b></label>
-                        <input class="inputText" type="password" placeholder="Enter current Password" name="current_password">
+                        <input class="inputText form-control" type="password" placeholder="Enter current Password" name="current_password">
 
                         <label for="psw"><b>Password</b></label>
-                        <input class="inputText" type="password" placeholder="Enter new Password" name="password">
+                        <input class="inputText form-control" type="password" placeholder="Enter new Password" name="password">
 
                         <label for="psw-repeat"><b>Repeat Password</b></label>
-                        <input class="inputText" type="password" placeholder="Repeat new Password" name="password2">
+                        <input class="inputText form-control" type="password" placeholder="Repeat new Password" name="password2">
                     </div>
 
                 </div>
