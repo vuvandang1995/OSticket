@@ -5,13 +5,10 @@ import json
 from user.models import *
 from channels.layers import get_channel_layer
 
-dict_chat = {}
-list_mess = []
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
-        print(self.room_group_name)
         
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -20,38 +17,7 @@ class ChatConsumer(WebsocketConsumer):
         )
         self.accept()
 
-        try:
-            list_message = dict_chat[self.room_group_name]
-            for listmess in list_message:
-                self.send(text_data=json.dumps({
-                'message': listmess['message'],
-                'who': listmess['who']
-            }))
-        except:
-            print('ok')
-
     def disconnect(self, close_code):
-        try:
-            list_mess_check = dict_chat[self.room_group_name]
-            check = True
-        except:
-            check = False
-
-        if check == True:
-            list_mess_ = []
-            list_mess_ = dict_chat[self.room_group_name]
-            if list_mess not in list_mess_:
-                print('true')
-            #     list_mess_ = list_mess_ + list_mess
-            #     dict_chat[self.room_group_name] = list_mess_
-            #     print('co roi')
-            #     print(list_mess_)
-            print(list_mess)
-            print(list_mess_)
-        else:
-            dict_chat[self.room_group_name] = list_mess
-            print('chua co')
-            print(list_mess)
         # Leave room group
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
@@ -66,8 +32,8 @@ class ChatConsumer(WebsocketConsumer):
         message = text_data_json['message']
         who = text_data_json['who']
 
-        list_mess.append(text_data_json)
-        print(list_mess)
+        print(message)
+        print(who)
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(

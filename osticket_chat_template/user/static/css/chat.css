@@ -35,20 +35,20 @@
 }
 .frame{
     background:#e0e0de;
-    height:450px;
+    height:325px;
     overflow:hidden;
     padding:0;
 }
 .frame > div:last-of-type{
     position:absolute;bottom:0;width:100%;display:flex;
 }
-body > div > div > div:nth-child(2) > span{
+.frame > div > div:nth-child(2) > span{
     background: whitesmoke;padding: 10px;font-size: 21px;border-radius: 50%;
 }
-body > div > div > div.msj-rta.macro{
+.frame > div > div.msj-rta.macro{
     margin:auto;margin-left:1%;
 }
-ul {
+.frame > ul {
     width:100%;
     list-style-type: none;
     padding:18px;
@@ -56,7 +56,7 @@ ul {
     bottom:47px;
     display:flex;
     flex-direction: column;
-    top:0;
+    top:33px;
     overflow-y:scroll;
 }
 .msj:before{

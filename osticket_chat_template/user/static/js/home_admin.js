@@ -77,6 +77,19 @@ $(document).ready(function(){
                 success: function(){
                     // window.location.reload();
                     $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+                    var sender = $('#sender'+id).html();
+                    var Socket1 = new WebSocket(
+                    'ws://' + window.location.host +
+                    '/ws/user/' + sender + '/');
+    
+                    message = 'Ticket '+id+' is deleted by admin!' 
+                    Socket1.onopen = function (event) {
+                        setTimeout(function(){
+                            Socket1.send(JSON.stringify({
+                                'message' : message,
+                            }));
+                        }, 1000);
+                    };
                 }
            });
         }
@@ -112,6 +125,19 @@ $(document).ready(function(){
                 $(".forward_ticket").prop('disabled', false);
                 $(".inputText").prop('disabled', false);
                 $(".closefd").prop('disabled', false);
+                var sender = $('#sender'+id).html();
+                var Socket1 = new WebSocket(
+                'ws://' + window.location.host +
+                '/ws/user/' + sender + '/');
+
+                message = 'Ticket '+id+' is processing by admin!' 
+                Socket1.onopen = function (event) {
+                    setTimeout(function(){
+                        Socket1.send(JSON.stringify({
+                            'message' : message,
+                        }));
+                    }, 1000);
+                };
             }
         });
     });
