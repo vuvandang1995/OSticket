@@ -15,6 +15,7 @@
 			</tr>
             {% for tk in forwardin %}
             <tr>
+                <input type="hidden" id="user{{tk.ticketid.id}}" value="{{tk.ticketid.sender.username}}">
                 <td>
                     <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content1">{{tk.ticketid.id}}</button>
                 </td>
@@ -29,6 +30,8 @@
                 {% else %}
                 <td><span class="label label-default">closed</span></td>
                 {% endif %}
+
+                
                 <td>
                     <button id="{{tk.ticketid.id}}" class="accept_forward btn btn-success" type="button" data-toggle="tooltip" title="accept" >
                         <span class="glyphicon glyphicon-ok" ></span>
@@ -84,6 +87,7 @@
 			</tr>
             {% for tk in addin %}
             <tr>
+                <input type="hidden" id="user{{tk.ticketid.id}}" value="{{tk.ticketid.sender.username}}">
                 <td>
                     <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
                 </td>
@@ -141,6 +145,21 @@
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
                 }));
+
+                var userName = $('#user'+id).val();
+
+                var Socket1 = new WebSocket(
+                    'ws://' + window.location.host +
+                    '/ws/user/' + userName + '/');
+
+                message = 'give up' 
+                Socket1.onopen = function (event) {
+                    setTimeout(function(){
+                        Socket1.send(JSON.stringify({
+                            'message' : message,
+                        }));
+                    }, 1000);
+                };
                 location.href="/agent/inbox/0_1_"+id;
            }
        });
@@ -163,6 +182,21 @@
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
                 }));
+
+                var userName = $('#user'+id).val();
+
+                var Socket1 = new WebSocket(
+                    'ws://' + window.location.host +
+                    '/ws/user/' + userName + '/');
+
+                message = 'give up' 
+                Socket1.onopen = function (event) {
+                    setTimeout(function(){
+                        Socket1.send(JSON.stringify({
+                            'message' : message,
+                        }));
+                    }, 1000);
+                };
                location.href="/agent/inbox/1_1_"+id;
            }
        });

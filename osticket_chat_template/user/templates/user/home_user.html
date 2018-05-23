@@ -14,7 +14,7 @@
     </button>
     <br/>
     <br/>
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered" id="list_tk_user">
         <tr>
             <td>ID</td>
             <td>Title</td>
@@ -22,6 +22,7 @@
             <td>Handler</td>
             <td>Option</td>
         </tr>
+        {% csrf_token %}
         {% for tk in ticket %}
         <tr>
             <td>
@@ -111,36 +112,40 @@
         </div>
         {% endfor %}
     </table>
-
 </div>
 <script>
         $(document).ready(function(){
             $('body').on('click', '.close_ticket', function(){
                 var id = $(this).attr('id');
+                var token = $("input[name=csrfmiddlewaretoken]").val();
                 var mgs = 'Ticket ' +id+' is closed by '+userName;
                 var message = []
                 if(confirm("Are you sure ?")){
-                    
-                    var array = $('#hd'+id).html().split("<br>");
-                    for (i = 0; i < array.length-1; i++) {
-                        var agentName = array[i].replace(/\s/g,'');
-                        message.push(agentName);
-                    }
+                    $.ajax({
+                        type:'POST',
+                        url:location.href,
+                        data: {'tkid':id, 'csrfmiddlewaretoken':token},
+                        success: function(){
+                            // window.location.reload();
+                            $("#list_tk_user").load(location.href + " #list_tk_user");
 
-                    message.push(mgs);
-                    var chatSocket1 = new WebSocket(
-                    'ws://' + window.location.host +
-                    '/ws/agent/group_agent_Socket/');
-                    chatSocket1.onopen = function (event) {
-                        chatSocket1.send(JSON.stringify({
-                            'message' : message,
-                        }));
-                    };
-                    
-                    setTimeout(function(){
-                        location.href="/user/close_"+id;
-                    }, 1000);
-                    
+                            var array = $('#hd'+id).html().split("<br>");
+                            for (i = 0; i < array.length-1; i++) {
+                                var agentName = array[i].replace(/\s/g,'');
+                                message.push(agentName);
+                            }
+
+                            message.push(mgs);
+                            var chatSocket1 = new WebSocket(
+                            'ws://' + window.location.host +
+                            '/ws/agent/group_agent_Socket/');
+                            chatSocket1.onopen = function (event) {
+                                chatSocket1.send(JSON.stringify({
+                                    'message' : message,
+                                }));
+                            };
+                        }
+                    });
                 }
                 
             });
@@ -148,8 +153,9 @@
             var dict_ws = {};
             $("body").on('click', '#chat_with_agent', function(){
                 var tkid = $(this).children('input').val();
+                $('body .chat'+tkid).show();
+                $("body .mytext").focus();
                 var roomName = makeid();
-                
 
                 if (dict_ws[tkid] == undefined){
                     dict_ws[tkid] = new WebSocket(
@@ -204,7 +210,7 @@
                     }
                     setTimeout(
                         function(){                        
-                            $("body #chat"+tkid+" .frame > ul").append(control).scrollTop($("ul").prop('scrollHeight'));
+                            $("body #chat"+tkid+" .frame > ul").append(control).scrollTop($("body #chat"+tkid+" .frame > ul").prop('scrollHeight'));
                         }, time);
                     
                 }
@@ -216,13 +222,12 @@
                     var who = data['who'];
                     insertChat(who, message, 0);
                 };
-
-                
+               
             });
 
-            /*$('body').on('click', 'header', function(){
+            $('body').on('click', 'header', function(){
                 $(this).next().slideToggle(300, 'swing');
-            })*/
+            })
 
             $('body').on('click', '.xxx', function(){
                 $("body .mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
@@ -250,6 +255,7 @@
                 var tk_id = $(this).parent().next().children('h4').html();
                 dict_ws[tk_id].close();
                 delete dict_ws[tk_id];
+                $("body #chat"+tk_id+" .frame > ul").empty();
             })
              
         });

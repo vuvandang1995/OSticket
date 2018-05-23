@@ -83,19 +83,6 @@
     });
 
 
-    /*chatSocket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        if (message.includes('is closed by')){
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
-            $('.message-center').prepend(noti);
-            $(".point").show();
-            x.play();
-            setTimeout(function(){
-                $("#info_user").load(location.href + " #info_user");
-            }, 1000);
-        }
-    };*/
 
     group_agent_Socket.onmessage = function(e) {
         var data = JSON.parse(e.data);
@@ -119,7 +106,7 @@
         }
 
         // Thong bao va load lai table processing khi ban duoc ai do forward hoac add ticket
-        if (message.includes(fullname) && message.includes('forward_new')) {
+        if (message.includes(agentName) && message.includes('forward_new')) {
             var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span></div></a>';
             $('.message-center').prepend(noti);
             $(".point").show();
@@ -129,7 +116,7 @@
             }, 2000);
         }
 
-        if (message.includes(fullname) && message.includes('add_new')) {
+        if (message.includes(agentName) && message.includes('add_new')) {
             var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(add)</span></div></a>';
             $('.message-center').prepend(noti);
             $(".point").show();
@@ -219,9 +206,21 @@
             }, 2000);
         }
 
-        if (message.includes(agentName) && message.includes('is closed by')) {
+        
+        if (message.includes(agentName) && message[1].includes('is closed by')) {
             var len = message.length;
             var message1 = message[len-1];
+            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+            $('.message-center').prepend(noti);
+            $(".point").show();
+            x.play();
+            setTimeout(function(){
+                $("#info_user").load(location.href + " #info_user");
+            }, 2000);
+        }
+
+        if (message.includes(agentName+'+') && message.includes('give up')) {
+            var message1 = message[0]+' just have given up ticket no. '+message[1];
             var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
             $('.message-center').prepend(noti);
             $(".point").show();

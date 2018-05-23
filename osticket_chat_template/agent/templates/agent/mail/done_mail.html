@@ -3,7 +3,5 @@ Hi {{ receiver.fullname }},
 {{sender.fullname}} just finished your ticket.
 Click link below to check
 http://{{ domain }}{% url 'user:homeuser'%}
-If you don't feel satisfied, you can tell {{sender.fullname}} to re-process
-http://{{ domain }}{% url 'user:conversation' ticketid %}
 Thank for your patience!
 {% endautoescape %}

@@ -258,6 +258,7 @@ def assign_ticket(request, id):
 
 def processing_ticket(request):
     if request.session.has_key('agent'):
+        agent = Agents.objects.exclude(Q(username=request.session['agent']) | Q(admin=1))
         form = ForwardForm()
         form1 = AddForm()
         sender = Agents.objects.get(username=request.session['agent'])
@@ -268,111 +269,106 @@ def processing_ticket(request):
         gua = {}
         for tk in tksdpr:
             agt = TicketAgent.objects.filter(ticketid=tk).values('agentid')
-            tem = [x.fullname for x in Agents.objects.filter(id__in=agt, admin=0)]
+            tem = [x.username for x in Agents.objects.filter(id__in=agt, admin=0)]
             if len(tem) > 1:
                 gua[tk.id] = 'yes'
             else:
                 gua[tk.id] = 'no'
             agc[tk.id] = tem
-            agk[tk.id] = [x.fullname for x in Agents.objects.exclude(Q(id__in=agt) | Q(admin=1))]
-        content = {'ticket': tksdpr, 'agc': agc, 'agk': agk, 'form':form, 'form1': form1, 'gua': gua, 'agent_name': mark_safe(json.dumps(sender.username)), 'fullname': mark_safe(json.dumps(sender.fullname))}
+        content = {'agent': agent, 'ticket': tksdpr, 'agc': agc, 'form':form, 'form1': form1, 'gua': gua, 'agent_name': mark_safe(json.dumps(sender.username)), 'fullname': mark_safe(json.dumps(sender.fullname))}
         if request.method == 'POST':
-            if request.POST['type'] == 'forward':
-                form = ForwardForm(request.POST)
-                if form.is_valid():
-                    tksd = Tickets.objects.get(id=request.POST['ticketid'])
-                    receiver = Agents.objects.filter(fullname__in=request.POST.getlist('receiver'))
-                    text = form.cleaned_data.get('content')
-                    for rc in receiver:
-                        if rc != sender:
+            if request.POST['type'] == 'forward_agent':
+                list_agent = request.POST['list_agent[]']
+                list_agent = json.loads(list_agent)
+                tk = Tickets.objects.get(id=request.POST['ticketid'])
+                receiver = Agents.objects.filter(username__in=list_agent)
+                text = request.POST['content']
+                for rc in receiver:
+                    if rc != sender:
+                        try:
+                            TicketAgent.objects.get(ticketid=tk, agentid=rc)
+                        except ObjectDoesNotExist:
                             try:
-                                TicketAgent.objects.get(ticketid=tksd, agentid=rc)
+                                ForwardTickets.objects.get(senderid=sender, receiverid=rc, ticketid=tk)
                             except ObjectDoesNotExist:
-                                try:
-                                    ForwardTickets.objects.get(senderid=sender, receiverid=rc, ticketid=tksd)
-                                except ObjectDoesNotExist:
-                                    ForwardTickets.objects.create(senderid=sender, receiverid=rc, ticketid=tksd,content=text)
-                                    if rc.receive_email == 1:
-                                        email = EmailMessage(
-                                            'Forward ticket',
-                                            render_to_string('agent/mail/forward_mail.html',
-                                                             {'receiver': rc,
-                                                              'domain': (get_current_site(request)).domain,
-                                                              'sender': sender}),
-                                            to=[rc.email],
-                                        )
-                                        email.send()
+                                ForwardTickets.objects.create(senderid=sender, receiverid=rc, ticketid=tk,content=text)
+                                if rc.receive_email == 1:
+                                    email = EmailMessage(
+                                        'Forward ticket',
+                                        render_to_string('agent/mail/forward_mail.html',
+                                                            {'receiver': rc,
+                                                            'domain': (get_current_site(request)).domain,
+                                                            'sender': sender}),
+                                        to=[rc.email],
+                                    )
+                                    email.send()
                 return redirect("/agent/processing_ticket")
-            else:
-                form1 = AddForm(request.POST)
-                if form1.is_valid():
-                    tksd = Tickets.objects.get(id=request.POST['ticketid'])
-                    receiver = Agents.objects.filter(fullname__in=request.POST.getlist('receiver'))
-                    text = form1.cleaned_data.get('content')
-                    for rc in receiver:
-                        if rc != sender:
+            elif request.POST['type'] == 'add_agent':
+                list_agent = request.POST['list_agent[]']
+                list_agent = json.loads(list_agent)
+                tk = Tickets.objects.get(id=request.POST['ticketid'])
+                receiver = Agents.objects.filter(username__in=list_agent)
+                text = request.POST['content']
+                for rc in receiver:
+                    if rc != sender:
+                        try:
+                            TicketAgent.objects.get(ticketid=tk,agentid=rc)
+                        except ObjectDoesNotExist:
                             try:
-                                TicketAgent.objects.get(ticketid=tksd,agentid=rc)
+                                AddAgents.objects.get(senderid=sender, receiverid=rc, ticketid=tk)
                             except ObjectDoesNotExist:
-                                try:
-                                    AddAgents.objects.get(senderid=sender, receiverid=rc, ticketid=tksd)
-                                except ObjectDoesNotExist:
-                                    AddAgents.objects.create(senderid=sender, receiverid=rc, ticketid=tksd, content=text)
-                                    if rc.receive_email == 1:
-                                        email = EmailMessage(
-                                            'Add in a ticket',
-                                            render_to_string('agent/mail/add_mail.html',
-                                                             {'receiver': rc,
-                                                              'domain': (get_current_site(request)).domain,
-                                                              'sender': sender}),
-                                            to=[rc.email]
-                                        )
-                                        email.send()
+                                AddAgents.objects.create(senderid=sender, receiverid=rc, ticketid=tk, content=text)
+                                if rc.receive_email == 1:
+                                    email = EmailMessage(
+                                        'Add in a ticket',
+                                        render_to_string('agent/mail/add_mail.html',
+                                                            {'receiver': rc,
+                                                            'domain': (get_current_site(request)).domain,
+                                                            'sender': sender}),
+                                        to=[rc.email]
+                                    )
+                                    email.send()
                 return redirect("/agent/processing_ticket")
+            elif request.POST['type'] == 'process_done':
+                tkid = request.POST['tkid']
+                stt = request.POST['stt']
+                ticket = Tickets.objects.get(id=tkid)
+                ticket.status = stt
+                ticket.save()
+                if stt == 1:
+                    action = 're-process ticket'
+                else:
+                    action = 'done ticket'
+                    user = Users.objects.get(id=ticket.sender.id)
+                    # if user.receive_email == 1:
+                    #     email = EmailMessage(
+                    #         'Finished ticket',
+                    #         render_to_string('agent/mail/done_mail.html',
+                    #                         {'receiver': user,
+                    #                         'domain': (get_current_site(request)).domain,
+                    #                         'sender': sender,
+                    #                         'ticketid': ticket.id}),
+                    #         to=[user.email],
+                    #     )
+                    #     email.send()
+                TicketLog.objects.create(agentid=sender, ticketid=ticket,
+                                        action=action,
+                                        date=timezone.now().date(),
+                                        time=timezone.now().time())
+            elif request.POST['type'] == 'give_up':
+                ticket = Tickets.objects.get(id=request.POST['tkid'])
+                try:
+                    TicketAgent.objects.get(ticketid=ticket)
+                except MultipleObjectsReturned:
+                    tk = TicketAgent.objects.get(ticketid=ticket, agentid=sender)
+                    tk.delete()
+                    TicketLog.objects.create(agentid=sender, ticketid=ticket, action='give up ticket',
+                                            date=timezone.now().date(),
+                                            time=timezone.now().time())
         return render(request,'agent/processing_ticket.html',content)
     else:
         return redirect("/")
 
-
-def processing_ticket_interaction(request, option, choose, id):
-    if request.session.has_key('agent'):
-        agent = Agents.objects.get(username=request.session['agent'])
-        ticket = Tickets.objects.get(id=id)
-        if option == 0:
-            ticket.status = choose
-            ticket.save()
-            if choose == 1:
-                action = 're-process ticket'
-            else:
-                action = 'done ticket'
-                user = Users.objects.get(id=ticket.sender.id)
-                if user.receive_email == 1:
-                    email = EmailMessage(
-                        'Finished ticket',
-                        render_to_string('agent/mail/done_mail.html',
-                                         {'receiver': user,
-                                          'domain': (get_current_site(request)).domain,
-                                          'sender': agent,
-                                          'ticketid': ticket.id}),
-                        to=[user.email],
-                    )
-                    email.send()
-            TicketLog.objects.create(agentid=agent, ticketid=ticket,
-                                     action=action,
-                                     date=timezone.now().date(),
-                                     time=timezone.now().time())
-        elif option == 4:
-            try:
-                TicketAgent.objects.get(ticketid=ticket)
-            except MultipleObjectsReturned:
-                tk = TicketAgent.objects.get(ticketid=ticket, agentid=agent)
-                tk.delete()
-                TicketLog.objects.create(agentid=agent, ticketid=ticket, action='give up ticket',
-                                         date=timezone.now().date(),
-                                         time=timezone.now().time())
-        return redirect("/agent/processing_ticket")
-    else:
-        return redirect("/")
 
 
 def history(request,id):
@@ -632,25 +628,4 @@ def manager_user_interaction(request, choose, id):
         return redirect("/")
 
 
-def conversation(request, id):
-    if request.session.has_key('agent'):
-        agent = Agents.objects.get(username=request.session['agent'])
-        ticket = get_object_or_404(Tickets, pk=id)
-        try:
-            hd = TicketAgent.objects.filter(ticketid=ticket)
-        except:
-            hd = None
-        if hd is not None:
-            if ticket.chat is None:
-                room_name = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
-                ticket.chat = room_name
-                ticket.save()
-            tk = mark_safe(json.dumps(ticket.chat))
-        else:
-            return redirect('/agent')
-        
-        content = {'agent': agent, 'ticket': ticket, 'room_name_json': tk, 'who': 'you'}
-        return render(request, 'user/conversation.html', content)
-    else:
-        return redirect("/")
 

@@ -70,10 +70,12 @@
         chatSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);
             var message = data['message'];
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
-            $('.message-center').prepend(noti);
-            $(".point").show();
-            x.play();
+            if (message !=  'give up'){
+                var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                $('.message-center').prepend(noti);
+                $(".point").show();
+                x.play();
+            }
             setTimeout(function(){
                 $("#info_user").load(location.href + " #info_user");
             }, 2000);

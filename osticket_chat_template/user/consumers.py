@@ -16,6 +16,18 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
+        try:
+            file = open(self.room_group_name+'.txt', 'r')
+            for line in file:
+                message = line.split('^%$^%$&^')[0]
+                who = line.split('^%$^%$&^')[1].strip()
+                self.send(text_data=json.dumps({
+                        'message': message,
+                        'who': who
+                    }))
+        except:
+            pass
+        
 
     def disconnect(self, close_code):
         # Leave room group
@@ -32,8 +44,9 @@ class ChatConsumer(WebsocketConsumer):
         message = text_data_json['message']
         who = text_data_json['who']
 
-        print(message)
-        print(who)
+        file = open(self.room_group_name+'.txt','a') 
+        file.write(message + "^%$^%$&^"+ who + "\n") 
+        file.close()  
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(

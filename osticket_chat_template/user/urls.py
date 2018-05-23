@@ -13,8 +13,5 @@ urlpatterns = [
         views.activate, name='activate'),
     path(r'^resetpassword/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.resetpwd, name='resetpassword'),
-    path('user/close_<int:id>',views.close_ticket, name='close_ticket'),
-    # path('user/<int:id>_<str:chat>', views.conversation, name='conversation'),
-    url(r'^user/(?P<id>[^/]+)/$', views.conversation, name='conversation'),
     path('user/history_<int:id>', views.history, name='history')
 ]
