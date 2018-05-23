@@ -467,9 +467,15 @@ def inbox_interaction(request, foa, choose, id):
         agent = Agents.objects.get(username=request.session.get('agent'))
         ticket = Tickets.objects.get(id=id)
         if foa == 0:
-            fwticket = ForwardTickets.objects.get(ticketid=ticket,receiverid=agent)
+            try:
+                addagent = AddAgents.objects.get(ticketid=ticket, receiverid=agent)
+            except ObjectDoesNotExist:
+                pass
+            else:
+                addagent.delete()
+            fwticket = ForwardTickets.objects.get(ticketid=ticket, receiverid=agent)
             sender = fwticket.senderid
-            agticket = TicketAgent.objects.get(ticketid=ticket,agentid=fwticket.senderid)
+            agticket = TicketAgent.objects.get(ticketid=ticket, agentid=fwticket.senderid)
             fwticket.delete()
             if choose == 0:
                 if sender.receive_email == 1:
@@ -505,9 +511,15 @@ def inbox_interaction(request, foa, choose, id):
                 else:
                     agticket.delete()
         else:
-            fwticket = AddAgents.objects.get(ticketid=ticket, receiverid=agent)
-            sender = fwticket.senderid
-            fwticket.delete()
+            try:
+                fwticket = ForwardTickets.objects.get(ticketid=ticket, receiverid=agent)
+            except ObjectDoesNotExist:
+                pass
+            else:
+                fwticket.delete()
+            addagent = AddAgents.objects.get(ticketid=ticket, receiverid=agent)
+            sender = addagent.senderid
+            addagent.delete()
             if choose == 0:
                 if sender.receive_email == 1:
                     email = EmailMessage(
