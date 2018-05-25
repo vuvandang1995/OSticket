@@ -131,6 +131,13 @@ class ResetForm(forms.Form):
     
 # form User đăng nhập
 class UserLoginForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Password',
+        }
+    ))
+
     username = forms.CharField(widget=forms.TextInput(
         attrs={               
             'class': 'form-control',
@@ -138,18 +145,14 @@ class UserLoginForm(forms.Form):
         }
     ))
 
-    password = forms.CharField(widget=forms.PasswordInput(
-        attrs={               
-            'class': 'form-control',
-            'placeholder': 'Password',
-        }
-    ))
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        return password
 
-    # check xem tài khoản có tồn tại không
-    def clean(self, *args, **kwargs):
-        if 'username' in self.cleaned_data:
+    def clean_username(self):
+        if 'password' in self.cleaned_data:
             username = self.cleaned_data['username']
-            password = self.cleaned_data.get('password')
+            password = self.cleaned_data['password']
             if authenticate_user(username=username, password=password) is None:
                 raise forms.ValidationError('Account is not exist!')
             u = get_user(username)
@@ -159,17 +162,17 @@ class UserLoginForm(forms.Form):
 
 # form Agent đăng nhập
 class AgentLoginForm(forms.Form):
+    agentpass = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Password',
+        }
+    ))
+
     agentname = forms.CharField(widget=forms.TextInput(
         attrs={               
             'class': 'form-control',
             'placeholder': 'User name',
-        }
-    ))
-
-    agentpass = forms.CharField(widget=forms.PasswordInput(
-        attrs={               
-            'class': 'form-control',
-            'placeholder': 'Password',
         }
     ))
 
