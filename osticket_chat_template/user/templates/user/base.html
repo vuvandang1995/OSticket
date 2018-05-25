@@ -102,36 +102,65 @@
         chatSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);
             var message = data['message'];
-            if (message ==  'give up'){
-                setTimeout(function(){
-                    $("#info_user").load(location.href + " #info_user");
-                }, 2000);
-            }else if (message.includes('new+chat')){
-                var tkid = message[0];
-                if ($('body .chat'+tkid).length){
-                    if ($('body .chat'+tkid).css('display') == 'none'){
+            var type_save = data['type'];
+            if (typeof type_save !== 'undefined'){
+                if (type_save == 're-noti'){
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                }else{
+                    var href="javascript:register_popup('chat"+message+"', "+message+");"
+                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    $('.notification_chat').prepend(noti);
+                }
+                
+            }else{
+                if (message ==  'give up'){
+                    setTimeout(function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }else if (message.includes('new+chat')){
+                    var tkid = message[0];
+                    if ($('body .chat'+tkid).length){
+                        if ($('body .chat'+tkid).css('display') == 'none'){
+                            var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
+                            var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
+                            $('.notification_chat').prepend(noti);
+                            $("body .point_message").show();
+                            x.play();
+    
+                            chatSocket.send(JSON.stringify({
+                                'message' : message[0],
+                                'type' : 'chat',
+                            }));
+                        }
+                    }else{
                         var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
                         var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
                         $('.notification_chat').prepend(noti);
                         $("body .point_message").show();
                         x.play();
+    
+                        chatSocket.send(JSON.stringify({
+                            'message' : message[0],
+                            'type' : 'chat',
+                        }));
                     }
                 }else{
-                    var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
-                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
-                    $('.notification_chat').prepend(noti);
-                    $("body .point_message").show();
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $(".point_noti").show();
                     x.play();
+                    setTimeout(function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }, 2000);
+    
+                    chatSocket.send(JSON.stringify({
+                        'message' : message,
+                        'type' : 'save',
+                    }));
                 }
-            }else{
-                var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
-                $('.noti_noti').prepend(noti);
-                $(".point_noti").show();
-                x.play();
-                setTimeout(function(){
-                    $("#info_user").load(location.href + " #info_user");
-                }, 2000);
             }
+            
                 
         };
     

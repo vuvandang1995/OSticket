@@ -88,16 +88,24 @@ class UserConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
-        # try:
-        #     file = open(self.room_group_name+'.txt', 'r')
-        #     for line in file:
-        #         message = line[:len(line)-1]
-        #         self.send(text_data=json.dumps({
-        #                 'message': message,
-        #                 'type' : 're-noti'
-        #             }))
-        # except:
-        #     pass
+        try:
+            f = r'notification/user/'+self.room_group_name+'.txt'
+            file = open(f, 'r')
+            for line in file:
+                message = line[:len(line)-1]
+                if '*&*%^chat' in message:
+                    message = line.split('*&*%^chat')[0]
+                    self.send(text_data=json.dumps({
+                        'message': message,
+                        'type' : 're-noti-chat'
+                    }))
+                else:
+                    self.send(text_data=json.dumps({
+                            'message': message,
+                            'type' : 're-noti'
+                        }))
+        except:
+            pass
 
     def disconnect(self, close_code):
         # Leave room group
@@ -111,18 +119,29 @@ class UserConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
-        file = open(self.room_group_name+'.txt','a') 
-        file.write(str(message) + "\n") 
-        file.close()
-        print(message)
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-            }
-        )
+        try:
+            type_save = text_data_json['type']
+            if type_save == 'chat':
+                f = r'notification/user/'+self.room_group_name+'.txt'
+                file = open(f,'a') 
+                file.write(str(message) + "*&*%^chat" + "\n") 
+                file.close()
+            else:
+                f = r'notification/user/'+self.room_group_name+'.txt'
+                file = open(f,'a') 
+                file.write(str(message) + "\n") 
+                file.close()
+        except:
+            # Send message to room group
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                }
+            )
+        
+        
 
     # Receive message from room group
     def chat_message(self, event):
@@ -146,16 +165,27 @@ class AgentConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
-        # try:
-        #     file = open(self.room_group_name+'.txt', 'r')
-        #     for line in file:
-        #         message = line[:len(line)-1]
-        #         self.send(text_data=json.dumps({
-        #                 'message': message,
-        #                 'type' : 're-noti'
-        #             }))
-        # except:
-        #     pass
+        try:
+            f = r'notification/agent/'+self.room_group_name+'.txt'
+            file = open(f, 'r')
+            for line in file:
+                message = line[:len(line)-1]
+                if '*&*%^chat' in message:
+                    msg = line.split('*&*%^chat')[0]
+                    message = msg.split('-')[0]
+                    name = msg.split('-')[1]
+                    self.send(text_data=json.dumps({
+                        'message': message,
+                        'user_name' : name,
+                        'type' : 're-noti-chat'
+                    }))
+                else:
+                    self.send(text_data=json.dumps({
+                            'message': message,
+                            'type' : 're-noti'
+                        }))
+        except:
+            pass
 
     def disconnect(self, close_code):
         # Leave room group
@@ -169,18 +199,27 @@ class AgentConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
-        file = open(self.room_group_name+'.txt','a') 
-        file.write(str(message) + "\n") 
-        file.close()
-        print(message)
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-            }
-        )
+        try:
+            type_save = text_data_json['type']
+            if type_save == 'chat':
+                f = r'notification/agent/'+self.room_group_name+'.txt'
+                file = open(f,'a') 
+                file.write(str(message) + "*&*%^chat" + "\n") 
+                file.close()
+            else:
+                f = r'notification/agent/'+self.room_group_name+'.txt'
+                file = open(f,'a') 
+                file.write(str(message) + "\n") 
+                file.close()
+        except:
+            # Send message to room group
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                }
+            )
 
     # Receive message from room group
     def chat_message(self, event):

@@ -234,7 +234,7 @@
 </script>
 <script>
    $(document).ready(function(){
-       $("body").on('click', '.handle_done', function(){
+        $("body").on('click', '.handle_done', function(){
            var id = $(this).attr('id');
            var token = $("input[name=csrfmiddlewaretoken]").val();
            if(confirm("Are you sure ?")){
@@ -265,10 +265,10 @@
                     }
                 });
             }
-       });
+        });
 
 
-       $("body").on('click', '.handle_processing', function(){
+        $("body").on('click', '.handle_processing', function(){
            var id = $(this).attr('id');
            var token = $("input[name=csrfmiddlewaretoken]").val();
            if(confirm("Are you sure ?")){
