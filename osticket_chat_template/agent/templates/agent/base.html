@@ -101,9 +101,16 @@
         '/ws/agent/group_agent_Socket/');
         
         
-    //$("body .point").hide();
-    //$("body .point2").hide();
-
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
 
     $("body").on('click', '.fa-bell', function(){
         $("body .point_noti").hide();
@@ -127,182 +134,263 @@
     group_agent_Socket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         var message = data['message'];
-        // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
-        switch(message) {
-            case 'new_ticket':
-                var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">You have a new ticket</span></div></a>';
-                $('.noti_noti').prepend(noti);
-                $("body .point_noti").show();
-                setTimeout(function(){
-                    $("#list_ticket_home").load(location.href + " #list_ticket_home");
-                }, 1000);
-                x.play();
-                break;
-            case 'ticket da duoc xu ly':
-                setTimeout(function(){
-                    $("#list_ticket_home").load(location.href + " #list_ticket_home");
-                }, 1000);
-                break;
-        }
-
-        // Thong bao va load lai table processing khi ban duoc ai do forward hoac add ticket
-        if (check_exits(agentName, message) && check_exits('forward_new', message)) {
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_forward").load(location.href + " #list_ticket_forward");
-            }, 2000);
-        }
-
-        if (check_exits(agentName, message) && check_exits('add_new', message)) {
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(add)</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_add").load(location.href + " #list_ticket_add");
-            }, 2000);
-        }
-
-        // Thong bao va load lai table inbox, processing khi co agent dong y ticket ban forward hoac add
-        if (message.includes('+'+fullname) && message.includes('agreed your ticket you forwarding')) {
-            var message1 = message.slice(0, (message.length - fullname.length - 1));
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#info_user").load(location.href + " #info_user");
-            }, 2000);
-        }
-
-        if (message.includes('+'+fullname) && message.includes('Your ticket you forwarding refused by')) {
-            var message1 = message.slice(0, (message.length - fullname.length - 1));
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
-            }, 2000);
-        }
-
-        if (message.includes('+'+fullname) && message.includes('agreed your ticket you adding')) {
-            var message1 = message.slice(0, (message.length - fullname.length - 1));
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#info_user").load(location.href + " #info_user");
-            }, 2000);
-        }
-
-        if (message.includes('+'+fullname) && message.includes('Your ticket you adding refused by')) {
-            var message1 = message.slice(0, (message.length - fullname.length - 1));
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
-            }, 2000);
-        }
-        
-        
-        if (check_exits(agentName, message) && check_exits('leader_forward', message)) {
-            var message1 = 'Leader have just forwarded for you ticket '+message[message.length-1];
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
-            }, 2000);
-        }
-        
-        if (check_exits(agentName, message) && check_exits('admin_close_ticket', message)) {
-            var len = message.length;
-            var message1 = 'Leader have just closed ticket '+message[len-1];
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
-            }, 2000);
-        }
-
-        
-        if (check_exits(agentName, message) && check_exits('admin_open_ticket', message)) {
-            var len = message.length;
-            var message1 = 'Leader have just opend ticket '+message[len-1];
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
-            }, 2000);
-        }
-
-        
-        if (message.includes(agentName) && message[1].includes('is closed by')) {
-            var len = message.length;
-            var message1 = message[len-1];
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#info_user").load(location.href + " #info_user");
-            }, 2000);
-        }
-
-        if (message.includes(agentName+'+') && message.includes('give up')) {
-            var message1 = message[0]+' just have given up ticket no. '+message[1];
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.noti_noti').prepend(noti);
-            $("body .point_noti").show();
-            x.play();
-            setTimeout(function(){
-                $("#info_user").load(location.href + " #info_user");
-            }, 2000);
-        }
-
-        if (check_exits(agentName, message) && check_exits('new_chat', message)) {
-            var tkid = message[0];
-            if ($('body .chat'+tkid).length){
-                if ($('body .chat'+tkid).css('display') == 'none'){
-                    var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
-                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
+        var type_save = data['type'];
+            if (typeof type_save !== 'undefined'){
+                if (type_save == 're-noti'){
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                }else{
+                    var name = data['user_name'];
+                    var href="javascript:register_popup_agent('chat"+message+"', "+message+", '"+name+"');"
+                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
                     $('.notification_chat').prepend(noti);
-                    $("body .point_message").show();
-                    x.play();
                 }
             }else{
-                var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
-                var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
-                $('.notification_chat').prepend(noti);
-                $("body .point_message").show();
-                x.play();
+                // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
+                switch(message) {
+                    case 'new_ticket':
+                        var message = 'You have a new ticket';
+                        var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $("body .point_noti").show();
+
+                        group_agent_Socket.send(JSON.stringify({
+                            'message' : message,
+                            'type' : 'save',
+                        }));
+                        setTimeout(function(){
+                            $("#list_ticket_home").load(location.href + " #list_ticket_home");
+                        }, 1000);
+                        x.play();
+                        break;
+
+                    case 'ticket da duoc xu ly':
+                        setTimeout(function(){
+                            $("#list_ticket_home").load(location.href + " #list_ticket_home");
+                        }, 1000);
+                        break;
+                }
+
+                // Thong bao va load lai table processing khi ban duoc ai do forward hoac add ticket
+                if (check_exits(agentName, message) && check_exits('forward_new', message)) {
+                    var message = 'INBOX: You have a new ticket(forward)';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#list_ticket_forward").load(location.href + " #list_ticket_forward");
+                    }, 2000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('add_new', message)) {
+                    var message = 'INBOX: You have a new ticket(add)';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#list_ticket_add").load(location.href + " #list_ticket_add");
+                    }, 2000);
+                }
+
+                // Thong bao va load lai table inbox, processing khi co agent dong y ticket ban forward hoac add
+                if (message.includes('+'+fullname) && message.includes('agreed your ticket you forwarding')) {
+                    var message1 = message.slice(0, (message.length - fullname.length - 1));
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }
+
+                if (message.includes('+'+fullname) && message.includes('Your ticket you forwarding refused by')) {
+                    var message1 = message.slice(0, (message.length - fullname.length - 1));
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
+                    }, 2000);
+                }
+
+                if (message.includes('+'+fullname) && message.includes('agreed your ticket you adding')) {
+                    var message1 = message.slice(0, (message.length - fullname.length - 1));
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }
+
+                if (message.includes('+'+fullname) && message.includes('Your ticket you adding refused by')) {
+                    var message1 = message.slice(0, (message.length - fullname.length - 1));
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
+                    }, 2000);
+                }
+                
+                
+                if (check_exits(agentName, message) && check_exits('leader_forward', message)) {
+                    var message1 = 'Leader have just forwarded for you ticket '+message[message.length-1];
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+                    }, 2000);
+                }
+                
+                if (check_exits(agentName, message) && check_exits('admin_close_ticket', message)) {
+                    var len = message.length;
+                    var message1 = 'Leader have just closed ticket '+message[len-1];
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+                    }, 2000);
+                }
+
+                
+                if (check_exits(agentName, message) && check_exits('admin_open_ticket', message)) {
+                    var len = message.length;
+                    var message1 = 'Leader have just opend ticket '+message[len-1];
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+                    }, 2000);
+                }
+
+                
+                if (message.includes(agentName) && message[1].includes('is closed by')) {
+                    var len = message.length;
+                    var message1 = message[len-1];
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }
+
+                if (message.includes(agentName+'+') && message.includes('give up')) {
+                    var message1 = message[0]+' just have given up ticket no. '+message[1];
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'type' : 'save',
+                    }));
+
+                    setTimeout(function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('new_chat', message)) {
+                    var tkid = message[0];
+                    if ($('body .chat'+tkid).length){
+                        if ($('body .chat'+tkid).css('display') == 'none'){
+                            var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
+                            var message2 = message[0]+'-'+message[1];
+                            var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
+                            $('.notification_chat').prepend(noti);
+                            $("body .point_message").show();
+                            x.play();
+
+                            group_agent_Socket.send(JSON.stringify({
+                                'message' : message2,
+                                'type' : 'chat',
+                            }));
+                        }
+                    }else{
+                        var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
+                        var message2 = message[0]+'-'+message[1];
+                        var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
+                        $('.notification_chat').prepend(noti);
+                        $("body .point_message").show();
+                        x.play();
+
+                        group_agent_Socket.send(JSON.stringify({
+                            'message' : message2,
+                            'type' : 'chat',
+                        }));
+                    }
+                    
+                }
             }
-            
-        }
         
     };
-    function formatAMPM(date) {
-        var hours = date.getHours();
-        var minutes = date.getMinutes();
-        var ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0'+minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
-        return strTime;
-    }
+    
 
     var dict_ws = {};
     $("body").on('click', '.noti_chat', function(){
