@@ -146,14 +146,15 @@ class UserLoginForm(forms.Form):
     ))
 
     # check xem tài khoản có tồn tại không
-    def clean(self):
+    def clean(self, *args, **kwargs):
         if 'username' in self.cleaned_data:
             username = self.cleaned_data['username']
-            password = self.cleaned_data['password']
+            password = self.cleaned_data.get('password')
             if authenticate_user(username=username, password=password) is None:
-                raise forms.ValidationError('Tài khoản không tồn tại!')
-        else:
-            raise forms.ValidationError('Tài khoản không tồn tại!')
+                raise forms.ValidationError('Account is not exist!')
+            u = get_user(username)
+            if u.status == 0:
+                raise forms.ValidationError('Your account has been blocked or inactive!')
 
 
 # form Agent đăng nhập

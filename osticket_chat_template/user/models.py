@@ -184,10 +184,9 @@ def authenticate_user(username, password):
     u = get_user(username)
     if u is not None:
         login_valid = (u.username == username)
-        #pwd_valid = check_password(password, u.password)
         pwd_valid = (password == u.password)
-        status_valid = u.status
-        if login_valid and pwd_valid and status_valid:
+        # status_valid = u.status
+        if login_valid and pwd_valid:
             return u
         else:
             return None

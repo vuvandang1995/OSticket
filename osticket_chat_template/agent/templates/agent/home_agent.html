@@ -11,6 +11,7 @@
             <td>Status</td>
             <td>Option</td>
         </tr>
+        {% csrf_token %}
         {% for tk in ticket %}
         <tr>
             <td>
@@ -60,8 +61,9 @@
     <script>
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
-            $("#list_ticket_home").on('click', '.assign_ticket', function(){
+            $("body").on('click', '.assign_ticket', function(){
                 var id = $(this).attr('id');
+                var token = $("input[name=csrfmiddlewaretoken]").val();
                 if(confirm("Are you sure ?")){
                     var userName = document.getElementById('user_name').value;
                     var chatSocket1 = new WebSocket(
@@ -78,9 +80,19 @@
                     group_agent_Socket.send(JSON.stringify({
                         'message' : 'ticket da duoc xu ly',
                     }));
-                    location.href="/agent/assign/"+id;
+
+                    $.ajax({
+                        type:'POST',
+                        url:location.href,
+                        data: {'tkid':id, 'csrfmiddlewaretoken':token},
+                        success: function(){
+                            $("#info_user").load(location.href + " #info_user");
+                        }
+                    });
                 }
             });
+
+
         });
     </script>
 {% endblock %}

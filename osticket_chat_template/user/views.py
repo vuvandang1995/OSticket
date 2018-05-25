@@ -85,91 +85,97 @@ def history(request,id):
 
 def homeuser(request):
     if request.session.has_key('user'):
-        user = Users.objects.get(username=request.session['user'])
-        admin = Agents.objects.get(admin=1)
-        form = CreateNewTicketForm()
-        topic = Topics.objects.all()
-        ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
-        handler = TicketAgent.objects.all()
-
         try:
-            file = open(self.room_group_name+'.txt', 'r')
-            for line in file:
-                message = line.split('^%$^%$&^')[0]
-                who = line.split('^%$^%$&^')[1].strip()
-                self.send(text_data=json.dumps({
-                        'message': message,
-                        'who': who
-                    }))
-        except:
-            pass
-        content = {'ticket': ticket,
-                   'form': form,
-                   'user': user,
-                   'handler': handler,
-                   'topic': topic,
-                   'username': mark_safe(json.dumps(user.username)),
-                   'admin': mark_safe(json.dumps(admin.username))
-                   }
-        if request.method == 'POST':
-            if 'tkid' in request.POST:
-                ticket = Tickets.objects.get(id=request.POST['tkid'])
-                ticket.status = 3
-                ticket.save()
-                TicketLog.objects.create(userid=user,
-                                        ticketid=ticket,
-                                        action='close ticket',
-                                        date=timezone.now().date(),
-                                        time=timezone.now().time())
-                try:
-                    tkag = TicketAgent.objects.filter(ticketid=request.POST['tkid']).values('agentid')
-                except ObjectDoesNotExist:
-                    pass
-                else:
-                    receiver = Agents.objects.filter(id__in=tkag)
-                    for rc in receiver:
-                        if rc.receive_email == 1:
-                            email = EmailMessage('Closed ticket',
-                                                render_to_string('user/close_email.html',{'receiver': rc,'sender': sender,'id':id}),
-                                                to=[rc.email],)
-                            email.send()
-            else:
-                form = CreateNewTicketForm(request.POST,request.FILES)
-                if form.is_valid():
-                    topicA = Topics.objects.get(id=request.POST['topic'])
-                    ticket = Tickets()
-                    ticket.title = form.cleaned_data['title']
-                    ticket.content = form.cleaned_data['content']
-                    ticket.sender = user
-                    ticket.topicid = topicA
-                    ticket.datestart = timezone.now()
-                    ticket.dateend = (timezone.now() + timezone.timedelta(days=3))
-                    if request.FILES.get('attach') is not None:
-                        if request.FILES['attach']._size < MAX_UPLOAD_SIZE:
-                            ticket.attach = request.FILES['attach']
-                            handle_uploaded_file(request.FILES['attach'])
-                        else:
-                            return render(request, 'user/home_user.html', content)
+            user = Users.objects.get(username=request.session['user'])
+            admin = Agents.objects.get(admin=1)
+            form = CreateNewTicketForm()
+            topic = Topics.objects.all()
+            ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
+            handler = TicketAgent.objects.all()
+            # dict_chat = {}
+            # for tk in ticket:
+            #     if tk.status == 1 or tk.status == 2:
+            #         dem = 0
+            #         try:
+            #             file = open('chat_'+str(tk.id)+'.txt', 'r')
+            #             for line in file:
+            #                 who = line.split('^%$^%$&^')[1].strip()
+            #                 if who == 'you':
+            #                     dem = dem + 1
+            #         except:
+            #             pass
+            #         dict_chat[str(tk.id)] = dem
+            # print(dict_chat)
+            content = {'ticket': ticket,
+                    'form': form,
+                    'user': user,
+                    'handler': handler,
+                    'topic': topic,
+                    'username': mark_safe(json.dumps(user.username)),
+                    'admin': mark_safe(json.dumps(admin.username))
+                    }
+            if request.method == 'POST':
+                if 'tkid' in request.POST:
+                    ticket = Tickets.objects.get(id=request.POST['tkid'])
+                    ticket.status = 3
                     ticket.save()
                     TicketLog.objects.create(userid=user,
                                             ticketid=ticket,
-                                            action='create ticket',
+                                            action='close ticket',
                                             date=timezone.now().date(),
                                             time=timezone.now().time())
-                    # if topicA.type_send == 1:
-                    #     for rc in receiver:
-                    #         if rc.receive_email == 1:
-                    #             email = EmailMessage('New ticket',
-                    #                                 render_to_string('user/new_ticket.html', {}),
-                    #                                 to=[rc.email],)
-                    #             email.send()
-                    # else:
-                    #     email = EmailMessage('New ticket',
-                    #                         render_to_string('user/new_ticket.html', {}),
-                    #                         to=[admin.email],)
-                    #     email.send()
-                return redirect("/user")
-        return render(request, 'user/home_user.html', content)
+                    try:
+                        tkag = TicketAgent.objects.filter(ticketid=request.POST['tkid']).values('agentid')
+                    except ObjectDoesNotExist:
+                        pass
+                    else:
+                        receiver = Agents.objects.filter(id__in=tkag)
+                        for rc in receiver:
+                            if rc.receive_email == 1:
+                                email = EmailMessage('Closed ticket',
+                                                    render_to_string('user/close_email.html',{'receiver': rc,'sender': user,'id':id}),
+                                                    to=[rc.email],)
+                                email.send()
+                else:
+                    form = CreateNewTicketForm(request.POST,request.FILES)
+                    if form.is_valid():
+                        topicA = Topics.objects.get(id=request.POST['topic'])
+                        ticket = Tickets()
+                        ticket.title = form.cleaned_data['title']
+                        ticket.content = form.cleaned_data['content']
+                        ticket.sender = user
+                        ticket.topicid = topicA
+                        ticket.datestart = timezone.now()
+                        ticket.dateend = (timezone.now() + timezone.timedelta(days=3))
+                        if request.FILES.get('attach') is not None:
+                            if request.FILES['attach']._size < MAX_UPLOAD_SIZE:
+                                ticket.attach = request.FILES['attach']
+                                handle_uploaded_file(request.FILES['attach'])
+                            else:
+                                return render(request, 'user/home_user.html', content)
+                        ticket.save()
+                        TicketLog.objects.create(userid=user,
+                                                ticketid=ticket,
+                                                action='create ticket',
+                                                date=timezone.now().date(),
+                                                time=timezone.now().time())
+                        # if topicA.type_send == 1:
+                        #     for rc in receiver:
+                        #         if rc.receive_email == 1:
+                        #             email = EmailMessage('New ticket',
+                        #                                 render_to_string('user/new_ticket.html', {}),
+                        #                                 to=[rc.email],)
+                        #             email.send()
+                        # else:
+                        #     email = EmailMessage('New ticket',
+                        #                         render_to_string('user/new_ticket.html', {}),
+                        #                         to=[admin.email],)
+                        #     email.send()
+                    return redirect("/user")
+            return render(request, 'user/home_user.html', content)
+        except:
+            del request.session['user']
+            return redirect("/")
     else:
         return redirect("/")
 
@@ -313,7 +319,10 @@ def login_user(request):
                     request.session['user'] = username
                     return redirect("/user")
                 else:
-                    return render(request, 'user/index.html',{'mess': mess_login_error})
+                    error = ''
+                    for field in form:
+                        error += field.errors
+                    return render(request, 'user/index.html',{'mess': mess_login_error, 'error':error})
         return render(request, 'user/index.html', {})
 
 
