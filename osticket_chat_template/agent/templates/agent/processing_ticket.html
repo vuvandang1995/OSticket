@@ -1,11 +1,5 @@
 {% extends 'agent/base.html' %}
 {% load staticfiles %}
-{% block lib %}
-    <link rel="stylesheet" href="{% static 'css/home_user.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/chat.css' %}" type="text/css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700">
-    <script src="{% static 'js/home_user.js' %}"></script>
-{% endblock%}
 {% block title %}Processing ticket{% endblock %}
 {% block content %}
 <div id="list_ticket_processing">
@@ -56,8 +50,11 @@
                 <input type="hidden" id="user{{tk.id}}" value="{{tk.sender.username}}">
                 {% endif %}
                 
-                <a href="javascript:register_popup('chat{{tk.id}}', {{tk.id}});" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_user">
+                <a href="javascript:register_popup_agent('chat{{tk.id}}', {{tk.id}}, '{{tk.sender.username}}');" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_user">
                     <span class="glyphicon glyphicon-comment" ></span>
+                    <div class="notify">
+                        <span class="point2 noti_chat{{tk.id}}"></span>
+                    </div>
                     <input type="hidden" value="{{tk.id}}"/>
                 </a>
                 <button id="{{tk.id}}" type="button" class="btn btn-info fw_agent" data-toggle="modal" data-title="forward" data-target="#forward_add">
@@ -348,11 +345,9 @@
             }
        });
 
-
-
-       var dict_ws = {};
         $("body").on('click', '#chat_with_user', function(){
             var tkid = $(this).children('input').val();
+            $("body .noti_chat"+tkid).hide();
             $('body .chat'+tkid).show();
             $("body .mytext").focus();
             var roomName = makeid();
@@ -368,18 +363,7 @@
             me.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/22885865_1722296451175676_8315630450281336486_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeF3N32BRG1HfiI6wYFOD0syQnWULRna1ynbA4X_9isP5U9OTYpX393weyHM7i53ld34rFsOa0PdREWLJij8FWXIF0EfX1p8u3GUsxq_xcyEsw&oh=733c482517a19a82689b73cea0f35a4e&oe=5B58D2E3";
 
             var you = {};
-            you.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/14732373_1224510360954290_7402332525860387467_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeHKXwDy_s1iK9FoOwayfi1qoOsIZlCm_H_ILhjIlp7LpK_1UzL2lTNdV6hbvFqTDhhJngiHagzjXZdsq1veAd6UGPEJKNXC4eyjPt-BNHGNUA&oh=6e9c0ee4c9352e7446fdef79a9037cd7&oe=5B5799DF";
-
-            function formatAMPM(date) {
-                var hours = date.getHours();
-                var minutes = date.getMinutes();
-                var ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12; // the hour '0' should be '12'
-                minutes = minutes < 10 ? '0'+minutes : minutes;
-                var strTime = hours + ':' + minutes + ' ' + ampm;
-                return strTime;
-            }            
+            you.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/14732373_1224510360954290_7402332525860387467_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeHKXwDy_s1iK9FoOwayfi1qoOsIZlCm_H_ILhjIlp7LpK_1UzL2lTNdV6hbvFqTDhhJngiHagzjXZdsq1veAd6UGPEJKNXC4eyjPt-BNHGNUA&oh=6e9c0ee4c9352e7446fdef79a9037cd7&oe=5B5799DF";      
 
             //-- No use time. It is a javaScript effect.
             function insertChat(who, text, time){
@@ -387,7 +371,7 @@
                     time = 0;
                 }
                 var control = "";
-                var date = formatAMPM(new Date());
+                var date = time;
                 
                 if (who == "me"){
                     control = '<li style="width:100%">' +
@@ -421,44 +405,13 @@
                 var data = JSON.parse(e.data);
                 var message = data['message'];
                 var who = data['who'];
-                insertChat(who, message, 0);
+                var time = data['time'];
+                insertChat(who, message, time);
             };
 
             
         });
 
-        $('body').on('click', 'header', function(){
-            $(this).next().slideToggle(300, 'swing');
-        })
-
-        $('body').on('click', '.xxx', function(){
-            $("body .mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
-        })
-
-        $("body .mytext").focus();
-        $('body').on('keyup', '.mytext', function(e){
-            if (e.keyCode === 13) {
-                $(this).parent().parent().next().children('span').click();
-            }
-        })
-
-        $('body').on('click', '.xxx', function(){
-            var message = $(this).parent().parent().children().children().children('input').val();
-            var tk_id = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('h4').html();
-            dict_ws[tk_id].send(JSON.stringify({
-                'message' : message,
-                'who' : 'you',
-            }));
-            $(this).parent().parent().children().children().children('input').val('');
-        })
-
-
-        $('body').on('click', '.chat-close', function(){
-            var tk_id = $(this).parent().next().children('h4').html();
-            dict_ws[tk_id].close();
-            delete dict_ws[tk_id];
-            $("body #chat"+tk_id+" .frame > ul").empty();
-        })
              
    });
 </script>

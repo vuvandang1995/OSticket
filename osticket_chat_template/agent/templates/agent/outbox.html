@@ -3,6 +3,7 @@
 {% endblock%}
 {% block title %}Outbox{% endblock %}
 {% block content %}
+{% csrf_token %}
 <div style="float:left;width:45%;">
     <h2>Forward out request</h2>
         <table class="table table-striped table-bordered" id="list_ticket_forward_outbox">
@@ -32,7 +33,7 @@
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
-                    <button id="outbox/0_{{tk.id}}" class="cancel_forward btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
+                    <button id="{{tk.id}}" class="cancel_forward btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
                         <span class="glyphicon glyphicon-remove" ></span>
                     </button>
             </tr>
@@ -99,7 +100,7 @@
                 {% endif %}
                 <td>{{tk.ticketid.dateend}}</td>
                 <td>
-                    <button id="outbox/1_{{tk.id}}" class="cancel_add btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
+                    <button id="{{tk.id}}" class="cancel_add btn btn-danger" type="button" data-toggle="tooltip" title="cancel" >
                         <span class="glyphicon glyphicon-remove" ></span>
                     </button>
                 </td>
@@ -133,14 +134,30 @@
    $(document).ready(function(){
        $("#info_user").on('click', '.cancel_forward', function(){
            var id = $(this).attr('id');
+           var token = $("input[name=csrfmiddlewaretoken]").val();
            if(confirm("Are you sure ?")){
-               location.href="/agent/"+id;
+                $.ajax({
+                    type:'POST',
+                    url:location.href,
+                    data: {'tkid':id, 'csrfmiddlewaretoken':token, 'forward': 'forward'},
+                    success: function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }
+                });
            }
        });
        $("#info_user").on('click', '.cancel_add', function(){
            var id = $(this).attr('id');
+           var token = $("input[name=csrfmiddlewaretoken]").val();
            if(confirm("Are you sure ?")){
-               location.href="/agent/"+id;
+                $.ajax({
+                    type:'POST',
+                    url:location.href,
+                    data: {'tkid':id, 'csrfmiddlewaretoken':token, 'add': 'add'},
+                    success: function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }
+                });
            }
        });
    });

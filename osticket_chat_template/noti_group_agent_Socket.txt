@@ -1,0 +1,39 @@
+new_ticket
+['253', 'dangvv', 'new_chat', 'dung']
+['252', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+['252', 'dangvv', 'new_chat', 'dung']
+ticket da duoc xu ly
+new_ticket
+['253', 'dangvv', 'new_chat', 'dung']
+['253', 'dangvv', 'new_chat', 'dung']
+ticket da duoc xu ly
+new_ticket
+['253', 'dangvv', 'new_chat', 'dung']
+ticket da duoc xu ly
+new_ticket
+['256', 'dangvv', 'new_chat', 'dung']
+ticket da duoc xu ly
+['manh', 'forward_new']
+Your ticket you forwarding refused by Manh +Nguyen Dung
+Your ticket you forwarding refused by Manh +Nguyen Dung
+Your ticket you forwarding refused by Manh +Nguyen Dung
+Your ticket you forwarding refused by Manh +Nguyen Dung
+Your ticket you forwarding refused by Manh +Nguyen Dung
+Your ticket you forwarding refused by Manh +Nguyen Dung
+['manh', 'forward_new']
+['manh', 'dang', 'dang2', 'forward_new']
+['manh', 'dang', 'dang2', 'add_new']
+Manh agreed your ticket you forwarding +Nguyen Dung
+['dung', 'forward_new']
+['dung', 'add_new']
+['dung', 'Ticket 257 is closed by dangvv']
+['252', 'dangvv', 'new_chat', 'dung']

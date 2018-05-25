@@ -125,6 +125,18 @@ li {
 }
 
 .notify .point {
+    display: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 30px;
+    background-color: #ef5350;
+    position: absolute;
+    right: 6px;
+    top: -10px;
+}
+
+.notify .point2 {
+    display: none;
     width: 6px;
     height: 6px;
     border-radius: 30px;

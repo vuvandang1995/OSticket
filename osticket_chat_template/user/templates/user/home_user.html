@@ -115,6 +115,7 @@
 </div>
 <script>
         $(document).ready(function(){
+
             $('body').on('click', '.close_ticket', function(){
                 var id = $(this).attr('id');
                 var token = $("input[name=csrfmiddlewaretoken]").val();
@@ -150,7 +151,6 @@
                 
             });
             
-            var dict_ws = {};
             $("body").on('click', '#chat_with_agent', function(){
                 var tkid = $(this).children('input').val();
                 $('body .chat'+tkid).show();
@@ -168,17 +168,7 @@
 
                 var you = {};
                 you.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/14732373_1224510360954290_7402332525860387467_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeHKXwDy_s1iK9FoOwayfi1qoOsIZlCm_H_ILhjIlp7LpK_1UzL2lTNdV6hbvFqTDhhJngiHagzjXZdsq1veAd6UGPEJKNXC4eyjPt-BNHGNUA&oh=6e9c0ee4c9352e7446fdef79a9037cd7&oe=5B5799DF";
-
-                function formatAMPM(date) {
-                    var hours = date.getHours();
-                    var minutes = date.getMinutes();
-                    var ampm = hours >= 12 ? 'PM' : 'AM';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12; // the hour '0' should be '12'
-                    minutes = minutes < 10 ? '0'+minutes : minutes;
-                    var strTime = hours + ':' + minutes + ' ' + ampm;
-                    return strTime;
-                }            
+            
 
                 //-- No use time. It is a javaScript effect.
                 function insertChat(who, text, time){
@@ -186,7 +176,7 @@
                         time = 0;
                     }
                     var control = "";
-                    var date = formatAMPM(new Date());
+                    var date = time;
                     
                     if (who == "me"){
                         control = '<li style="width:100%">' +
@@ -220,43 +210,11 @@
                     var data = JSON.parse(e.data);
                     var message = data['message'];
                     var who = data['who'];
-                    insertChat(who, message, 0);
+                    var time = data['time'];
+                    insertChat(who, message, time);
                 };
                
             });
-
-            $('body').on('click', 'header', function(){
-                $(this).next().slideToggle(300, 'swing');
-            })
-
-            $('body').on('click', '.xxx', function(){
-                $("body .mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
-            })
-
-            $("body .mytext").focus();
-            $('body').on('keyup', '.mytext', function(e){
-                if (e.keyCode === 13) {
-                    $(this).parent().parent().next().children('span').click();
-                }
-            })
-
-            $('body').on('click', '.xxx', function(){
-                var message = $(this).parent().parent().children().children().children('input').val();
-                var tk_id = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('h4').html();
-                dict_ws[tk_id].send(JSON.stringify({
-                    'message' : message,
-                    'who' : 'me',
-                }));
-                $(this).parent().parent().children().children().children('input').val('');
-            })
-
-
-            $('body').on('click', '.chat-close', function(){
-                var tk_id = $(this).parent().next().children('h4').html();
-                dict_ws[tk_id].close();
-                delete dict_ws[tk_id];
-                $("body #chat"+tk_id+" .frame > ul").empty();
-            })
              
         });
         

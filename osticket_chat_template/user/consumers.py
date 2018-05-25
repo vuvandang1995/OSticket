@@ -21,9 +21,11 @@ class ChatConsumer(WebsocketConsumer):
             for line in file:
                 message = line.split('^%$^%$&^')[0]
                 who = line.split('^%$^%$&^')[1].strip()
+                time = line.split('^%$^%$&^')[2].strip()
                 self.send(text_data=json.dumps({
                         'message': message,
-                        'who': who
+                        'who': who,
+                        'time' : time
                     }))
         except:
             pass
@@ -43,9 +45,10 @@ class ChatConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         who = text_data_json['who']
+        time = text_data_json['time']
 
         file = open(self.room_group_name+'.txt','a') 
-        file.write(message + "^%$^%$&^"+ who + "\n") 
+        file.write(message + "^%$^%$&^"+ who +"^%$^%$&^"+ time + "\n") 
         file.close()  
 
         # Send message to room group
@@ -54,7 +57,8 @@ class ChatConsumer(WebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message,
-                'who' : who
+                'who' : who,
+                'time' : time
             }
         )
 
@@ -62,35 +66,21 @@ class ChatConsumer(WebsocketConsumer):
     def chat_message(self, event):
         message = event['message']
         who = event['who']
+        time = event['time']
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': message,
-            'who': who
+            'who': who,
+            'time' :  time
         }))
 
-
-
-# class UserConsumer(WebsocketConsumer):
-#     def connect(self):
-#         self.user_name = self.scope['url_route']['kwargs']['username']
-#         self.accept()
-#         u = Users.objects.get(username=self.user_name)
-#         tk = Tickets.objects.filter(sender=u)
-#         dem = 0
-#         for tk in tk:
-#             if tk.status == 1:
-#                 dem = dem + 1
-#         if dem is not 0:
-#             self.send(text_data=json.dumps({
-#                 'aaa': dem
-#             }))
 
 
 class UserConsumer(WebsocketConsumer):
     def connect(self):
         self.user_name = self.scope['url_route']['kwargs']['username']
-        self.room_group_name = 'chat_%s' % self.user_name
+        self.room_group_name = 'noti_%s' % self.user_name
         
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -98,6 +88,16 @@ class UserConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
+        # try:
+        #     file = open(self.room_group_name+'.txt', 'r')
+        #     for line in file:
+        #         message = line[:len(line)-1]
+        #         self.send(text_data=json.dumps({
+        #                 'message': message,
+        #                 'type' : 're-noti'
+        #             }))
+        # except:
+        #     pass
 
     def disconnect(self, close_code):
         # Leave room group
@@ -110,8 +110,68 @@ class UserConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        # tkid = text_data_json['ticketid']
 
+        file = open(self.room_group_name+'.txt','a') 
+        file.write(str(message) + "\n") 
+        file.close()
+        print(message)
+        # Send message to room group
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message,
+            }
+        )
+
+    # Receive message from room group
+    def chat_message(self, event):
+        message = event['message']
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'message': message,
+        }))
+
+
+
+class AgentConsumer(WebsocketConsumer):
+    def connect(self):
+        self.user_name = self.scope['url_route']['kwargs']['username']
+        self.room_group_name = 'noti_%s' % self.user_name
+        
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+        self.accept()
+        # try:
+        #     file = open(self.room_group_name+'.txt', 'r')
+        #     for line in file:
+        #         message = line[:len(line)-1]
+        #         self.send(text_data=json.dumps({
+        #                 'message': message,
+        #                 'type' : 're-noti'
+        #             }))
+        # except:
+        #     pass
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    # Receive message from WebSocket
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+
+        file = open(self.room_group_name+'.txt','a') 
+        file.write(str(message) + "\n") 
+        file.close()
         print(message)
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
