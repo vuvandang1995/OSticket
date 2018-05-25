@@ -7,15 +7,11 @@ from django.utils import timezone
 
 from user.models import *
 from .forms import ForwardForm, AddForm
-from user.forms import CommentForm
 from django.core.mail import EmailMessage
-import datetime
-from django.http import HttpResponse, HttpResponseRedirect
 import simplejson as json
 from django.utils.safestring import mark_safe
 import json
 import string
-from random import *
 min_char = 8
 max_char = 12
 allchar = string.ascii_letters + string.digits
@@ -54,9 +50,9 @@ def home_admin(request):
                     action = "close ticket"
                 tk.save()
                 TicketLog.objects.create(agentid=admin, ticketid=tk,
-                                     action=action,
-                                     date=timezone.now().date(),
-                                     time=timezone.now().time())
+                                         action=action,
+                                         date=timezone.now().date(),
+                                         time=timezone.now().time())
             elif 'delete' in request.POST:
                 ticketid = request.POST['delete']
                 tk = Tickets.objects.get(id=ticketid)
@@ -100,9 +96,9 @@ def home_admin(request):
                             email = EmailMessage(
                                 'Forward ticket',
                                 render_to_string('agent/mail/forward_mail_leader.html',
-                                                    {'receiver': agent,
-                                                    'domain': (get_current_site(request)).domain,
-                                                    'sender': 'Leader'}),
+                                                 {'receiver': agent,
+                                                  'domain': (get_current_site(request)).domain,
+                                                  'sender': 'Leader'}),
                                 to=[agent.email],
                             )
                             email.send()
@@ -175,10 +171,8 @@ def manager_agent(request):
                 ag = Agents.objects.get(id=agentid)
                 if ag.status == 0:
                     ag.status = 1
-                    ag.username = ag.username[:-1]
                 else:
                     ag.status = 0
-                    ag.username += "_"
                 ag.save()
             elif 'delete' in request.POST:
                 agentid = request.POST['delete']
@@ -202,7 +196,7 @@ def manager_agent(request):
                     ag.email = email
                     ag.phone = phone
                     ag.save()
-                    username =ag.username
+                    username = ag.username
         return render(request, 'agent/manager_agent.html', content)
     else:
         return redirect('/')
@@ -219,10 +213,10 @@ def logout(request):
 
 
 def home_agent(request):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
         topic = Topics.objects.exclude(Q(name='Other') | Q(type_send=0))
-        content = {'ticket': Tickets.objects.filter(status=0,topicid__in=topic).order_by('dateend'),
+        content = {'ticket': Tickets.objects.filter(status=0, topicid__in=topic).order_by('dateend'),
                    'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
         if request.method == 'POST':
             if 'tkid' in request.POST:
@@ -230,28 +224,28 @@ def home_agent(request):
                 ticket.status = 1
                 ticket.save()
                 TicketLog.objects.create(agentid=agent, ticketid=ticket, action='assign ticket',
-                                        date=timezone.now().date(),
-                                        time=timezone.now().time())
+                                         date=timezone.now().date(),
+                                         time=timezone.now().time())
                 TicketAgent.objects.create(agentid=agent, ticketid=ticket)
                 user = Users.objects.get(id=ticket.sender.id)
                 if user.receive_email == 1:
                     email = EmailMessage(
                         'Assign ticket',
                         render_to_string('agent/mail/assign_mail.html',
-                                        {'receiver': user,
-                                        'domain': (get_current_site(request)).domain,
-                                        'sender': agent,
-                                        'ticketid':ticket.id}),
+                                         {'receiver': user,
+                                          'domain': (get_current_site(request)).domain,
+                                          'sender': agent,
+                                          'ticketid': ticket.id}),
                         to=[user.email],
                     )
                     email.send()
-        return render(request,'agent/home_agent.html',content)
+        return render(request, 'agent/home_agent.html', content)
     else:
         return redirect("/")
 
 
 def assign_ticket(request, id):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         ticket = Tickets.objects.get(id=id)
         agent = Agents.objects.get(username=request.session['agent'])
         ticket.status = 1
@@ -268,7 +262,7 @@ def assign_ticket(request, id):
                                  {'receiver': user,
                                   'domain': (get_current_site(request)).domain,
                                   'sender': agent,
-                                  'ticketid':ticket.id}),
+                                  'ticketid': ticket.id}),
                 to=[user.email],
             )
             email.send()
@@ -278,7 +272,7 @@ def assign_ticket(request, id):
 
 
 def processing_ticket(request):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.exclude(Q(username=request.session['agent']) | Q(admin=1))
         form = ForwardForm()
         form1 = AddForm()
@@ -296,7 +290,7 @@ def processing_ticket(request):
             else:
                 gua[tk.id] = 'no'
             agc[tk.id] = tem
-        content = {'agent': agent, 'ticket': tksdpr, 'agc': agc, 'form':form, 'form1': form1, 'gua': gua, 'agent_name': mark_safe(json.dumps(sender.username)), 'fullname': mark_safe(json.dumps(sender.fullname))}
+        content = {'agent': agent, 'ticket': tksdpr, 'agc': agc, 'form': form, 'form1': form1, 'gua': gua, 'agent_name': mark_safe(json.dumps(sender.username)), 'fullname': mark_safe(json.dumps(sender.fullname))}
         if request.method == 'POST':
             if request.POST['type'] == 'forward_agent':
                 list_agent = request.POST['list_agent[]']
@@ -317,9 +311,9 @@ def processing_ticket(request):
                                     email = EmailMessage(
                                         'Forward ticket',
                                         render_to_string('agent/mail/forward_mail.html',
-                                                            {'receiver': rc,
-                                                            'domain': (get_current_site(request)).domain,
-                                                            'sender': sender}),
+                                                         {'receiver': rc,
+                                                          'domain': (get_current_site(request)).domain,
+                                                          'sender': sender}),
                                         to=[rc.email],
                                     )
                                     email.send()
@@ -343,9 +337,9 @@ def processing_ticket(request):
                                     email = EmailMessage(
                                         'Add in a ticket',
                                         render_to_string('agent/mail/add_mail.html',
-                                                            {'receiver': rc,
-                                                            'domain': (get_current_site(request)).domain,
-                                                            'sender': sender}),
+                                                         {'receiver': rc,
+                                                          'domain': (get_current_site(request)).domain,
+                                                          'sender': sender}),
                                         to=[rc.email]
                                     )
                                     email.send()
@@ -373,9 +367,9 @@ def processing_ticket(request):
                     #     )
                     #     email.send()
                 TicketLog.objects.create(agentid=sender, ticketid=ticket,
-                                        action=action,
-                                        date=timezone.now().date(),
-                                        time=timezone.now().time())
+                                         action=action,
+                                         date=timezone.now().date(),
+                                         time=timezone.now().time())
             elif request.POST['type'] == 'give_up':
                 ticket = Tickets.objects.get(id=request.POST['tkid'])
                 try:
@@ -384,16 +378,15 @@ def processing_ticket(request):
                     tk = TicketAgent.objects.get(ticketid=ticket, agentid=sender)
                     tk.delete()
                     TicketLog.objects.create(agentid=sender, ticketid=ticket, action='give up ticket',
-                                            date=timezone.now().date(),
-                                            time=timezone.now().time())
-        return render(request,'agent/processing_ticket.html',content)
+                                             date=timezone.now().date(),
+                                             time=timezone.now().time())
+        return render(request, 'agent/processing_ticket.html', content)
     else:
         return redirect("/")
 
 
-
 def history(request,id):
-    if request.session.has_key('agent') or request.session.has_key('admin'):
+    if (request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1) or request.session.has_key('admin'):
         tems = TicketLog.objects.filter(ticketid=id)
         result = []
         for tem in tems:
@@ -474,7 +467,7 @@ def history_all_ticket(request, date, date2):
 
 
 def inbox(request):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
         content = {'forwardin': ForwardTickets.objects.filter(receiverid=agent),
                    'addin': AddAgents.objects.filter(receiverid=agent), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
@@ -496,9 +489,9 @@ def inbox(request):
                         email = EmailMessage(
                             'Deny forward request',
                             render_to_string('agent/mail/deny_mail.html',
-                                            {'receiver': sender,
-                                            'domain': (get_current_site(request)).domain,
-                                            'sender': agent}),
+                                             {'receiver': sender,
+                                              'domain': (get_current_site(request)).domain,
+                                              'sender': agent}),
                             to=[sender.email]
                         )
                         email.send()
@@ -510,15 +503,15 @@ def inbox(request):
                         agticket.save()
                         action = "received ticket forward from (agent)" + sender.fullname
                         TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
-                                                date=timezone.now().date(),
-                                                time=timezone.now().time())
+                                                 date=timezone.now().date(),
+                                                 time=timezone.now().time())
                         if sender.receive_email == 1:
                             email = EmailMessage(
                                 'Accept forward request',
                                 render_to_string('agent/mail/accept_mail.html',
-                                                {'receiver': sender,
-                                                'domain': (get_current_site(request)).domain,
-                                                'sender': agent}),
+                                                 {'receiver': sender,
+                                                  'domain': (get_current_site(request)).domain,
+                                                  'sender': agent}),
                                 to=[sender.email]
                             )
                             email.send()
@@ -539,9 +532,9 @@ def inbox(request):
                         email = EmailMessage(
                             'Deny add request',
                             render_to_string('agent/mail/deny_mail.html',
-                                            {'receiver': sender,
-                                            'domain': (get_current_site(request)).domain,
-                                            'sender': agent}),
+                                             {'receiver': sender,
+                                              'domain': (get_current_site(request)).domain,
+                                              'sender': agent}),
                             to=[sender.email]
                         )
                         email.send()
@@ -552,15 +545,15 @@ def inbox(request):
                         TicketAgent.objects.create(ticketid=ticket, agentid=agent)
                         action = 'join to handler ticket'
                         TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
-                                                date=timezone.now().date(),
-                                                time=timezone.now().time())
+                                                 date=timezone.now().date(),
+                                                 time=timezone.now().time())
                         if sender.receive_email == 1:
                             email = EmailMessage(
                                 'Accept add request',
                                 render_to_string('agent/mail/accept_mail.html',
-                                                {'receiver': sender,
-                                                'domain': (get_current_site(request)).domain,
-                                                'sender': agent}),
+                                                 {'receiver': sender,
+                                                  'domain': (get_current_site(request)).domain,
+                                                  'sender': agent}),
                                 to=[sender.email]
                             )
                             email.send()
@@ -572,7 +565,7 @@ def inbox(request):
 
 
 def outbox(request):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
         content ={'forwardout':ForwardTickets.objects.filter(senderid=agent),
                   'addout': AddAgents.objects.filter(senderid=agent), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
@@ -588,7 +581,7 @@ def outbox(request):
 
 
 def profile(request):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
         if request.method == 'POST':
             if 'fullname' in request.POST:
@@ -606,7 +599,7 @@ def profile(request):
 
 
 def closed_ticket(request):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
         tem = Tickets.objects.filter(status=3)
         content = {'ticket': TicketAgent.objects.filter(agentid=agent, ticketid__in=tem), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
@@ -616,16 +609,12 @@ def closed_ticket(request):
 
 
 def manager_user(request):
-    if request.session.has_key('agent'):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
         users = Users.objects.all()
         if request.method == 'POST':
             user = Users.objects.get(id=request.POST['tkid'])
             user.status = request.POST['stt']
-            if request.POST['stt'] == 1:
-                user.username += "_"
-            else:
-                user.username = user.username[:-1]
             user.save()
         return render(request,"agent/manage_user.html",{'user':users, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
     else:

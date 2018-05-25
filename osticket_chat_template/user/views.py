@@ -1,7 +1,5 @@
-from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import *
 from django.shortcuts import get_object_or_404, render
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -12,15 +10,10 @@ from django.core.mail import EmailMessage
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.utils.safestring import mark_safe
 import json
-
-from django.http import Http404
-from django.views import generic
-from django.urls import reverse
 from .forms import *
 import string
 import datetime
 from random import *
-from django.template.defaulttags import register
 min_char = 8
 max_char = 12
 allchar = string.ascii_letters + string.digits
@@ -30,8 +23,8 @@ dic = {}
 dic_time = {}
 
 
-def history(request,id):
-    if request.session.has_key('user'):
+def history(request, id):
+    if request.session.has_key('user') and (Users.objects.get(username=request.session['user'])).status == 1:
         tems = TicketLog.objects.filter(ticketid=id)
         result = []
         for tem in tems:
@@ -84,98 +77,95 @@ def history(request,id):
 
 
 def homeuser(request):
-    if request.session.has_key('user'):
-        try:
-            user = Users.objects.get(username=request.session['user'])
-            admin = Agents.objects.get(admin=1)
-            form = CreateNewTicketForm()
-            topic = Topics.objects.all()
-            ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
-            handler = TicketAgent.objects.all()
-            # dict_chat = {}
-            # for tk in ticket:
-            #     if tk.status == 1 or tk.status == 2:
-            #         dem = 0
-            #         try:
-            #             file = open('chat_'+str(tk.id)+'.txt', 'r')
-            #             for line in file:
-            #                 who = line.split('^%$^%$&^')[1].strip()
-            #                 if who == 'you':
-            #                     dem = dem + 1
-            #         except:
-            #             pass
-            #         dict_chat[str(tk.id)] = dem
-            # print(dict_chat)
-            content = {'ticket': ticket,
-                    'form': form,
-                    'user': user,
-                    'handler': handler,
-                    'topic': topic,
-                    'username': mark_safe(json.dumps(user.username)),
-                    'admin': mark_safe(json.dumps(admin.username))
-                    }
-            if request.method == 'POST':
-                if 'tkid' in request.POST:
-                    ticket = Tickets.objects.get(id=request.POST['tkid'])
-                    ticket.status = 3
+    if request.session.has_key('user') and (Users.objects.get(username=request.session['user'])).status == 1:
+        user = Users.objects.get(username=request.session['user'])
+        admin = Agents.objects.get(admin=1)
+        form = CreateNewTicketForm()
+        topic = Topics.objects.all()
+        ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
+        handler = TicketAgent.objects.all()
+        # dict_chat = {}
+        # for tk in ticket:
+        #     if tk.status == 1 or tk.status == 2:
+        #         dem = 0
+        #         try:
+        #             file = open('chat_'+str(tk.id)+'.txt', 'r')
+        #             for line in file:
+        #                 who = line.split('^%$^%$&^')[1].strip()
+        #                 if who == 'you':
+        #                     dem = dem + 1
+        #         except:
+        #             pass
+        #         dict_chat[str(tk.id)] = dem
+        # print(dict_chat)
+        content = {'ticket': ticket,
+                   'form': form,
+                   'user': user,
+                   'handler': handler,
+                   'topic': topic,
+                   'username': mark_safe(json.dumps(user.username)),
+                   'admin': mark_safe(json.dumps(admin.username)),
+                   }
+        if request.method == 'POST':
+            if 'tkid' in request.POST:
+                ticket = Tickets.objects.get(id=request.POST['tkid'])
+                ticket.status = 3
+                ticket.save()
+                TicketLog.objects.create(userid=user,
+                                        ticketid=ticket,
+                                        action='close ticket',
+                                        date=timezone.now().date(),
+                                        time=timezone.now().time())
+                try:
+                    tkag = TicketAgent.objects.filter(ticketid=request.POST['tkid']).values('agentid')
+                except ObjectDoesNotExist:
+                    pass
+                else:
+                    receiver = Agents.objects.filter(id__in=tkag)
+                    for rc in receiver:
+                        if rc.receive_email == 1:
+                            email = EmailMessage('Closed ticket',
+                                                 render_to_string('user/close_email.html',
+                                                                  {'receiver': rc, 'sender': user, 'id': id}),
+                                                 to=[rc.email],)
+                            email.send()
+            else:
+                form = CreateNewTicketForm(request.POST,request.FILES)
+                if form.is_valid():
+                    topicA = Topics.objects.get(id=request.POST['topic'])
+                    ticket = Tickets()
+                    ticket.title = form.cleaned_data['title']
+                    ticket.content = form.cleaned_data['content']
+                    ticket.sender = user
+                    ticket.topicid = topicA
+                    ticket.datestart = timezone.now()
+                    ticket.dateend = (timezone.now() + timezone.timedelta(days=3))
+                    if request.FILES.get('attach') is not None:
+                        if request.FILES['attach']._size < MAX_UPLOAD_SIZE:
+                            ticket.attach = request.FILES['attach']
+                            handle_uploaded_file(request.FILES['attach'])
+                        else:
+                            return render(request, 'user/home_user.html', content)
                     ticket.save()
                     TicketLog.objects.create(userid=user,
-                                            ticketid=ticket,
-                                            action='close ticket',
-                                            date=timezone.now().date(),
-                                            time=timezone.now().time())
-                    try:
-                        tkag = TicketAgent.objects.filter(ticketid=request.POST['tkid']).values('agentid')
-                    except ObjectDoesNotExist:
-                        pass
-                    else:
-                        receiver = Agents.objects.filter(id__in=tkag)
-                        for rc in receiver:
-                            if rc.receive_email == 1:
-                                email = EmailMessage('Closed ticket',
-                                                    render_to_string('user/close_email.html',{'receiver': rc,'sender': user,'id':id}),
-                                                    to=[rc.email],)
-                                email.send()
-                else:
-                    form = CreateNewTicketForm(request.POST,request.FILES)
-                    if form.is_valid():
-                        topicA = Topics.objects.get(id=request.POST['topic'])
-                        ticket = Tickets()
-                        ticket.title = form.cleaned_data['title']
-                        ticket.content = form.cleaned_data['content']
-                        ticket.sender = user
-                        ticket.topicid = topicA
-                        ticket.datestart = timezone.now()
-                        ticket.dateend = (timezone.now() + timezone.timedelta(days=3))
-                        if request.FILES.get('attach') is not None:
-                            if request.FILES['attach']._size < MAX_UPLOAD_SIZE:
-                                ticket.attach = request.FILES['attach']
-                                handle_uploaded_file(request.FILES['attach'])
-                            else:
-                                return render(request, 'user/home_user.html', content)
-                        ticket.save()
-                        TicketLog.objects.create(userid=user,
-                                                ticketid=ticket,
-                                                action='create ticket',
-                                                date=timezone.now().date(),
-                                                time=timezone.now().time())
-                        # if topicA.type_send == 1:
-                        #     for rc in receiver:
-                        #         if rc.receive_email == 1:
-                        #             email = EmailMessage('New ticket',
-                        #                                 render_to_string('user/new_ticket.html', {}),
-                        #                                 to=[rc.email],)
-                        #             email.send()
-                        # else:
-                        #     email = EmailMessage('New ticket',
-                        #                         render_to_string('user/new_ticket.html', {}),
-                        #                         to=[admin.email],)
-                        #     email.send()
-                    return redirect("/user")
-            return render(request, 'user/home_user.html', content)
-        except:
-            del request.session['user']
-            return redirect("/")
+                                             ticketid=ticket,
+                                             action='create ticket',
+                                             date=timezone.now().date(),
+                                             time=timezone.now().time())
+                    # if topicA.type_send == 1:
+                    #     for rc in receiver:
+                    #         if rc.receive_email == 1:
+                    #             email = EmailMessage('New ticket',
+                    #                                 render_to_string('user/new_ticket.html', {}),
+                    #                                 to=[rc.email],)
+                    #             email.send()
+                    # else:
+                    #     email = EmailMessage('New ticket',
+                    #                         render_to_string('user/new_ticket.html', {}),
+                    #                         to=[admin.email],)
+                    #     email.send()
+                return redirect("/user")
+        return render(request, 'user/home_user.html', content)
     else:
         return redirect("/")
 
@@ -188,9 +178,8 @@ def handle_uploaded_file(f):
     file.close()
 
 
-
 def detail_user(request):
-    if request.session.has_key('user'):
+    if request.session.has_key('user')and (Users.objects.get(username=request.session['user'])).status == 1:
         user = Users.objects.get(username=request.session['user'])
         if request.method == 'POST':
             if 'change_user' in request.POST:
@@ -218,10 +207,10 @@ def login_user(request):
     mess_resetpwd_ok = 'Please confirm your email address to reset your account'
     mess_register_error = 'Register information is invalid'
     mess_register_ok = 'Please confirm your email address to complete the registration'
-    mess_login_error = 'username or password incorrect'
-    if request.session.has_key('user'):
+    mess_login_error = 'login error'
+    if request.session.has_key('user')and (Users.objects.get(username=request.session['user'])).status == 1:
         return redirect("/user")
-    elif request.session.has_key('agent'):
+    elif request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         return redirect('/agent')
     elif request.session.has_key('admin'):
         return redirect('/agent/admin')
@@ -272,7 +261,6 @@ def login_user(request):
                     email.send()
                     return render(request, 'user/index.html',{'mess': mess_register_ok})
                 else:
-                    # form.non_field_errors()
                     error = ''
                     for field in form:
                         error += field.errors
@@ -284,19 +272,16 @@ def login_user(request):
                     agentname = form.cleaned_data['agentname']
                     agentpass = form.cleaned_data['agentpass']
                     if authenticate_agent(agentname=agentname, agentpass=agentpass) is None:
-                        return render(request, 'user/index.html',{'mess': mess_login_error})
+                        return render(request, 'user/index.html', {'mess': mess_login_error})
                     elif authenticate_agent(agentname=agentname, agentpass=agentpass) == 1:
                         agent = get_agent(agentname)
                         mail_subject = 'Mã xác thực đăng nhập.'
                         code = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
                         dic[agent.username] = code
                         now = datetime.datetime.now()
-                        expiry_date = now + datetime.timedelta(minutes = 1)
+                        expiry_date = now + datetime.timedelta(minutes=1)
                         dic_time[code] = expiry_date
-                        message = render_to_string('user/confirm_admin.html', {
-                        'agent': agent,
-                        'code': code,
-                        })
+                        message = render_to_string('user/confirm_admin.html', {'agent': agent, 'code': code})
                         to_email = agent.email
                         email = EmailMessage(
                                     mail_subject, message, to=[to_email]
@@ -304,8 +289,13 @@ def login_user(request):
                         email.send()
                         return redirect('/submitadmin')
                     elif authenticate_agent(agentname=agentname, agentpass=agentpass) == 0:
-                        request.session['agent'] = agentname
-                        return redirect('/agent')
+                        ag = Agents.objects.get(username=agentname)
+                        print(ag.status)
+                        if ag.status == 1:
+                            request.session['agent'] = agentname
+                            return redirect('/agent')
+                        else:
+                            return render(request, 'user/index.html', {'mess': 'your account has been blocked'})
                 else:
                     error = ''
                     for field in form:
@@ -315,9 +305,9 @@ def login_user(request):
             else:
                 form = UserLoginForm(request.POST)
                 if form.is_valid():
-                    username = form.cleaned_data['username']
+                    username = request.POST['username']
                     request.session['user'] = username
-                    return redirect("/user")
+                    return redirect("/user/")
                 else:
                     error = ''
                     for field in form:
@@ -332,8 +322,6 @@ def logout_user(request):
 
 
 def activate(request, uidb64, token):
-    mess_active_error = 'Activation link is invalid!'
-    mess_active_ok = ''
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = Users.objects.get(id=uid)
@@ -342,12 +330,8 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.status = 1
         user.save()
-        return render(request,
-                      'user/index.html', {'mess': "Success",'error': 'Thank you for your email confirmation.'})
-        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-        # mess = 'Thank you for your email confirmation. Now you can login your account.'
-        # return render(request, 'user/index.html',{'mess': mess})
-        # return redirect('/', {'mess': mess})
+        return render(request, 'user/index.html',
+                      {'mess': "Success", 'error': 'Thank you for your email confirmation.'})
     else:
         return HttpResponse('Activation link is invalid!')
 

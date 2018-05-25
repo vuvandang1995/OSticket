@@ -6,8 +6,6 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django.utils import timezone
-# from django.contrib.auth.hashers import check_password
 from user.models import *
 
 
@@ -185,7 +183,6 @@ def authenticate_user(username, password):
     if u is not None:
         login_valid = (u.username == username)
         pwd_valid = (password == u.password)
-        # status_valid = u.status
         if login_valid and pwd_valid:
             return u
         else:
@@ -198,11 +195,9 @@ def authenticate_agent(agentname, agentpass):
     u = get_agent(agentname)
     if u is not None:
         login_valid = (u.username == agentname)
-        #pwd_valid = check_password(password, u.password)
         pwd_valid = (agentpass == u.password)
         admin_valid = u.admin
-        status_valid = u.status
-        if login_valid and pwd_valid and status_valid:
+        if login_valid and pwd_valid:
             if admin_valid:
                 return 1
             else:
