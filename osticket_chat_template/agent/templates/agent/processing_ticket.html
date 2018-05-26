@@ -205,10 +205,12 @@
                     url:location.href,
                     data: {'list_agent[]': JSON.stringify(list_agent),'csrfmiddlewaretoken':token, 'ticketid': tkid, 'content': content, 'type': 'forward_agent'},
                     success: function(){
+                        var date = formatAMPM(new Date());
                         document.getElementById("close_fw_add").click();
                         list_agent.push('forward_new');
                         group_agent_Socket.send(JSON.stringify({
                             'message' : list_agent,
+                            'time' : date
                         }));
                                 }
                 });
@@ -218,10 +220,12 @@
                     url:location.href,
                     data: {'list_agent[]': JSON.stringify(list_agent),'csrfmiddlewaretoken':token, 'ticketid': tkid, 'content': content, 'type': 'add_agent'},
                     success: function(){
+                        var date = formatAMPM(new Date());
                         document.getElementById("close_fw_add").click();
                         list_agent.push('add_new');
                         group_agent_Socket.send(JSON.stringify({
                             'message' : list_agent,
+                            'time' : date
                         }));
                     }
                 });
@@ -244,7 +248,7 @@
                     url:location.href,
                     data: {'tkid':id, 'csrfmiddlewaretoken':token, 'stt': 2, 'type': 'process_done'},
                     success: function(){
-                        // window.location.reload();
+                        var date = formatAMPM(new Date());
                         $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
 
                         var userName = $('#user'+id).val();
@@ -258,6 +262,7 @@
                             setTimeout(function(){
                                 Socket1.send(JSON.stringify({
                                     'message' : message,
+                                    'time' : date
                                 }));
                             }, 1000);
                         };
@@ -277,7 +282,7 @@
                     url:location.href,
                     data: {'tkid':id, 'csrfmiddlewaretoken':token, 'stt': 1, 'type': 'process_done'},
                     success: function(){
-                        // window.location.reload();
+                        var date = formatAMPM(new Date());
                         $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
 
                         var userName = $('#user'+id).val();
@@ -291,6 +296,7 @@
                             setTimeout(function(){
                                 Socket1.send(JSON.stringify({
                                     'message' : message,
+                                    'time' : date
                                 }));
                             }, 1000);
                         };
@@ -327,6 +333,7 @@
                         };
                         // con thong bao toi agent khac, load lai trang cua agent va admin
                         list_agent = [];
+                        var date = formatAMPM(new Date());
                         var array = $('body #hd'+id).html().split(",");
                         for (i = 0; i < array.length-1; i++) {
                             if (agentName !=  array[i].replace(/\s/g,'')){
@@ -339,6 +346,7 @@
                         list_agent.unshift(agentName);
                         group_agent_Socket.send(JSON.stringify({
                             'message' : list_agent,
+                            'time' : date
                         }));
                     }
                 });

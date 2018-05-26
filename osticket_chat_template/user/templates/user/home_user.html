@@ -137,12 +137,14 @@
                             }
 
                             message.push(mgs);
+                            var date = formatAMPM(new Date());
                             var chatSocket1 = new WebSocket(
                             'ws://' + window.location.host +
-                            '/ws/agent/group_agent_Socket/');
+                            '/ws/agent/agent+group_agent_Socket/');
                             chatSocket1.onopen = function (event) {
                                 chatSocket1.send(JSON.stringify({
                                     'message' : message,
+                                    'time': date
                                 }));
                             };
                         }
@@ -271,11 +273,13 @@
         $("#id02").submit(function() {
             var chatSocket1 = new WebSocket(
             'ws://' + window.location.host +
-            '/ws/agent/group_agent_Socket/');
+            '/ws/agent/agent+group_agent_Socket/');
             var message = 'new_ticket';
+            var date = formatAMPM(new Date());
             chatSocket1.onopen = function (event) {
                 chatSocket1.send(JSON.stringify({
                     'message' : message,
+                    'time' : date
                 }));
             };
         });

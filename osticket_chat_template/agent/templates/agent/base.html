@@ -98,7 +98,7 @@
     
     var group_agent_Socket = new WebSocket(
         'ws://' + window.location.host +
-        '/ws/agent/group_agent_Socket/');
+        '/ws/agent/'+agentName+'+group_agent_Socket/');
         
         
     function formatAMPM(date) {
@@ -134,15 +134,16 @@
     group_agent_Socket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         var message = data['message'];
+        var time = data['time'];
         var type_save = data['type'];
             if (typeof type_save !== 'undefined'){
                 if (type_save == 're-noti'){
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                 }else{
                     var name = data['user_name'];
                     var href="javascript:register_popup_agent('chat"+message+"', "+message+", '"+name+"');"
-                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                     $('.notification_chat').prepend(noti);
                 }
             }else{
@@ -150,12 +151,14 @@
                 switch(message) {
                     case 'new_ticket':
                         var message = 'You have a new ticket';
-                        var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                        var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                         $('.noti_noti').prepend(noti);
                         $("body .point_noti").show();
 
                         group_agent_Socket.send(JSON.stringify({
                             'message' : message,
+                            'agentName' : agentName,
+                            'time' : time,
                             'type' : 'save',
                         }));
                         setTimeout(function(){
@@ -174,13 +177,15 @@
                 // Thong bao va load lai table processing khi ban duoc ai do forward hoac add ticket
                 if (check_exits(agentName, message) && check_exits('forward_new', message)) {
                     var message = 'INBOX: You have a new ticket(forward)';
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
-                        'message' : message1,
+                        'message' : message,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -190,13 +195,15 @@
 
                 if (check_exits(agentName, message) && check_exits('add_new', message)) {
                     var message = 'INBOX: You have a new ticket(add)';
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -205,15 +212,17 @@
                 }
 
                 // Thong bao va load lai table inbox, processing khi co agent dong y ticket ban forward hoac add
-                if (message.includes('+'+fullname) && message.includes('agreed your ticket you forwarding')) {
-                    var message1 = message.slice(0, (message.length - fullname.length - 1));
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                if (message.includes('+'+agentName) && message.includes('agreed your ticket you forwarding')) {
+                    var message1 = message.slice(0, (message.length - agentName.length - 1));
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -221,15 +230,17 @@
                     }, 2000);
                 }
 
-                if (message.includes('+'+fullname) && message.includes('Your ticket you forwarding refused by')) {
-                    var message1 = message.slice(0, (message.length - fullname.length - 1));
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                if (message.includes('+'+agentName) && message.includes('Your ticket you forwarding refused by')) {
+                    var message1 = message.slice(0, (message.length - agentName.length - 1));
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -237,15 +248,17 @@
                     }, 2000);
                 }
 
-                if (message.includes('+'+fullname) && message.includes('agreed your ticket you adding')) {
-                    var message1 = message.slice(0, (message.length - fullname.length - 1));
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                if (message.includes('+'+agentName) && message.includes('agreed your ticket you adding')) {
+                    var message1 = message.slice(0, (message.length - agentName.length - 1));
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -253,15 +266,17 @@
                     }, 2000);
                 }
 
-                if (message.includes('+'+fullname) && message.includes('Your ticket you adding refused by')) {
-                    var message1 = message.slice(0, (message.length - fullname.length - 1));
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                if (message.includes('+'+agentName) && message.includes('Your ticket you adding refused by')) {
+                    var message1 = message.slice(0, (message.length - agentName.length - 1));
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -272,13 +287,15 @@
                 
                 if (check_exits(agentName, message) && check_exits('leader_forward', message)) {
                     var message1 = 'Leader have just forwarded for you ticket '+message[message.length-1];
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -289,13 +306,15 @@
                 if (check_exits(agentName, message) && check_exits('admin_close_ticket', message)) {
                     var len = message.length;
                     var message1 = 'Leader have just closed ticket '+message[len-1];
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -307,13 +326,15 @@
                 if (check_exits(agentName, message) && check_exits('admin_open_ticket', message)) {
                     var len = message.length;
                     var message1 = 'Leader have just opend ticket '+message[len-1];
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -325,13 +346,15 @@
                 if (message.includes(agentName) && message[1].includes('is closed by')) {
                     var len = message.length;
                     var message1 = message[len-1];
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
                     setTimeout(function(){
@@ -341,13 +364,15 @@
 
                 if (message.includes(agentName+'+') && message.includes('give up')) {
                     var message1 = message[0]+' just have given up ticket no. '+message[1];
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $("body .point_noti").show();
                     x.play();
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
                         'type' : 'save',
                     }));
 
@@ -362,26 +387,30 @@
                         if ($('body .chat'+tkid).css('display') == 'none'){
                             var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
                             var message2 = message[0]+'-'+message[1];
-                            var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
+                            var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span><span class="time">'+time+'</span></div></a>';
                             $('.notification_chat').prepend(noti);
                             $("body .point_message").show();
                             x.play();
 
                             group_agent_Socket.send(JSON.stringify({
                                 'message' : message2,
+                                'agentName' : agentName,
+                                'time' : time,
                                 'type' : 'chat',
                             }));
                         }
                     }else{
                         var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
                         var message2 = message[0]+'-'+message[1];
-                        var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
+                        var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span><span class="time">'+time+'</span></div></a>';
                         $('.notification_chat').prepend(noti);
                         $("body .point_message").show();
                         x.play();
 
                         group_agent_Socket.send(JSON.stringify({
                             'message' : message2,
+                            'agentName' : agentName,
+                            'time' : time,
                             'type' : 'chat',
                         }));
                     }
@@ -497,6 +526,7 @@
         chatSocket.onopen = function (event) {
             chatSocket.send(JSON.stringify({
                 'message' : message,
+                'time' : date
             }));
         };
     })

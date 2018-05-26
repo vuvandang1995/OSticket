@@ -21,7 +21,7 @@
                 <td>
                     <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content1">{{tk.ticketid.id}}</button>
                 </td>
-                <td id="sender{{tk.ticketid.id}}">{{tk.senderid.fullname}}</td>
+                <td id="sender{{tk.ticketid.id}}">{{tk.senderid.username}}</td>
                 <td>{{tk.content}}</td>
                 {% if tk.ticketid.status == 0 %}
                 <td><span class="label label-danger">pending</span></td>
@@ -93,7 +93,7 @@
                 <td>
                     <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
                 </td>
-                <td id="sender_{{tk.ticketid.id}}">{{tk.senderid.fullname}}</td>
+                <td id="sender_{{tk.ticketid.id}}">{{tk.senderid.username}}</td>
                 <td>{{tk.content}}</td>
                 {% if tk.ticketid.status == 0 %}
                 <td><span class="label label-danger">pending</span></td>
@@ -144,9 +144,11 @@
            var token = $("input[name=csrfmiddlewaretoken]").val();
            if(confirm("Are you sure ?")){
                 var sender = $('body #sender'+id).html();
+                var date = formatAMPM(new Date());
                 message = fullname+' agreed your ticket you forwarding +'+sender;
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
+                    'time' : date
                 }));
 
                 var userName = $('#user'+id).val();
@@ -159,6 +161,7 @@
                     setTimeout(function(){
                         Socket1.send(JSON.stringify({
                             'message' : message,
+                            'time' : date
                         }));
                     }, 1000);
                 };
@@ -179,9 +182,11 @@
            var token = $("input[name=csrfmiddlewaretoken]").val();
            if(confirm("Are you sure ?")){
                 var sender = $('body #sender'+id).html();
+                var date = formatAMPM(new Date());
                 message = 'Your ticket you forwarding refused by '+fullname+' +'+sender;
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
+                    'time' : date
                 }));
 
                 $.ajax({
@@ -200,9 +205,11 @@
            var token = $("input[name=csrfmiddlewaretoken]").val();
            if(confirm("Are you sure ?")){
                 var sender = $('body #sender_'+id).html();
+                var date = formatAMPM(new Date());
                 message = fullname+' agreed your ticket you adding +'+sender;
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
+                    'time' : date
                 }));
 
                 var userName = $('#user'+id).val();
@@ -216,6 +223,7 @@
                     setTimeout(function(){
                         Socket1.send(JSON.stringify({
                             'message' : message,
+                            'time' : date
                         }));
                     }, 1000);
                 };
@@ -235,9 +243,11 @@
            var token = $("input[name=csrfmiddlewaretoken]").val();
            if(confirm("Are you sure ?")){
                 var sender = $('body #sender_'+id).html();
+                var date = formatAMPM(new Date());
                 message = 'Your ticket you adding refused by '+fullname+' +'+sender;
                 group_agent_Socket.send(JSON.stringify({
                     'message' : message,
+                    'time' : date
                 }));
 
                 $.ajax({
