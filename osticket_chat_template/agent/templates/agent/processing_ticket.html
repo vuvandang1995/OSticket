@@ -323,11 +323,13 @@
                             'ws://' + window.location.host +
                             '/ws/user/' + userName + '/');
 
-                        message = 'give up' 
+                        message = 'give up'
+                        var date = formatAMPM(new Date());
                         Socket1.onopen = function (event) {
                             setTimeout(function(){
                                 Socket1.send(JSON.stringify({
                                     'message' : message,
+                                    'time' : date
                                 }));
                             }, 1000);
                         };
