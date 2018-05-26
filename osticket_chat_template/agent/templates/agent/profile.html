@@ -23,7 +23,7 @@
                             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
                                 <i class="fa fa-bell"></i>
                                 <div class="notify"> 
-                                    <span class="point"></span>
+                                    <span class="point point_noti"></span>
                                 </div>
                             </a>
                             <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
@@ -33,15 +33,33 @@
                                     </li>
                                     <li>
                                         <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
-                                            <div class="message-center" style="overflow: hidden; width: auto; height: 250px;">
-                                                    
+                                            <div class="message-center noti_noti" style="overflow: hidden; width: auto; height: 250px;">
                                             </div>
                                         </div>
                                     </li>
-                                    
                                 </ul>
                             </div>
-                            
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-envelope"></i>
+                                <div class="notify"> 
+                                    <span class="point point_message"></span>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
+                                <ul>
+                                    <li>
+                                        <div class="drop-title">Notifications</div>
+                                    </li>
+                                    <li>
+                                        <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
+                                            <div class="message-center notification_chat" style="overflow: hidden; width: auto; height: 250px;">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                         <li><a class="list-group-item" href="{% url 'agent:home_agent' %}">Home</a></li>
                         <li><a class="list-group-item" href="{% url 'agent:inbox' %}">Inbox</a></li>
