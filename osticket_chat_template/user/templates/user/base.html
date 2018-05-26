@@ -102,14 +102,15 @@
         chatSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);
             var message = data['message'];
+            var time = data['time'];
             var type_save = data['type'];
             if (typeof type_save !== 'undefined'){
                 if (type_save == 're-noti'){
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                 }else{
                     var href="javascript:register_popup('chat"+message+"', "+message+");"
-                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                     $('.notification_chat').prepend(noti);
                 }
                 
@@ -123,30 +124,32 @@
                     if ($('body .chat'+tkid).length){
                         if ($('body .chat'+tkid).css('display') == 'none'){
                             var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
-                            var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
+                            var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span><span class="time">'+time+'</span></div></a>';
                             $('.notification_chat').prepend(noti);
                             $("body .point_message").show();
                             x.play();
     
                             chatSocket.send(JSON.stringify({
                                 'message' : message[0],
+                                'time' : time,
                                 'type' : 'chat',
                             }));
                         }
                     }else{
                         var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
-                        var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span></div></a>';
+                        var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span><span class="time">'+time+'</span></div></a>';
                         $('.notification_chat').prepend(noti);
                         $("body .point_message").show();
                         x.play();
     
                         chatSocket.send(JSON.stringify({
                             'message' : message[0],
+                            'time' : time,
                             'type' : 'chat',
                         }));
                     }
                 }else{
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span></div></a>';
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $(".point_noti").show();
                     x.play();
@@ -156,6 +159,7 @@
     
                     chatSocket.send(JSON.stringify({
                         'message' : message,
+                        'time' : time,
                         'type' : 'save',
                     }));
                 }
@@ -291,7 +295,7 @@
 
             var chatSocket1 = new WebSocket(
             'ws://' + window.location.host +
-            '/ws/agent/group_agent_Socket/');
+            '/ws/agent/agent+group_agent_Socket/');
             var message = 'new_chat';
             list_ag.unshift(message);
             list_ag.unshift(userName);
@@ -299,6 +303,7 @@
             chatSocket1.onopen = function (event) {
                 chatSocket1.send(JSON.stringify({
                     'message' : list_ag,
+                    'time' : date
                 }));
             };
         })

@@ -484,7 +484,7 @@ def inbox(request):
                 sender = fwticket.senderid
                 agticket = TicketAgent.objects.get(ticketid=ticket, agentid=fwticket.senderid)
                 fwticket.delete()
-                if 'agree' in request.POST:
+                if 'agree' not in request.POST:
                     if sender.receive_email == 1:
                         email = EmailMessage(
                             'Deny forward request',
@@ -527,7 +527,7 @@ def inbox(request):
                 addagent = AddAgents.objects.get(ticketid=ticket, receiverid=agent)
                 sender = addagent.senderid
                 addagent.delete()
-                if 'agree' in request.POST:
+                if 'agree' not in request.POST:
                     if sender.receive_email == 1:
                         email = EmailMessage(
                             'Deny add request',
