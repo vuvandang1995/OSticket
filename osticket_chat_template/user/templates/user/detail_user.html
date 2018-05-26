@@ -46,11 +46,11 @@
         </tr>      
       </tbody>
     </table>
-    <button type="button" class="btn btn-success" id="{{ user.id }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
+    <button type="button" class="btn btn-success info_agent" id="{{ user.id }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
             <span class="glyphicon glyphicon-wrench">Change info</span>
     </button>
 
-    <button type="button" class="btn btn-danger" id="{{ user.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
+    <button type="button" class="btn btn-danger pwd_agent" id="{{ user.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
             <span class="glyphicon glyphicon-wrench" id="{{user.password}}" name='pwd_current'>Change password</span>
     </button>
 </div>
@@ -100,5 +100,6 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 

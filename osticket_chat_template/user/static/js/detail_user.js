@@ -1,5 +1,48 @@
 $(document).ready(function(){
-    $("#changeuser").click(function() {
+    $('body').on('click', '.info_agent', function(){
+        var userid = $(this).attr('id');
+        $('body #title').html("Edit User")
+        $("body input[name=userid]").val(userid);
+
+        var fullname = $("body #full_name").html();
+        $("body input[name=fullname]").val(fullname);
+
+        var email = $("body #email_user").html();
+        $("body input[name=email]").val(email);
+
+        var phone = $("body #phone_user").html();
+        $("body input[name=phone]").val(phone);
+
+        if ($('body #rc_email').html() == 'Yes'){
+            $('body #topicModal input:checkbox').prop('checked', true);
+        }else{
+            $('body #topicModal input:checkbox').prop('checked', false);
+        }
+
+        $('body #info').show();
+        $('body #pwd').hide();
+        
+    });
+
+    $('body').on('click', '.pwd_agent', function(){
+        var userid = $(this).attr('id');
+        $('body #title').html("Change your password")
+
+        $("body input[name=userid]").val(userid);
+
+        $("body input[name=fullname]").val('no');
+
+        $("body input[name=current_password]").val("");
+
+        $("body input[name=password]").val("");
+
+        $("body input[name=password2]").val("");
+
+        $('body #info').hide();
+        $('body #pwd').show();
+    });
+
+    $('body').on('click', '#changeuser', function(){
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var fullname = $("input[name=fullname]").val();
         var email = $("input[name=email]").val();
@@ -18,7 +61,6 @@ $(document).ready(function(){
                         url:location.href,
                         data: {'csrfmiddlewaretoken':token, 'userid': userid, 'pwd': pwd1},
                         success: function(){
-                            // window.location.reload();
                             document.getElementById("change_user_close").click();
                             $("#info-user").load(location.href + " #info-user");
                         }
@@ -48,51 +90,4 @@ $(document).ready(function(){
             });
         }
     });
-
-
-    
-    $("#topicModal").on('show.bs.modal', function(event){
-        var button = $(event.relatedTarget);
-        var title = button.data('title');
-        if (title === 'change'){
-            $('#title').html("Edit User")
-            var userid = button.attr('id');
-            $("input[name=userid]").val(userid);
-
-            var fullname = $("#full_name").html();
-            $("input[name=fullname]").val(fullname);
-
-            var email = $("#email_user").html();
-            $("input[name=email]").val(email);
-
-            var phone = $("#phone_user").html();
-            $("input[name=phone]").val(phone);
-
-            if ($('#rc_email').html() == 'Yes'){
-                $('#topicModal input:checkbox').prop('checked', true);
-            }else{
-                $('#topicModal input:checkbox').prop('checked', false);
-            }
-
-            $('#info').show();
-            $('#pwd').hide();
-        }else if (title === 'change_pwd'){
-            $('#title').html("Change your password")
-
-            var userid = button.attr('id');
-            $("input[name=userid]").val(userid);
-
-            $("input[name=fullname]").val('no');
-
-            $("input[name=current_password]").val("");
-
-            $("input[name=password]").val("");
-
-            $("input[name=password2]").val("");
-
-            $('#info').hide();
-            $('#pwd').show();
-        }
-    });
-    
 });
