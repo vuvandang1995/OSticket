@@ -239,6 +239,16 @@ li {
     white-space: nowrap;
 }
 
+.mailbox .message-center a .mail-contnet .time {
+    font-size: 12px;
+    display: block;
+    margin: 1px 0;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    color: #67757c;
+    white-space: nowrap;
+}
+
 .not-active {
   pointer-events: none;
   cursor: default;

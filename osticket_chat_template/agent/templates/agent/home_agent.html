@@ -53,9 +53,7 @@
               </div>
             </div>
           </div>
-        <input id="user_name" type="hidden" value="{{ tk.sender.username}}">
-        <input id="agent_name" type="hidden" value="{{ agent.username}}">
-
+        <input id="user_name{{tk.id}}" type="hidden" value="{{ tk.sender.username}}">
         {% endfor%}
     </table>
     <script>
@@ -65,20 +63,23 @@
                 var id = $(this).attr('id');
                 var token = $("input[name=csrfmiddlewaretoken]").val();
                 if(confirm("Are you sure ?")){
-                    var userName = document.getElementById('user_name').value;
+                    var userName = document.getElementById('user_name'+id).value;
                     var chatSocket1 = new WebSocket(
                         'ws://' + window.location.host +
                         '/ws/user/' + userName + '/');
 
+                    var date = formatAMPM(new Date());
                     message = 'ticket '+id+' dang duoc xu ly';
                     chatSocket1.onopen = function (event) {
                         chatSocket1.send(JSON.stringify({
                             'message' : message,
+                            'time' : date,
                         }));
                     };
 
                     group_agent_Socket.send(JSON.stringify({
                         'message' : 'ticket da duoc xu ly',
+                        'time' : date,
                     }));
 
                     $.ajax({
