@@ -340,6 +340,37 @@
                     }, 2000);
                 }
 
+                if (check_exits(agentName, message) && check_exits('admin_delete_ticket', message)) {
+                    var len = message.length;
+                    var message1 = 'Leader have just delete ticket '+message[len-1];
+                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $("body .point_noti").show();
+                    x.play();
+
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : message1,
+                        'agentName' : agentName,
+                        'time' : time,
+                        'type' : 'save',
+                    }));
+                    setTimeout(function(){
+                        $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+                    }, 2000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('cancle_forward', message)) {
+                    setTimeout(function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }, 1000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('cancle_add', message)) {
+                    setTimeout(function(){
+                        $("#info_user").load(location.href + " #info_user");
+                    }, 1000);
+                }
+
                 
                 if (message.includes(agentName) && message[1].includes('is closed by')) {
                     var len = message.length;

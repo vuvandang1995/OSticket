@@ -71,7 +71,19 @@
         'ws://' + window.location.host +
         '/ws/agent/'+agentName+'+group_agent_Socket/');
         
-        
+    
+
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+
     $(".point").hide();
 
     $(".fa-bell").click(function(){
@@ -79,20 +91,10 @@
     });
 
 
-    /*chatSocket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        $(".point").show();
-        setTimeout(function(){
-            $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
-        }, 1000);
-    };*/
-
     group_agent_Socket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         var message = data['message'];
         // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
-        $(".point").show();
         setTimeout(function(){
             $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
         }, 1000);

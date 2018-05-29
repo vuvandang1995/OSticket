@@ -106,7 +106,7 @@ DATABASES = {
         'NAME': 'osticket',
         'USER': 'dangvv',
         'PASSWORD': '1',
-        'HOST': '192.168.40.138',
+        'HOST': '192.168.100.22',
         'PORT': '3306',
     }
 }
