@@ -106,12 +106,9 @@
             var type_save = data['type'];
             if (typeof type_save !== 'undefined'){
                 if (type_save == 're-noti'){
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
-                    $('.noti_noti').prepend(noti);
+                    $('.noti_noti').prepend(message);
                 }else{
-                    var href="javascript:register_popup('chat"+message+"', "+message+");"
-                    var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
-                    $('.notification_chat').prepend(noti);
+                    $('.notification_chat').prepend(message);
                 }
                 
             }else{
@@ -130,8 +127,7 @@
                             x.play();
     
                             chatSocket.send(JSON.stringify({
-                                'message' : message[0],
-                                'time' : time,
+                                'message' : noti,
                                 'type' : 'chat',
                             }));
                         }
@@ -143,13 +139,13 @@
                         x.play();
     
                         chatSocket.send(JSON.stringify({
-                            'message' : message[0],
-                            'time' : time,
+                            'message' : noti,
                             'type' : 'chat',
                         }));
                     }
                 }else{
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
+                    var href="{% url 'user:homeuser' %}"
+                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     $(".point_noti").show();
                     x.play();
@@ -158,8 +154,7 @@
                     }, 2000);
     
                     chatSocket.send(JSON.stringify({
-                        'message' : message,
-                        'time' : time,
+                        'message' : noti,
                         'type' : 'save',
                     }));
                 }

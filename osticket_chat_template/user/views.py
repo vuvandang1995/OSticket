@@ -84,20 +84,6 @@ def homeuser(request):
         topic = Topics.objects.all()
         ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
         handler = TicketAgent.objects.all()
-        # dict_chat = {}
-        # for tk in ticket:
-        #     if tk.status == 1 or tk.status == 2:
-        #         dem = 0
-        #         try:
-        #             file = open('chat_'+str(tk.id)+'.txt', 'r')
-        #             for line in file:
-        #                 who = line.split('^%$^%$&^')[1].strip()
-        #                 if who == 'you':
-        #                     dem = dem + 1
-        #         except:
-        #             pass
-        #         dict_chat[str(tk.id)] = dem
-        # print(dict_chat)
         content = {'ticket': ticket,
                    'form': form,
                    'user': user,
@@ -111,6 +97,7 @@ def homeuser(request):
                 ticket = Tickets.objects.get(id=request.POST['tkid'])
                 ticket.status = 3
                 ticket.save()
+                
                 TicketLog.objects.create(userid=user,
                                         ticketid=ticket,
                                         action='close ticket',
