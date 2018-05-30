@@ -584,15 +584,21 @@ def profile(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
         if request.method == 'POST':
-            if 'fullname' in request.POST:
-                agent.fullname = request.POST['fullname']
-                agent.email = request.POST['email']
-                agent.phone = request.POST['phone']
-                agent.receive_email = request.POST['receive']
-                agent.save()
+            if 'change_user' in request.POST:
+                u = Agents.objects.get(id=request.POST['agentid'])
+                fullname = request.POST['change_user']
+                email = request.POST['email']
+                phone = request.POST['phone']
+                receive_mail = request.POST['receive_mail']
+                u.fullname = fullname
+                u.email = email
+                u.phone = phone
+                u.receive_email = receive_mail
+                u.save()
             elif 'pwd' in request.POST:
-                agent.password = request.POST['pwd']
-                agent.save()
+                u = Agents.objects.get(id=request.POST['agentid'])
+                u.password = request.POST['pwd']
+                u.save()
         return render(request,"agent/profile.html",{'agent':agent, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
     else:
         return redirect("/")

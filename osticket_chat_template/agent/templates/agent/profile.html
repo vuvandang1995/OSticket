@@ -1,102 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load staticfiles %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
+{% extends 'agent/base.html' %}
+{% load staticfiles %}
+{% block title %}Processing ticket{% endblock %}
+{% block lib %}
     <link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/detail_agent.js' %}"></script>
+{% endblock %}
+{% block js %}
+<script src="{% static 'js/detail_agent.js' %}"></script>
+{% endblock %}
+    
+{% block content %}
     <title>Profile</title>
-</head>
-<body>
-        <div class="header">
-                <nav class="main-menu">
-                    <ul>
-                        <li class="dropdown nav-item">
-                            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-bell"></i>
-                                <div class="notify"> 
-                                    <span class="point"></span>
-                                </div>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
-                                <ul>
-                                    <li>
-                                        <div class="drop-title">Notifications</div>
-                                    </li>
-                                    <li>
-                                        <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
-                                            <div class="message-center" style="overflow: hidden; width: auto; height: 250px;">
-                                                    
-                                            </div>
-                                        </div>
-                                    </li>
-                                    
-                                </ul>
-                            </div>
-                            
-                        </li>
-                        <li><a class="list-group-item" href="{% url 'agent:home_agent' %}">Home</a></li>
-                        <li><a class="list-group-item" href="{% url 'agent:inbox' %}">Inbox</a></li>
-                        <li><a class="list-group-item" href="{% url 'agent:outbox' %}">Outbox</a></li>
-                        <li><a class="list-group-item" href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
-                        <li><a class="list-group-item" href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
-                        <li><a class="list-group-item" href="{% url 'agent:manage_user' %}">Manage user</a></li>
-                        <li><a class="list-group-item" href="{% url 'agent:profile' %}">Profile</a></li>
-                        <li><a class="list-group-item" href="{% url 'agent:logout' %}">Logout</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <br />
-            <br />
-            <br />
-<div class="container" id="info_user">
     <h2>Profile</h2>
-    <table class="table table-striped table-bordered">
-            <tr>
-                <td>Fullname</td>
-                <td id="full_name">{{ agent.fullname }}</td>
-            </tr>
-            <tr>
-                <td>Email</td>
-                <td id="email_user">{{ agent.email }}</td>
-            </tr>
-            <tr>
-                <td>Phone</td>
-                <td id="phone_user">{{ agent.phone }}</td>
-            </tr>
-            <tr>
-                <td>Status</td>
-                {% if agent.status == 0 %}
-                <td><span class="label label-danger">inactive</span></td>
-                {% else %}
-                <td><span class="label label-success">active</span></td>
-                {% endif %}
-            </tr>
-            <tr>
-                <td>Receive email</td>
-                {% if agent.receive_email == 0 %}
-                 <td><span class="label label-danger">no</span></td>
-                {% else %}
-                <td><span class="label label-success">yes</span></td>
-                {% endif %}
-            </tr>
-    </table>
-    <button type="button" class="btn btn-success" id="{{ agent.receive_email }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
-            <span class="glyphicon glyphicon-wrench">Change info</span>
-    </button>
-
-    <button type="button" class="btn btn-danger" id="{{ agent.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
-            <span class="glyphicon glyphicon-wrench" id="{{agent.password}}" name='pwd_current'>Change password</span>
-    </button>
-</div>
+    <table class="table table-striped table-bordered" id="info-user">
+        <tbody>
+          <tr>
+              <td>Fullname</td>
+            <td id="full_name">{{ agent.fullname }}</td>
+          </tr>
+          <tr>
+              <td>Email</td>
+            <td id="email_user">{{ agent.email }}</td>
+          </tr>
+          <tr>
+              <td>Username</td>
+            <td>{{ agent.username }}</td>
+          </tr>
+          <tr>
+              <td>Phone</td>
+            <td id="phone_user">{{agent.phone}}</td>
+          </tr>
+          <tr>
+              <td>Receive email</td>
+            {% if agent.receive_email == 1 %}
+                  <td id="rc_email">Yes</td>
+              {% else %}
+                  <td id="rc_email">No</td>
+            {% endif%}
+          </tr>
+          <tr>
+              <td>Status</td>
+            {% if agent.status == 0 %}
+              <td><span class="label label-danger">inactive</span></td>
+              {% else %}
+              <td><span class="label label-success">active</span></td>
+              {% endif %}
+          </tr>     
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-success info_agent" id="{{ agent.id }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
+              <span class="glyphicon glyphicon-wrench">Change info</span>
+      </button>
+  
+      <button type="button" class="btn btn-danger pwd_agent" id="{{ agent.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
+              <span class="glyphicon glyphicon-wrench" id="{{agent.password}}" name='pwd_current'>Change password</span>
+      </button>
+  </div>
+  
 {% csrf_token %}
 <div id="topicModal" class="modal fade">
     <div class="modal-dialog">
@@ -104,6 +64,7 @@
             <div class="modal-header">
                 <h3 class="modal-title" style= "color: red";><strong id="title"></strong></h3>
             </div>
+                
                 <div class="modal-body form-group">
                     <div id="info">
                         <label for="fullname"><b>Full name</b></label>
@@ -114,13 +75,8 @@
 
                         <label for="phone"><b>Phone</b></label>
                         <input class="inputText form-control" type="text" placeholder="Enter your phone number" name="phone">
-
-                        <label for="phone"><b>Receive email:</b></label><br/>
-                        {% if agent.receive_email == 0 %}
-                        <input style="transform: scale(2)" type="checkbox" name="receive_email"> <b>Yes</b>
-                        {% else %}
-                        <input style="transform: scale(2)" type="checkbox" name="receive_email" checked> <b>Yes</b>
-                        {% endif %}
+                        <br/>
+                        <input class="inputText" style="transform: scale(2)" type="checkbox" name="receive_mail" > <b>   Receive Email?</b>
                     </div>
 
                     <div id="pwd">
@@ -134,135 +90,14 @@
                         <input class="inputText form-control" type="password" placeholder="Repeat new Password" name="password2">
                     </div>
 
-                </div>
+                    <input type="hidden" name="agentid" value="">
 
+                </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id = "change_user_close">Close</button>
                     <button type="button" id="changeuser" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id = "change_user_close">Close</button>
                 </div>
-
         </div>
     </div>
 </div>
-<audio id="myAudio">
-    <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
-</audio>
-<script>
-    var x = document.getElementById("myAudio"); 
-    var fullname = {{ fullname }};
-    var agentName = {{ agent_name }};
-    var chatSocket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/agent/' + agentName + '/');
-    
-    var group_agent_Socket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/agent/group_agent_Socket/');
-        
-    $(".point").hide();
-
-    $(".fa-bell").click(function(){
-        $(".point").hide();
-    });
-
-    chatSocket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        /*if (message == 'close_ticket'){
-            setTimeout(function(){
-                $("#list_ticket").load(location.href + " #list_ticket");
-            }, 1000);
-        }*/
-        document.getElementById('noti').innerHTML = message;
-    };
-
-    group_agent_Socket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
-        switch(message) {
-            case 'new_ticket':
-                var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">You have a new ticket</span></div></a>';
-                $('.message-center').prepend(noti);
-                $(".point").show();
-                setTimeout(function(){
-                    $("#list_ticket_home").load(location.href + " #list_ticket_home");
-                }, 1000);
-                x.play();
-                break;
-            case 'ticket da duoc xu ly':
-                setTimeout(function(){
-                    $("#list_ticket_home").load(location.href + " #list_ticket_home");
-                }, 1000);
-                break;
-        }
-
-        // Thong bao va load lai table processing khi ban duoc ai do forward hoac add ticket
-        if (message.includes(fullname) && message.includes('forward_new')) {
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span></div></a>';
-            $('.message-center').prepend(noti);
-            $(".point").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_forward").load(location.href + " #list_ticket_forward");
-            }, 2000);
-        }
-
-        if (message.includes(fullname) && message.includes('add_new')) {
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(add)</span></div></a>';
-            $('.message-center').prepend(noti);
-            $(".point").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_add").load(location.href + " #list_ticket_add");
-            }, 2000);
-        }
-
-        // Thong bao va load lai table inbox, processing khi co agent dong y ticket ban forward hoac add
-        if (message.includes('+'+fullname) && message.includes('agreed your ticket you forwarding')) {
-            var message1 = message.slice(0, (message.length - fullname.length - 1));
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.message-center').prepend(noti);
-            $(".point").show();
-            x.play();
-            setTimeout(function(){
-                $("#info_user").load(location.href + " #info_user");
-            }, 2000);
-        }
-
-        if (message.includes('+'+fullname) && message.includes('Your ticket you forwarding refused by')) {
-            var message1 = message.slice(0, (message.length - fullname.length - 1));
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.message-center').prepend(noti);
-            $(".point").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
-            }, 2000);
-        }
-
-        if (message.includes('+'+fullname) && message.includes('agreed your ticket you adding')) {
-            var message1 = message.slice(0, (message.length - fullname.length - 1));
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.message-center').prepend(noti);
-            $(".point").show();
-            x.play();
-            setTimeout(function(){
-                $("#info_user").load(location.href + " #info_user");
-            }, 2000);
-        }
-
-        if (message.includes('+'+fullname) && message.includes('Your ticket you adding refused by')) {
-            var message1 = message.slice(0, (message.length - fullname.length - 1));
-            var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span></div></a>';
-            $('.message-center').prepend(noti);
-            $(".point").show();
-            x.play();
-            setTimeout(function(){
-                $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
-            }, 2000);
-        }
-    };
-</script>
-</body>
-</html>
+{% endblock %}

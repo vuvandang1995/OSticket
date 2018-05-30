@@ -6,6 +6,7 @@ $(document).ready(function(){
         var r = confirm('Are you sure?');
         var array = $('#hd'+id).html().split("<br>");
         var stt = $('#leader'+id).html();
+        var date = formatAMPM(new Date());
         var array2 = [];
         for (i = 0; i < array.length-1; i++) {
             array2.push(array[i].replace(/\s/g,''));
@@ -25,6 +26,7 @@ $(document).ready(function(){
                         var sender = $('#sender'+id).html();
                         group_agent_Socket.send(JSON.stringify({
                             'message' : array2,
+                            'time' : date,
                         }));
 
                         var Socket1 = new WebSocket(
@@ -36,6 +38,7 @@ $(document).ready(function(){
                             setTimeout(function(){
                                 Socket1.send(JSON.stringify({
                                     'message' : message,
+                                    'time' : date,
                                 }));
                             }, 1000);
                         };
@@ -44,6 +47,7 @@ $(document).ready(function(){
                         array2.push(id);
                         group_agent_Socket.send(JSON.stringify({
                             'message' : array2,
+                            'time' : date,
                         }));
                         var sender = $('#sender'+id).html();
                         var Socket1 = new WebSocket(
@@ -55,6 +59,7 @@ $(document).ready(function(){
                             setTimeout(function(){
                                 Socket1.send(JSON.stringify({
                                     'message' : message,
+                                    'time' : date,
                                 }));
                             }, 1000);
                         };
@@ -68,6 +73,12 @@ $(document).ready(function(){
     $("#list_ticket_leader").on('click', '.btn-danger', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
+        var array = $('#hd'+id).html().split("<br>");
+        var array2 = [];
+        for (i = 0; i < array.length-1; i++) {
+            array2.push(array[i].replace(/\s/g,''));
+        }
+        var date = formatAMPM(new Date());
         var r = confirm('Are you sure?');
         if (r == true){
             $.ajax({
@@ -76,6 +87,13 @@ $(document).ready(function(){
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     // window.location.reload();
+                    array2.push('admin_delete_ticket');
+                    array2.push(id);
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : array2,
+                        'time' : date,
+                    }));
+
                     $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
                     var sender = $('#sender'+id).html();
                     var Socket1 = new WebSocket(
@@ -87,6 +105,7 @@ $(document).ready(function(){
                         setTimeout(function(){
                             Socket1.send(JSON.stringify({
                                 'message' : message,
+                                'time' : date,
                             }));
                         }, 1000);
                     };
@@ -99,10 +118,11 @@ $(document).ready(function(){
         $('.loading').show();
         $(this).prop('disabled', true);
         $(".inputText").prop('disabled', true);
-        $(".closefd").prop('disabled', true);
+        //$(".closefd").prop('disabled', true);
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var id = $("input[name=ticketid]").val();
         var list_agent = [];
+        var date = formatAMPM(new Date());
         $('#forward_modal input:checkbox').each(function() {
             if ($(this).is(":checked")){
                 list_agent.push(this.name);
@@ -113,13 +133,13 @@ $(document).ready(function(){
             url:location.href,
             data: {'list_agent[]': JSON.stringify(list_agent),'csrfmiddlewaretoken':token, 'ticketid': id},
             success: function(){
-                // window.location.reload();
                 document.getElementById("forward_ticket_close").click();
                 $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
                 list_agent.push('leader_forward');
                 list_agent.push(id);
                 group_agent_Socket.send(JSON.stringify({
                     'message' : list_agent,
+                    'time' : date,
                 }));
                 $(".loading").hide();
                 $(".forward_ticket").prop('disabled', false);
@@ -135,6 +155,7 @@ $(document).ready(function(){
                     setTimeout(function(){
                         Socket1.send(JSON.stringify({
                             'message' : message,
+                            'time' : date,
                         }));
                     }, 1000);
                 };

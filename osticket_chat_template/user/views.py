@@ -275,19 +275,21 @@ def login_user(request):
                         return render(request, 'user/index.html', {'mess': mess_login_error})
                     elif authenticate_agent(agentname=agentname, agentpass=agentpass) == 1:
                         agent = get_agent(agentname)
-                        mail_subject = 'Mã xác thực đăng nhập.'
-                        code = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
-                        dic[agent.username] = code
-                        now = datetime.datetime.now()
-                        expiry_date = now + datetime.timedelta(minutes=1)
-                        dic_time[code] = expiry_date
-                        message = render_to_string('user/confirm_admin.html', {'agent': agent, 'code': code})
-                        to_email = agent.email
-                        email = EmailMessage(
-                                    mail_subject, message, to=[to_email]
-                        )
-                        email.send()
-                        return redirect('/submitadmin')
+                        request.session['admin'] = agentname
+                        return redirect('/agent/admin')
+                        # mail_subject = 'Mã xác thực đăng nhập.'
+                        # code = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
+                        # dic[agent.username] = code
+                        # now = datetime.datetime.now()
+                        # expiry_date = now + datetime.timedelta(minutes=1)
+                        # dic_time[code] = expiry_date
+                        # message = render_to_string('user/confirm_admin.html', {'agent': agent, 'code': code})
+                        # to_email = agent.email
+                        # email = EmailMessage(
+                        #             mail_subject, message, to=[to_email]
+                        # )
+                        # email.send()
+                        # return redirect('/submitadmin')
                     elif authenticate_agent(agentname=agentname, agentpass=agentpass) == 0:
                         ag = Agents.objects.get(username=agentname)
                         print(ag.status)
@@ -330,8 +332,7 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.status = 1
         user.save()
-        return render(request, 'user/index.html',
-                      {'mess': "Success", 'error': 'Thank you for your email confirmation.'})
+        return redirect('/')
     else:
         return HttpResponse('Activation link is invalid!')
 

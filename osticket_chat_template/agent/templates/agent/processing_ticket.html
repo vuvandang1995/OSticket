@@ -323,11 +323,13 @@
                             'ws://' + window.location.host +
                             '/ws/user/' + userName + '/');
 
-                        message = 'give up' 
+                        message = 'give up'
+                        var date = formatAMPM(new Date());
                         Socket1.onopen = function (event) {
                             setTimeout(function(){
                                 Socket1.send(JSON.stringify({
                                     'message' : message,
+                                    'time' : date
                                 }));
                             }, 1000);
                         };
@@ -368,10 +370,10 @@
             }
 
             var me = {};
-            me.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/22885865_1722296451175676_8315630450281336486_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeF3N32BRG1HfiI6wYFOD0syQnWULRna1ynbA4X_9isP5U9OTYpX393weyHM7i53ld34rFsOa0PdREWLJij8FWXIF0EfX1p8u3GUsxq_xcyEsw&oh=733c482517a19a82689b73cea0f35a4e&oe=5B58D2E3";
+            me.avatar = "https://cdn2.iconfinder.com/data/icons/perfect-flat-icons-2/512/User_man_male_profile_account_person_people.png";
 
             var you = {};
-            you.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/14732373_1224510360954290_7402332525860387467_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeHKXwDy_s1iK9FoOwayfi1qoOsIZlCm_H_ILhjIlp7LpK_1UzL2lTNdV6hbvFqTDhhJngiHagzjXZdsq1veAd6UGPEJKNXC4eyjPt-BNHGNUA&oh=6e9c0ee4c9352e7446fdef79a9037cd7&oe=5B5799DF";      
+            you.avatar = "https://cdn2.iconfinder.com/data/icons/rcons-users-color/32/support_man-512.png";      
 
             //-- No use time. It is a javaScript effect.
             function insertChat(who, text, time){

@@ -20,7 +20,7 @@
                 <td>
                     <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content1">{{tk.ticketid.id}}</button>
                 </td>
-                <td>{{tk.receiverid.fullname}}</td>
+                <td id="receive{{tk.id}}">{{tk.receiverid.username}}</td>
                 <td>{{tk.content}}</td>
                 {% if tk.ticketid.status == 0 %}
                 <td><span class="label label-danger">pending</span></td>
@@ -87,7 +87,7 @@
                 <td>
                     <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.ticketid.id}}content">{{tk.ticketid.id}}</button>
                 </td>
-                <td>{{tk.receiverid.fullname}}</td>
+                <td id="receive_{{tk.id}}">{{tk.receiverid.username}}</td>
                 <td>{{tk.content}}</td>
                 {% if tk.ticketid.status == 0 %}
                 <td><span class="label label-danger">pending</span></td>
@@ -135,6 +135,9 @@
        $("#info_user").on('click', '.cancel_forward', function(){
            var id = $(this).attr('id');
            var token = $("input[name=csrfmiddlewaretoken]").val();
+           var date = formatAMPM(new Date());
+           var receive = $('body #receive'+id).html();
+           
            if(confirm("Are you sure ?")){
                 $.ajax({
                     type:'POST',
@@ -142,6 +145,11 @@
                     data: {'tkid':id, 'csrfmiddlewaretoken':token, 'forward': 'forward'},
                     success: function(){
                         $("#info_user").load(location.href + " #info_user");
+                        message = ['cancle_forward', receive]
+                        group_agent_Socket.send(JSON.stringify({
+                            'message' : message,
+                            'time' : date
+                        }));
                     }
                 });
            }
@@ -149,6 +157,8 @@
        $("#info_user").on('click', '.cancel_add', function(){
            var id = $(this).attr('id');
            var token = $("input[name=csrfmiddlewaretoken]").val();
+           var receive = $('body #receive_'+id).html();
+           var date = formatAMPM(new Date());
            if(confirm("Are you sure ?")){
                 $.ajax({
                     type:'POST',
@@ -156,6 +166,11 @@
                     data: {'tkid':id, 'csrfmiddlewaretoken':token, 'add': 'add'},
                     success: function(){
                         $("#info_user").load(location.href + " #info_user");
+                        message = ['cancle_add', receive]
+                        group_agent_Socket.send(JSON.stringify({
+                            'message' : message,
+                            'time' : date
+                        }));
                     }
                 });
            }
