@@ -9,6 +9,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
   <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'history/style.css' %}" rel="stylesheet" type="text/css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -18,14 +19,38 @@
 <body>
 <div class="header">
         <nav class="main-menu">
-				<ul>
-                    <li><a href="{% url 'agent:home_admin' %}">Ticket</a></li>
-                    <li><a href="{% url 'agent:manager_agent' %}">Agent</a></li>
-                    <li><a href="{% url 'agent:manager_topic' %}">Topic</a></li>
-                    <li><a href="{% url 'agent:history_all_ticket' today|safe 3 %}">History all ticket</a></li>
-                    <li><a href="{% url 'agent:logout_admin' %}">Logout</a></li>
-				</ul>
-		</nav>
+            <ul>
+                <li class="dropdown nav-item">
+                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-bell"></i>
+                        <div class="notify">
+                            <span class="point"></span>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
+                        <ul>
+                            <li>
+                                <div class="drop-title">Notifications</div>
+                            </li>
+                            <li>
+                                <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
+                                    <div class="message-center" style="overflow: hidden; width: auto; height: 250px;">
+
+                                    </div>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </li>
+                <li><a class="list-group-item" href="{% url 'agent:home_admin' %}">Ticket</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:manager_agent' %}">Agent</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:manager_topic' %}">Topic</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:history_all_ticket' today|safe today|safe %}">History all ticket</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:logout_admin' %}">Logout</a></li>
+            </ul>
+        </nav>
     </div>
     <br />
     <br />
