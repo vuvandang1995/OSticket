@@ -12,6 +12,7 @@ import simplejson as json
 from django.utils.safestring import mark_safe
 import json
 import string
+import os
 min_char = 8
 max_char = 12
 allchar = string.ascii_letters + string.digits
@@ -57,6 +58,10 @@ def home_admin(request):
                 ticketid = request.POST['delete']
                 tk = Tickets.objects.get(id=ticketid)
                 tk.delete()
+                try:
+                    os.remove(r'notification/chat/chat_'+ticketid+'.txt')
+                except:
+                    pass
             elif 'ticketid' in request.POST:
                 list_agent = request.POST['list_agent[]']
                 list_agent = json.loads(list_agent)

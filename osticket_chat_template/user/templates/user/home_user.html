@@ -239,7 +239,7 @@
                      <br /><label for="topic"><b>Topic</b></label><br />
                      <select name="topic" class="form-control">
                          {% for tp in topic %}
-                         <option value="{{tp.id}}">{{tp.name}}</option>
+                         <option value="{{tp.id}}" name="{{tp.type_send}}">{{tp.name}}</option>
                          {% endfor %}
                      </select>
                      <br />
@@ -271,10 +271,18 @@
     $(document).ready(function(){
         // sau khi submit thanh cong thi send message tu websocket len server
         $("#id02").submit(function() {
+            var type_send = $(this).find('option:selected').attr("name");
             var chatSocket1 = new WebSocket(
             'ws://' + window.location.host +
             '/ws/agent/agent+group_agent_Socket/');
-            var message = 'new_ticket';
+            var message = '';
+            if (type_send == 1){
+                message = 'new_ticket';
+            }else{
+                message = 'new/ticket';
+            }
+            
+            
             var date = formatAMPM(new Date());
             chatSocket1.onopen = function (event) {
                 chatSocket1.send(JSON.stringify({
