@@ -18,6 +18,19 @@
 <body>
 <div class="header">
         <nav class="main-menu">
+<<<<<<< HEAD
+				<ul>
+                    <li><a href="{% url 'agent:index' %}">Home</a></li>
+                    <li><a href="{% url 'agent:inbox' %}">Inbox</a></li>
+                    <li><a href="{% url 'agent:outbox' %}">Outbox</a></li>
+                    <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
+                    <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
+                    <li><a href="{% url 'agent:manage_user' %}">Manage user</a></li>
+                    <li><a href="{% url 'agent:profile' %}">Profile</a></li>
+                    <li><a href="{% url 'agent:logout' %}">Logout</a></li>
+				</ul>
+		</nav>
+=======
             <ul>
                 <li class="dropdown nav-item">
                     <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
@@ -71,6 +84,7 @@
                 <li><a class="list-group-item" href="{% url 'agent:logout' %}">Logout</a></li>
             </ul>
         </nav>
+>>>>>>> 6353398e15917775c6f39d937006673f6ddacc8c
     </div>
     <br />
     <br />

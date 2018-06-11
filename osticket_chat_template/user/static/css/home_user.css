@@ -133,12 +133,12 @@
                 width: 300px;
             }
             
-            header {
+            .header-chat {
                 background: #293239;
                 border-radius: 5px 5px 0 0;
                 color: #fff;
                 cursor: pointer;
-                padding: 0px 10px;
+                padding: 1px 10px;
             }
             
             .live-chat h4:before {
@@ -152,7 +152,8 @@
             }
             
             .live-chat h4 {
-                font-size: 12px;
+                font-size: 15px;
+                color: aliceblue;
             }
             
             .live-chat h5 {
@@ -161,6 +162,10 @@
             
             .live-chat form {
                 padding: 24px;
+            }
+
+            .live-chat small {
+                font-size: 100%;
             }
             
             .live-chat input[type="text"] {

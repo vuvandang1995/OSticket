@@ -44,6 +44,9 @@ class Agents(models.Model):
     password = models.CharField(max_length=255)
     admin = models.IntegerField(default=0)
     status = models.IntegerField(default=1)
+    noti_noti = models.IntegerField(default=0)
+    noti_chat = models.IntegerField(default=0)
+
 
     class Meta:
         managed = True

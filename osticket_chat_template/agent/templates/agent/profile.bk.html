@@ -1,0 +1,103 @@
+{% extends 'agent/base.html' %}
+{% load staticfiles %}
+{% block title %}Processing ticket{% endblock %}
+{% block lib %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+{% endblock %}
+{% block js %}
+<script src="{% static 'js/detail_agent.js' %}"></script>
+{% endblock %}
+    
+{% block content %}
+    <title>Profile</title>
+    <h2>Profile</h2>
+    <table class="table table-striped table-bordered" id="info-user">
+        <tbody>
+          <tr>
+              <td>Fullname</td>
+            <td id="full_name">{{ agent.fullname }}</td>
+          </tr>
+          <tr>
+              <td>Email</td>
+            <td id="email_user">{{ agent.email }}</td>
+          </tr>
+          <tr>
+              <td>Username</td>
+            <td>{{ agent.username }}</td>
+          </tr>
+          <tr>
+              <td>Phone</td>
+            <td id="phone_user">{{agent.phone}}</td>
+          </tr>
+          <tr>
+              <td>Receive email</td>
+            {% if agent.receive_email == 1 %}
+                  <td id="rc_email">Yes</td>
+              {% else %}
+                  <td id="rc_email">No</td>
+            {% endif%}
+          </tr>
+          <tr>
+              <td>Status</td>
+            {% if agent.status == 0 %}
+              <td><span class="label label-danger">inactive</span></td>
+              {% else %}
+              <td><span class="label label-success">active</span></td>
+              {% endif %}
+          </tr>     
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-success info_agent" id="{{ agent.id }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
+              <span class="glyphicon glyphicon-wrench">Change info</span>
+      </button>
+  
+      <button type="button" class="btn btn-danger pwd_agent" id="{{ agent.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
+              <span class="glyphicon glyphicon-wrench" id="{{agent.password}}" name='pwd_current'>Change password</span>
+      </button>
+  </div>
+  
+{% csrf_token %}
+<div id="topicModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" style= "color: red";><strong id="title"></strong></h3>
+            </div>
+                
+                <div class="modal-body form-group">
+                    <div id="info">
+                        <label for="fullname"><b>Full name</b></label>
+                        <input class="inputText form-control" type="text" placeholder="Full name" name="fullname" >
+
+                        <label for="email"><b>Email</b></label>
+                        <input class="inputText form-control" type="text" placeholder="Enter Email" name="email">
+
+                        <label for="phone"><b>Phone</b></label>
+                        <input class="inputText form-control" type="text" placeholder="Enter your phone number" name="phone">
+                        <br/>
+                        <input class="inputText" style="transform: scale(2)" type="checkbox" name="receive_mail" > <b>   Receive Email?</b>
+                    </div>
+
+                    <div id="pwd">
+                        <label for="psw-current"><b>Current Password</b></label>
+                        <input class="inputText form-control" type="password" placeholder="Enter current Password" name="current_password">
+
+                        <label for="psw"><b>Password</b></label>
+                        <input class="inputText form-control" type="password" placeholder="Enter new Password" name="password">
+
+                        <label for="psw-repeat"><b>Repeat Password</b></label>
+                        <input class="inputText form-control" type="password" placeholder="Repeat new Password" name="password2">
+                    </div>
+
+                    <input type="hidden" name="agentid" value="">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="changeuser" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id = "change_user_close">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -221,8 +221,21 @@ def home_agent(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
         topic = Topics.objects.exclude(Q(name='Other') | Q(type_send=0))
-        content = {'ticket': Tickets.objects.filter(status=0, topicid__in=topic).order_by('dateend'),
-                   'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
+        user_total = Users.objects.count()
+        process = Tickets.objects.filter(Q(status=1) | Q(status=2))
+        done = Tickets.objects.filter(status=3)
+        tk_open = Tickets.objects.filter(status=0, topicid__in=topic).count()
+        tk_processing = TicketAgent.objects.filter(agentid=agent, ticketid__in=process).count()
+        tk_done = TicketAgent.objects.filter(agentid=agent, ticketid__in=done).count()
+        content = {'ticket': Tickets.objects.filter(status=0, topicid__in=topic).order_by('datestart'),
+                    'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username)),
+                    'fullname': mark_safe(json.dumps(agent.fullname)),
+                    'user_total': user_total,
+                    'tk_open': tk_open,
+                    'tk_processing': tk_processing,
+                    'tk_done': tk_done,
+                    'noti_noti': agent.noti_noti,
+                    'noti_chat': agent.noti_chat}
         if request.method == 'POST':
             if 'tkid' in request.POST:
                 ticket = Tickets.objects.get(id=request.POST['tkid'])
@@ -233,17 +246,23 @@ def home_agent(request):
                                          time=timezone.now().time())
                 TicketAgent.objects.create(agentid=agent, ticketid=ticket)
                 user = Users.objects.get(id=ticket.sender.id)
-                if user.receive_email == 1:
-                    email = EmailMessage(
-                        'Assign ticket',
-                        render_to_string('agent/mail/assign_mail.html',
-                                         {'receiver': user,
-                                          'domain': (get_current_site(request)).domain,
-                                          'sender': agent,
-                                          'ticketid': ticket.id}),
-                        to=[user.email],
-                    )
-                    email.send()
+                # if user.receive_email == 1:
+                #     email = EmailMessage(
+                #         'Assign ticket',
+                #         render_to_string('agent/mail/assign_mail.html',
+                #                          {'receiver': user,
+                #                           'domain': (get_current_site(request)).domain,
+                #                           'sender': agent,
+                #                           'ticketid': ticket.id}),
+                #         to=[user.email],
+                #     )
+                #     email.send()
+            if 'noti_noti' in request.POST:
+                agent.noti_noti = 0
+                agent.save()
+            if 'noti_chat' in request.POST:
+                agent.noti_chat = 0
+                agent.save()
         return render(request, 'agent/home_agent.html', content)
     else:
         return redirect("/")
@@ -295,96 +314,104 @@ def processing_ticket(request):
             else:
                 gua[tk.id] = 'no'
             agc[tk.id] = tem
-        content = {'agent': agent, 'ticket': tksdpr, 'agc': agc, 'form': form, 'form1': form1, 'gua': gua, 'agent_name': mark_safe(json.dumps(sender.username)), 'fullname': mark_safe(json.dumps(sender.fullname))}
+        content = {'noti_noti': sender.noti_noti,
+                    'noti_chat': sender.noti_chat, 'agent': agent, 'ticket': tksdpr, 'agc': agc, 'form': form, 'form1': form1, 'gua': gua, 'agent_name': mark_safe(json.dumps(sender.username)), 'fullname': mark_safe(json.dumps(sender.fullname))}
         if request.method == 'POST':
-            if request.POST['type'] == 'forward_agent':
-                list_agent = request.POST['list_agent[]']
-                list_agent = json.loads(list_agent)
-                tk = Tickets.objects.get(id=request.POST['ticketid'])
-                receiver = Agents.objects.filter(username__in=list_agent)
-                text = request.POST['content']
-                for rc in receiver:
-                    if rc != sender:
-                        try:
-                            TicketAgent.objects.get(ticketid=tk, agentid=rc)
-                        except ObjectDoesNotExist:
+            if 'noti_noti' in request.POST:
+                sender.noti_noti = 0
+                sender.save()
+            elif 'noti_chat' in request.POST:
+                sender.noti_chat = 0
+                sender.save()
+            elif 'type' in request.POST:
+                if request.POST['type'] == 'forward_agent':
+                    list_agent = request.POST['list_agent[]']
+                    list_agent = json.loads(list_agent)
+                    tk = Tickets.objects.get(id=request.POST['ticketid'])
+                    receiver = Agents.objects.filter(username__in=list_agent)
+                    text = request.POST['content']
+                    for rc in receiver:
+                        if rc != sender:
                             try:
-                                ForwardTickets.objects.get(senderid=sender, receiverid=rc, ticketid=tk)
+                                TicketAgent.objects.get(ticketid=tk, agentid=rc)
                             except ObjectDoesNotExist:
-                                ForwardTickets.objects.create(senderid=sender, receiverid=rc, ticketid=tk,content=text)
-                                if rc.receive_email == 1:
-                                    email = EmailMessage(
-                                        'Forward ticket',
-                                        render_to_string('agent/mail/forward_mail.html',
-                                                         {'receiver': rc,
-                                                          'domain': (get_current_site(request)).domain,
-                                                          'sender': sender}),
-                                        to=[rc.email],
-                                    )
-                                    email.send()
-                return redirect("/agent/processing_ticket")
-            elif request.POST['type'] == 'add_agent':
-                list_agent = request.POST['list_agent[]']
-                list_agent = json.loads(list_agent)
-                tk = Tickets.objects.get(id=request.POST['ticketid'])
-                receiver = Agents.objects.filter(username__in=list_agent)
-                text = request.POST['content']
-                for rc in receiver:
-                    if rc != sender:
-                        try:
-                            TicketAgent.objects.get(ticketid=tk,agentid=rc)
-                        except ObjectDoesNotExist:
+                                try:
+                                    ForwardTickets.objects.get(senderid=sender, receiverid=rc, ticketid=tk)
+                                except ObjectDoesNotExist:
+                                    ForwardTickets.objects.create(senderid=sender, receiverid=rc, ticketid=tk,content=text)
+                                    if rc.receive_email == 1:
+                                        email = EmailMessage(
+                                            'Forward ticket',
+                                            render_to_string('agent/mail/forward_mail.html',
+                                                            {'receiver': rc,
+                                                            'domain': (get_current_site(request)).domain,
+                                                            'sender': sender}),
+                                            to=[rc.email],
+                                        )
+                                        email.send()
+                    return redirect("/agent/processing_ticket")
+                elif request.POST['type'] == 'add_agent':
+                    list_agent = request.POST['list_agent[]']
+                    list_agent = json.loads(list_agent)
+                    tk = Tickets.objects.get(id=request.POST['ticketid'])
+                    receiver = Agents.objects.filter(username__in=list_agent)
+                    text = request.POST['content']
+                    for rc in receiver:
+                        if rc != sender:
                             try:
-                                AddAgents.objects.get(senderid=sender, receiverid=rc, ticketid=tk)
+                                TicketAgent.objects.get(ticketid=tk,agentid=rc)
                             except ObjectDoesNotExist:
-                                AddAgents.objects.create(senderid=sender, receiverid=rc, ticketid=tk, content=text)
-                                if rc.receive_email == 1:
-                                    email = EmailMessage(
-                                        'Add in a ticket',
-                                        render_to_string('agent/mail/add_mail.html',
-                                                         {'receiver': rc,
-                                                          'domain': (get_current_site(request)).domain,
-                                                          'sender': sender}),
-                                        to=[rc.email]
-                                    )
-                                    email.send()
-                return redirect("/agent/processing_ticket")
-            elif request.POST['type'] == 'process_done':
-                tkid = request.POST['tkid']
-                stt = request.POST['stt']
-                ticket = Tickets.objects.get(id=tkid)
-                ticket.status = stt
-                ticket.save()
-                if stt == 1:
-                    action = 're-process ticket'
-                else:
-                    action = 'done ticket'
-                    user = Users.objects.get(id=ticket.sender.id)
-                    # if user.receive_email == 1:
-                    #     email = EmailMessage(
-                    #         'Finished ticket',
-                    #         render_to_string('agent/mail/done_mail.html',
-                    #                         {'receiver': user,
-                    #                         'domain': (get_current_site(request)).domain,
-                    #                         'sender': sender,
-                    #                         'ticketid': ticket.id}),
-                    #         to=[user.email],
-                    #     )
-                    #     email.send()
-                TicketLog.objects.create(agentid=sender, ticketid=ticket,
-                                         action=action,
-                                         date=timezone.now().date(),
-                                         time=timezone.now().time())
-            elif request.POST['type'] == 'give_up':
-                ticket = Tickets.objects.get(id=request.POST['tkid'])
-                try:
-                    TicketAgent.objects.get(ticketid=ticket)
-                except MultipleObjectsReturned:
-                    tk = TicketAgent.objects.get(ticketid=ticket, agentid=sender)
-                    tk.delete()
-                    TicketLog.objects.create(agentid=sender, ticketid=ticket, action='give up ticket',
-                                             date=timezone.now().date(),
-                                             time=timezone.now().time())
+                                try:
+                                    AddAgents.objects.get(senderid=sender, receiverid=rc, ticketid=tk)
+                                except ObjectDoesNotExist:
+                                    AddAgents.objects.create(senderid=sender, receiverid=rc, ticketid=tk, content=text)
+                                    if rc.receive_email == 1:
+                                        email = EmailMessage(
+                                            'Add in a ticket',
+                                            render_to_string('agent/mail/add_mail.html',
+                                                            {'receiver': rc,
+                                                            'domain': (get_current_site(request)).domain,
+                                                            'sender': sender}),
+                                            to=[rc.email]
+                                        )
+                                        email.send()
+                    return redirect("/agent/processing_ticket")
+                elif request.POST['type'] == 'process_done':
+                    tkid = request.POST['tkid']
+                    stt = request.POST['stt']
+                    ticket = Tickets.objects.get(id=tkid)
+                    ticket.status = stt
+                    ticket.save()
+                    if stt == 1:
+                        action = 're-process ticket'
+                    else:
+                        action = 'done ticket'
+                        user = Users.objects.get(id=ticket.sender.id)
+                        # if user.receive_email == 1:
+                        #     email = EmailMessage(
+                        #         'Finished ticket',
+                        #         render_to_string('agent/mail/done_mail.html',
+                        #                         {'receiver': user,
+                        #                         'domain': (get_current_site(request)).domain,
+                        #                         'sender': sender,
+                        #                         'ticketid': ticket.id}),
+                        #         to=[user.email],
+                        #     )
+                        #     email.send()
+                    TicketLog.objects.create(agentid=sender, ticketid=ticket,
+                                            action=action,
+                                            date=timezone.now().date(),
+                                            time=timezone.now().time())
+                elif request.POST['type'] == 'give_up':
+                    ticket = Tickets.objects.get(id=request.POST['tkid'])
+                    try:
+                        TicketAgent.objects.get(ticketid=ticket)
+                    except MultipleObjectsReturned:
+                        tk = TicketAgent.objects.get(ticketid=ticket, agentid=sender)
+                        tk.delete()
+                        TicketLog.objects.create(agentid=sender, ticketid=ticket, action='give up ticket',
+                                                date=timezone.now().date(),
+                                                time=timezone.now().time())
         return render(request, 'agent/processing_ticket.html', content)
     else:
         return redirect("/")
@@ -475,10 +502,13 @@ def inbox(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
         content = {'forwardin': ForwardTickets.objects.filter(receiverid=agent),
+                    'noti_noti': agent.noti_noti,
+                    'noti_chat': agent.noti_chat,
                    'addin': AddAgents.objects.filter(receiverid=agent), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
         if request.method == 'POST':
-            ticket = Tickets.objects.get(id=request.POST['tkid'])
+            
             if 'forward' in request.POST:
+                ticket = Tickets.objects.get(id=request.POST['tkid'])
                 try:
                     addagent = AddAgents.objects.get(ticketid=ticket, receiverid=agent)
                 except ObjectDoesNotExist:
@@ -523,6 +553,7 @@ def inbox(request):
                     else:
                         agticket.delete()
             elif 'add' in request.POST:
+                ticket = Tickets.objects.get(id=request.POST['tkid'])
                 try:
                     fwticket = ForwardTickets.objects.get(ticketid=ticket, receiverid=agent)
                 except ObjectDoesNotExist:
@@ -562,6 +593,12 @@ def inbox(request):
                                 to=[sender.email]
                             )
                             email.send()
+            elif 'noti_noti' in request.POST:
+                agent.noti_noti = 0
+                agent.save()
+            elif 'noti_chat' in request.POST:
+                agent.noti_chat = 0
+                agent.save()
         return render(request, 'agent/inbox.html', content)
     else:
         return redirect("/")
@@ -573,12 +610,20 @@ def outbox(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
         content ={'forwardout':ForwardTickets.objects.filter(senderid=agent),
+                    'noti_noti': agent.noti_noti,
+                    'noti_chat': agent.noti_chat,
                   'addout': AddAgents.objects.filter(senderid=agent), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
         if request.method == 'POST':
             if 'forward' in request.POST:
                 fwticket = ForwardTickets.objects.get(id=request.POST['tkid'])
             elif 'add' in request.POST:
                 fwticket = AddAgents.objects.get(id=request.POST['tkid'])
+            elif 'noti_noti' in request.POST:
+                agent.noti_noti = 0
+                agent.save()
+            elif 'noti_chat' in request.POST:
+                agent.noti_chat = 0
+                agent.save()
             fwticket.delete()
         return render(request,'agent/outbox.html',content)
     else:
@@ -604,7 +649,14 @@ def profile(request):
                 u = Agents.objects.get(id=request.POST['agentid'])
                 u.password = request.POST['pwd']
                 u.save()
-        return render(request,"agent/profile.html",{'agent':agent, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
+            elif 'noti_noti' in request.POST:
+                agent.noti_noti = 0
+                agent.save()
+            elif 'noti_chat' in request.POST:
+                agent.noti_chat = 0
+                agent.save()
+        return render(request,"agent/profile.html",{'agent':agent, 'noti_noti': agent.noti_noti,
+                    'noti_chat': agent.noti_chat, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
     else:
         return redirect("/")
 
@@ -613,7 +665,15 @@ def closed_ticket(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
         tem = Tickets.objects.filter(status=3)
-        content = {'ticket': TicketAgent.objects.filter(agentid=agent, ticketid__in=tem), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
+        content = {'noti_noti': agent.noti_noti,
+                    'noti_chat': agent.noti_chat, 'ticket': TicketAgent.objects.filter(agentid=agent, ticketid__in=tem), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
+        if request.method == 'POST':
+            if 'noti_noti' in request.POST:
+                agent.noti_noti = 0
+                agent.save()
+            elif 'noti_chat' in request.POST:
+                agent.noti_chat = 0
+                agent.save()
         return render(request,'agent/closed_ticket.html', content)
     else:
         return redirect("/")
@@ -624,10 +684,19 @@ def manager_user(request):
         agent = Agents.objects.get(username=request.session['agent'])
         users = Users.objects.all()
         if request.method == 'POST':
-            user = Users.objects.get(id=request.POST['tkid'])
-            user.status = request.POST['stt']
-            user.save()
-        return render(request,"agent/manage_user.html",{'user':users, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
+            if 'noti_noti' in request.POST:
+                agent.noti_noti = 0
+                agent.save()
+            elif 'noti_chat' in request.POST:
+                agent.noti_chat = 0
+                agent.save()
+            else:
+                user = Users.objects.get(id=request.POST['tkid'])
+                user.status = request.POST['stt']
+                user.save()
+        
+        return render(request,"agent/manage_user.html",{'noti_noti': agent.noti_noti,
+                    'noti_chat': agent.noti_chat, 'user':users, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
     else:
         return redirect("/")
 

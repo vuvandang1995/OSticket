@@ -4,6 +4,7 @@ from channels.generic.websocket import WebsocketConsumer
 import json
 from user.models import *
 from channels.layers import get_channel_layer
+import fileinput
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -165,6 +166,7 @@ class AgentConsumer(WebsocketConsumer):
     def connect(self):
         self.user_name = self.scope['url_route']['kwargs']['username']
         agentName = self.user_name.split('+')[0]
+        self.agent_name = agentName
         group_agent = self.user_name.split('+')[1]
         self.room_group_name = 'noti_%s' % group_agent
         
@@ -175,11 +177,11 @@ class AgentConsumer(WebsocketConsumer):
         )
         self.accept()
         try:
+            
             f = r'notification/agent/noti_'+agentName+'.txt'
             file = open(f, 'r')
             for line in file:
-                message = line[:len(line)-1]
-                if '*&*%^chat' in message:
+                if '*&*%^chat' in line:
                     msg = line.split('*&*%^chat')[0]
                     self.send(text_data=json.dumps({
                         'message': msg,
@@ -187,9 +189,9 @@ class AgentConsumer(WebsocketConsumer):
                     }))
                 else:
                     self.send(text_data=json.dumps({
-                            'message': line,
-                            'type' : 're-noti'
-                        }))
+                        'message': line,
+                        'type' : 're-noti'
+                    }))
         except:
             pass
 
@@ -204,33 +206,221 @@ class AgentConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        
+        print(message)
+        # Send message to room group
+        time = text_data_json['time']
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message,
+                'time' : time,
+            }
+        )
 
-        try:
-            type_save = text_data_json['type']
-            agentName = text_data_json['agentName']
-            if type_save == 'chat':
-                f = r'notification/agent/noti_'+agentName+'.txt'
-                file = open(f,'a') 
-                file.write(str(message) + "*&*%^chat" + "\n")
+        if 'is closed by' in message[-1]:
+            notifi = message[-1]
+            list_agent = message
+            del list_agent[-1]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                noti = r'<a href="/agent/closed_ticket"><div class="btn btn-success btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">'+notifi+r'</span> <span class="time">'+time+r'</span></div></a>'
+                file.write(noti + "\n")
                 file.close()
-            else:
-                f = r'notification/agent/noti_'+agentName+'.txt'
-                file = open(f,'a') 
-                file.write(str(message) + "\n")
+                ag = Agents.objects.get(username=agent)
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
+                
+        if 'new_chat' in message:
+            list_agent = message
+            tkid = message[0]
+            user = message[1]
+            del list_agent[0]
+            del list_agent[0]
+            del list_agent[0]
+            try:
+                for agent in list_agent:
+                    f = r'notification/agent/noti_'+agent+'.txt'
+                    file = open(f, 'r')
+                    for line in fileinput.input(f, inplace=True):
+                        if '*&*%^chat' in line and tkid in line:
+                            continue
+                        print(line, end='')
+            except:
+                pass
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                href = "javascript:register_popup_agent('chat"+tkid+"', "+tkid+", '"+user+"');"
+                src = "/static/images/avatar.png"
+                noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+tkid+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "*&*%^chat" + "\n")
                 file.close()
-        except:
-            # Send message to room group
-            time = text_data_json['time']
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {
-                    'type': 'chat_message',
-                    'message': message,
-                    'time' : time,
-                }
-            )
-            print(message)
+                ag = Agents.objects.get(username=agent)
+                ag.noti_chat = ag.noti_chat + 1
+                ag.save()
+            
+        
+        if 'forward_new' in message:
+            list_agent = message
+            del list_agent[-1]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                message = 'INBOX: You have a new ticket(forward)'
+                noti = '<a href="/agent/inbox"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "\n")
+                file.close()
+                ag = Agents.objects.get(username=agent)
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
+
+        if 'add_new' in message:
+            list_agent = message
+            del list_agent[-1]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                message = 'INBOX: You have a new ticket(forward)'
+                noti = '<a href="/agent/inbox"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "\n")
+                file.close()
+                ag = Agents.objects.get(username=agent)
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
+
+
+        if 'agreed your ticket you forwarding' in message:
+            notifi = message.split('+')[0]
+            agent = message.split('+')[1]
+            f = r'notification/agent/noti_'+agent+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/agent/processing_ticket"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+notifi+'</span> <span class="time">'+time+'</span></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            ag = Agents.objects.get(username=agent)
+            ag.noti_noti = ag.noti_noti + 1
+            ag.save()
+        
+        if 'Your ticket you forwarding refused by' in message:
+            notifi = message.split('+')[0]
+            agent = message.split('+')[1]
+            f = r'notification/agent/noti_'+agent+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/agent/processing_ticket"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+notifi+'</span> <span class="time">'+time+'</span></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            ag = Agents.objects.get(username=agent)
+            ag.noti_noti = ag.noti_noti + 1
+            ag.save()
+
+        if 'agreed your ticket you adding' in message:
+            notifi = message.split('+')[0]
+            agent = message.split('+')[1]
+            f = r'notification/agent/noti_'+agent+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/agent/processing_ticket"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+notifi+'</span> <span class="time">'+time+'</span></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            ag = Agents.objects.get(username=agent)
+            ag.noti_noti = ag.noti_noti + 1
+            ag.save()
+
+        if 'Your ticket you adding refused by' in message:
+            notifi = message.split('+')[0]
+            agent = message.split('+')[1]
+            f = r'notification/agent/noti_'+agent+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/agent/processing_ticket"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+notifi+'</span> <span class="time">'+time+'</span></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            ag = Agents.objects.get(username=agent)
+            ag.noti_noti = ag.noti_noti + 1
+            ag.save()
+
+        if 'leader_forward' in message:
+            list_agent = message
+            tkid = message[-1]
+            del list_agent[-1]
+            del list_agent[-1]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                message1 = 'Leader have just forwarded for you ticket '+tkid
+                noti = '<a href="/agent/processing_ticket"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "\n")
+                file.close()
+                ag = Agents.objects.get(username=agent)
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
+        
+        if 'admin_open_ticket' in message:
+            list_agent = message
+            tkid = message[-1]
+            del list_agent[-1]
+            del list_agent[-1]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                message1 = 'Leader have just opend ticket '+tkid
+                noti = '<a href="/agent/processing_ticket"><div class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "\n")
+                file.close()
+                ag = Agents.objects.get(username=agent)
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
+
+        if 'admin_close_ticket' in message:
+            list_agent = message
+            tkid = message[-1]
+            del list_agent[-1]
+            del list_agent[-1]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                message1 = 'Leader have just closed ticket '+tkid
+                noti = '<a href="/agent/closed_ticket"><div class="btn btn-success btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "\n")
+                file.close()
+                ag = Agents.objects.get(username=agent)
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
+        
+        if 'admin_delete_ticket' in message:
+            list_agent = message
+            tkid = message[-1]
+            del list_agent[-1]
+            del list_agent[-1]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                message1 = 'Leader have just delete ticket '+tkid
+                noti = '<a href="/agent/processing_ticket"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-remove"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "\n")
+                file.close()
+                ag = Agents.objects.get(username=agent)
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
+
+        if 'give_up' in message:
+            list_agent = message
+            ag = message[0]
+            tkid = message[1]
+            del list_agent[0]
+            del list_agent[0]
+            del list_agent[0]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent.split('+')[0]+'.txt'
+                file = open(f,'a')
+                message1 = ag+' just have given up ticket no. '+tkid
+                noti = '<a href="/agent/processing_ticket"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-minus-circle"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "\n")
+                file.close()
+                ag = Agents.objects.get(username=agent.split('+')[0])
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
+            
 
     # Receive message from room group
     def chat_message(self, event):
