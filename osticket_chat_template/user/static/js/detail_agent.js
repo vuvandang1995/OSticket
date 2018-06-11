@@ -62,7 +62,7 @@ $(document).ready(function(){
                         data: {'csrfmiddlewaretoken':token, 'agentid': agentid, 'pwd': pwd1},
                         success: function(){
                             document.getElementById("change_user_close").click();
-                            $("#info-user").load(location.href + " #info-user");
+                            $("body #info-agent").load(location.href + " #info-agent");
                         }
                     });
                 }else{
@@ -85,7 +85,7 @@ $(document).ready(function(){
                 success: function(){
                     // window.location.reload();
                     document.getElementById("change_user_close").click();
-                    $("#info-user").load(location.href + " #info-user");
+                    $("body #info-agent").load(location.href + " #info-agent");
                 }
             });
         }

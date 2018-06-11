@@ -40,6 +40,7 @@ $(document).ready(function(){
                                     'message' : message,
                                     'time' : date,
                                 }));
+                                Socket1.close();
                             }, 1000);
                         };
                     }else{
@@ -61,6 +62,7 @@ $(document).ready(function(){
                                     'message' : message,
                                     'time' : date,
                                 }));
+                                Socket1.close();
                             }, 1000);
                         };
                     }
@@ -107,6 +109,7 @@ $(document).ready(function(){
                                 'message' : message,
                                 'time' : date,
                             }));
+                            Socket1.close();
                         }, 1000);
                     };
                 }
@@ -157,6 +160,7 @@ $(document).ready(function(){
                             'message' : message,
                             'time' : date,
                         }));
+                        Socket1.close();
                     }, 1000);
                 };
             }

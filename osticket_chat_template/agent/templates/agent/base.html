@@ -1,91 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
-    {% block lib %}{% endblock %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="{% static 'css/home_user.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/chat.css' %}" type="text/css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700">
-    <script src="{% static 'js/home_agent.js' %}"></script>
-    <title>{% block title %}{% endblock %}</title>
-    {% block js %}{% endblock %}
+        {% load staticfiles %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Tell the browser to be responsive to screen width -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block js %} {% endblock%}
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!-- Favicon icon -->
+        <title>Agent</title>
+        <!-- Bootstrap Core CSS -->
+        <link rel="stylesheet" href="{% static 'css/lib/bootstrap/bootstrap.min.css' %}" type="text/css">
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"> -->
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script> -->
+        <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script> -->
+        <!-- Custom CSS -->
+    
+        <link rel="stylesheet" href="{% static 'css/lib/calendar2/semantic.ui.min.css' %}" type="text/css">
+        
+        <link rel="stylesheet" href="{% static 'css/lib/calendar2/pignose.calendar.min.css' %}" type="text/css">
+        
+        <link rel="stylesheet" href="{% static 'css/lib/owl.carousel.min.css' %}" type="text/css">
+        
+        <link rel="stylesheet" href="{% static 'css/lib/owl.theme.default.min.css' %}" type="text/css">
+        
+        <link rel="stylesheet" href="{% static 'css/helper.css' %}" type="text/css">
+        
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+
+
+        <script src="{% static 'js/home_agent.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'css/home_user.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/chat.css' %}" type="text/css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700">
+
+        
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:** -->
+        <!--[if lt IE 9]>
+        <script src="https:**oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https:**oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-<body>
-    <div class="header">
-        <nav class="main-menu">
-            <ul>
-                <li class="dropdown nav-item">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-bell"></i>
-                        <div class="notify"> 
-                            <span class="point point_noti"></span>
-                        </div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
-                        <ul>
-                            <li>
-                                <div class="drop-title">Notifications</div>
-                            </li>
-                            <li>
-                                <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
-                                    <div class="message-center noti_noti" style="overflow: hidden; width: auto; height: 250px;">
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="dropdown nav-item">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-envelope"></i>
-                        <div class="notify"> 
-                            <span class="point point_message"></span>
-                        </div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
-                        <ul>
-                            <li>
-                                <div class="drop-title">Notifications</div>
-                            </li>
-                            <li>
-                                <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
-                                    <div class="message-center notification_chat" style="overflow: hidden; width: auto; height: 250px;">
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li><a class="list-group-item" href="{% url 'agent:home_agent' %}">Home</a></li>
-                <li><a class="list-group-item" href="{% url 'agent:inbox' %}">Inbox</a></li>
-                <li><a class="list-group-item" href="{% url 'agent:outbox' %}">Outbox</a></li>
-                <li><a class="list-group-item" href="{% url 'agent:processing_ticket' %}">Processing ticket</a></li>
-                <li><a class="list-group-item" href="{% url 'agent:closed_ticket' %}">Closed ticket</a></li>
-                <li><a class="list-group-item" href="{% url 'agent:manage_user' %}">Manage user</a></li>
-                <li><a class="list-group-item" href="{% url 'agent:profile' %}">Profile</a></li>
-                <li><a class="list-group-item" href="{% url 'agent:logout' %}">Logout</a></li>
-            </ul>
-        </nav>
+<body class="fix-header fix-sidebar">
+    <!-- Preloader - style you can find in spinners.css -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+			<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
     </div>
-    <br />
-    <br />
-    <br />
-    <div class="container" id="info_user">
-    {% block content %}
-    {% endblock %}
-    </div>
-    <audio id="myAudio">
-        <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
-    </audio>
+    <!-- Main wrapper  -->
+    <div id="main-wrapper">
+        <!-- header header  -->
+        <div class="header">
+            <nav class="navbar top-navbar navbar-expand-md navbar-light">
+                <!-- Logo -->
+                <div class="navbar-header" >
+                    <a class="navbar-brand" href="{% url 'agent:index' %}">
+                        <span><img src="{% static 'images/meditech.png' %}" alt="homepage" style="width:260px;height:40px;"></span>
+                    </a>
+                </div>
+                <!-- End Logo -->
+                <div class="navbar-collapse">
+                    <!-- toggle and nav items -->
+                    <ul class="navbar-nav mr-auto mt-md-0">
+                        <!-- This is  -->
+                        <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted  " href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
+                        <li class="nav-item m-l-10"> <a class="nav-link sidebartoggler hidden-sm-down text-muted  " href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                        <!-- Messages -->
+                        <li class="nav-item dropdown mega-dropdown"> <a class="nav-link dropdown-toggle text-muted  " href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-th-large"></i></a>
+                            <div class="dropdown-menu animated zoomIn">
+                                <ul class="mega-dropdown-menu row">
+
+
+                                    <li class="col-lg-3  m-b-30">
+                                        <h4 class="m-b-20">CONTACT US</h4>
+                                        <!-- Contact -->
+                                        <form>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" id="exampleInputname1" placeholder="Enter Name"> </div>
+                                            <div class="form-group">
+                                                <input type="email" class="form-control" placeholder="Enter email"> </div>
+                                            <div class="form-group">
+                                                <textarea class="form-control" id="exampleTextarea" rows="3" placeholder="Message"></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-info">Submit</button>
+                                        </form>
+                                    </li>
+                                    <li class="col-lg-3 col-xlg-3 m-b-30">
+                                        <h4 class="m-b-20">List style</h4>
+                                        <!-- List style -->
+                                        <ul class="list-style-none">
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="col-lg-3 col-xlg-3 m-b-30">
+                                        <h4 class="m-b-20">List style</h4>
+                                        <!-- List style -->
+                                        <ul class="list-style-none">
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="col-lg-3 col-xlg-3 m-b-30">
+                                        <h4 class="m-b-20">List style</h4>
+                                        <!-- List style -->
+                                        <ul class="list-style-none">
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- End Messages -->
+                    </ul>
+                    <!-- User profile and search -->
+                    <ul class="navbar-nav my-lg-0">
+
+                        <!-- Search -->
+                        <li class="nav-item hidden-sm-down search-box"> <a class="nav-link hidden-sm-down text-muted  " href="javascript:void(0)"><i class="ti-search"></i></a>
+                            <form class="app-search">
+                                <input type="text" class="form-control" placeholder="Search here"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
+                        </li>
+                        <!-- Comment -->
+                        <li class="nav-item dropdown notify_" >
+                            <a class="nav-link dropdown-toggle text-muted " onclick="notiFunction()" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-bell"></i>
+                                <div class="notify noti_fy"> </span> </div>
+                            </a>
+                            
+                            <div class="dropdown-menu dropdown-menu-right mailbox animated zoomIn" >
+                                <ul>
+                                    <li>
+                                        <div class="drop-title noti_msg">
+
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <div class="message-center noti_noti">
+                                            
+                                        </div>
+                                    </li>
+                                    
+                                    <li>
+                                        <a class="nav-link text-center" href="javascript:void(0);"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- End Comment -->
+                        <!-- Messages -->
+                        <li class="nav-item dropdown chat_">
+                            <a class="nav-link dropdown-toggle text-muted" onclick="chatFunction()" href="#" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-envelope"></i>
+								<div class="notify chat_noti"> </span> </div>
+							</a>
+                            <div class="dropdown-menu dropdown-menu-right mailbox animated zoomIn" aria-labelledby="2">
+                                <ul>
+                                    <li>
+                                        <div class="drop-title chat_msg"></div>
+                                    </li>
+                                    <li>
+                                        <div class="message-center notification_chat">
+                                            <!-- Message -->
+                                            
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-center" href="javascript:void(0);"> <strong>See all e-Mails</strong> <i class="fa fa-angle-right"></i> </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- End Messages -->
+                        <!-- Profile -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-muted"  href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{% static 'images/avatar.png' %}" alt="user" class="profile-pic" /></a>
+                            <div class="dropdown-menu dropdown-menu-right animated zoomIn">
+                                <ul class="dropdown-user">
+                                    <li><a href="{% url 'agent:profile' %}"><i class="ti-user"></i> Profile</a></li>
+                                    <li><a href="{% url 'agent:logout' %}"><i class="fa fa-power-off"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- End header header -->
+        <!-- Left Sidebar  -->
+        <div class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="nav-devider"></li>
+                        <li class="nav-label">{{ agent.fullname}}</li>
+                        <li> <a class="has-arrow  " href="#" aria-expanded="false"><i class="fa fa-tachometer"></i><span class="hide-menu">Dashboard<span class="label label-rouded label-primary pull-right">6</span></span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li>
+                                    <a href="{% url 'agent:index' %}">Home </a>
+                                </li>
+                                <li><a href="{% url 'agent:inbox' %}">Inbox </a></li>
+                                <li><a href="{% url 'agent:outbox' %}">Outbox </a></li>
+                                <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket </a></li>
+                                <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket </a></li>
+                                <li><a href="{% url 'agent:manage_user' %}">Manage user </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </div>
+<div id="info_user">
+{% csrf_token %}
+{% block content %}
+{% endblock %}
+</div>
+<audio id="myAudio">
+    <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
+</audio>
+
 <script>
     var x = document.getElementById("myAudio"); 
     var fullname = {{ fullname }};
@@ -110,14 +260,53 @@
         return strTime;
     }
 
-    $("body").on('click', '.fa-bell', function(){
-        $("body .point_noti").hide();
-    });
+    var noti_noti = {{noti_noti}};
+    var noti_chat = {{noti_chat}};
+    
+    function notiFunction() {
+        if ($('body .noti_fy .point').length){
+            var token = $("input[name=csrfmiddlewaretoken]").val();
+            $.ajax({
+                type:'POST',
+                url:location.href,
+                data: {'noti_noti': 0, 'csrfmiddlewaretoken':token},
+                success: function(){
+                    $("body .noti_fy").load(location.href + " .noti_fy");
+                }
+            });
+        }
+    }
 
-    $("body").on('click', '.fa-envelope', function(){
-        $("body .point_message").hide();
-    });
+    function chatFunction() {
+        if ($('body .chat_noti .point').length){
+            var token = $("input[name=csrfmiddlewaretoken]").val();
+            $.ajax({
+                type:'POST',
+                url:location.href,
+                data: {'noti_chat': 0, 'csrfmiddlewaretoken':token},
+                success: function(){
+                    $("body .chat_noti").load(location.href + " .chat_noti");
+                }
+            });
+        }
+    }
 
+    
+
+    
+    if (noti_noti != 0){
+        var noti = '<span class="heartbit"></span> <span class="point">';
+        $('body .noti_fy').prepend(noti);
+        $('body .noti_msg').html('You have '+noti_noti+' new notifications');
+    }
+
+    if (noti_chat != 0){
+        var noti = '<span class="heartbit"></span> <span class="point">';
+        $('body .chat_noti').prepend(noti);
+        $('body .chat_msg').html('You have '+noti_chat+' new messages');
+    }
+  
+    
     function check_exits(id, list){
         var x = false;
         for (var i = 0; i < list.length; i++)
@@ -127,6 +316,10 @@
             }
         return x;
     }
+
+
+    
+
 
 
     group_agent_Socket.onmessage = function(e) {
@@ -143,27 +336,23 @@
             }else{
                 // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
                 switch(message) {
-                    case 'new_ticket':
-                        var message = 'You have a new ticket';
-                        var href = "{% url 'agent:home_agent' %}";
-                        var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
+                    case 'You have a new ticket!':
+                        var message = 'You have a new ticket!';
+                        var href = "{% url 'agent:index' %}";
+                        var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-link"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>';
                         $('.noti_noti').prepend(noti);
-                        $("body .point_noti").show();
-
-                        group_agent_Socket.send(JSON.stringify({
-                            'message' : noti,
-                            'agentName' : agentName,
-                            'type' : 'save',
-                        }));
+                        var noti1 = '<span class="heartbit"></span> <span class="point">';
+                        $('body .noti_fy').prepend(noti1);
+                        
                         setTimeout(function(){
-                            $("#list_ticket_home").load(location.href + " #list_ticket_home");
+                            $("body #list_ticket_home").load(location.href + " #list_ticket_home");
                         }, 1000);
                         x.play();
                         break;
 
                     case 'ticket da duoc xu ly':
                         setTimeout(function(){
-                            $("#list_ticket_home").load(location.href + " #list_ticket_home");
+                            $("body #list_ticket_home").load(location.href + " #list_ticket_home");
                         }, 1000);
                         break;
                 }
@@ -172,36 +361,30 @@
                 if (check_exits(agentName, message) && check_exits('forward_new', message)) {
                     var message = 'INBOX: You have a new ticket(forward)';
                     var href="{% url 'agent:inbox' %}"
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#list_ticket_forward").load(location.href + " #list_ticket_forward");
+                        $("body #list_ticket_forward").load(location.href + " #list_ticket_forward");
                     }, 2000);
                 }
 
                 if (check_exits(agentName, message) && check_exits('add_new', message)) {
                     var message = 'INBOX: You have a new ticket(add)';
                     var href="{% url 'agent:inbox' %}"
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#list_ticket_add").load(location.href + " #list_ticket_add");
+                        $("body #list_ticket_add").load(location.href + " #list_ticket_add");
                     }, 2000);
                 }
 
@@ -209,72 +392,60 @@
                 if (message.includes('+'+agentName) && message.includes('agreed your ticket you forwarding')) {
                     var message1 = message.slice(0, (message.length - agentName.length - 1));
                     var href="{% url 'agent:processing_ticket' %}"
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#info_user").load(location.href + " #info_user");
+                        $("body #info_user").load(location.href + " #info_user");
                     }, 2000);
                 }
 
                 if (message.includes('+'+agentName) && message.includes('Your ticket you forwarding refused by')) {
                     var message1 = message.slice(0, (message.length - agentName.length - 1));
                     var href="{% url 'agent:processing_ticket' %}"
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
+                        $("body #list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
                     }, 2000);
                 }
 
                 if (message.includes('+'+agentName) && message.includes('agreed your ticket you adding')) {
                     var message1 = message.slice(0, (message.length - agentName.length - 1));
                     var href="{% url 'agent:processing_ticket' %}"
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#info_user").load(location.href + " #info_user");
+                        $("body #info_user").load(location.href + " #info_user");
                     }, 2000);
                 }
 
                 if (message.includes('+'+agentName) && message.includes('Your ticket you adding refused by')) {
                     var message1 = message.slice(0, (message.length - agentName.length - 1));
                     var href="{% url 'agent:processing_ticket' %}"
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
+                        $("body #list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
                     }, 2000);
                 }
                 
@@ -282,18 +453,15 @@
                 if (check_exits(agentName, message) && check_exits('leader_forward', message)) {
                     var message1 = 'Leader have just forwarded for you ticket '+message[message.length-1];
                     var href="{% url 'agent:processing_ticket' %}";
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
                     }, 2000);
                 }
                 
@@ -301,18 +469,15 @@
                     var len = message.length;
                     var message1 = 'Leader have just closed ticket '+message[len-1];
                     var href="{% url 'agent:closed_ticket' %}";
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-success btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
                     }, 2000);
                 }
 
@@ -321,48 +486,42 @@
                     var len = message.length;
                     var href = "{% url 'agent:processing_ticket' %}";
                     var message1 = 'Leader have just opend ticket '+message[len-1];
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
                     }, 2000);
                 }
 
                 if (check_exits(agentName, message) && check_exits('admin_delete_ticket', message)) {
                     var len = message.length;
                     var message1 = 'Leader have just delete ticket '+message[len-1];
-                    var noti = '<a href="#"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="#"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-remove"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
                     }, 2000);
                 }
 
                 if (check_exits(agentName, message) && check_exits('cancle_forward', message)) {
                     setTimeout(function(){
-                        $("#info_user").load(location.href + " #info_user");
+                        $("body #info_user").load(location.href + " #info_user");
                     }, 1000);
                 }
 
                 if (check_exits(agentName, message) && check_exits('cancle_add', message)) {
                     setTimeout(function(){
-                        $("#info_user").load(location.href + " #info_user");
+                        $("body #info_user").load(location.href + " #info_user");
                     }, 1000);
                 }
 
@@ -371,37 +530,29 @@
                     var len = message.length;
                     var message1 = message[len-1];
                     var href = "{% url 'agent:closed_ticket' %}";
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-success btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
+                    
                     setTimeout(function(){
-                        $("#info_user").load(location.href + " #info_user");
+                        $("body #info_user").load(location.href + " #info_user");
                     }, 2000);
                 }
 
-                if (message.includes(agentName+'+') && message.includes('give up')) {
+                if (message.includes(agentName+'+') && message.includes('give_up')) {
                     var message1 = message[0]+' just have given up ticket no. '+message[1];
                     var href = "{% url 'agent:processing_ticket' %}";
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message1+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-minus-circle"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $("body .point_noti").show();
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
                     x.play();
 
-                    group_agent_Socket.send(JSON.stringify({
-                        'message' : noti,
-                        'agentName' : agentName,
-                        'type' : 'save',
-                    }));
-
                     setTimeout(function(){
-                        $("#info_user").load(location.href + " #info_user");
+                        $("body #info_user").load(location.href + " #info_user");
                     }, 2000);
                 }
 
@@ -410,31 +561,39 @@
                     if ($('body .chat'+tkid).length){
                         if ($('body .chat'+tkid).css('display') == 'none'){
                             var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
+                            var src = "{% static 'images/avatar.png' %}"; 
                             var message2 = message[0]+'-'+message[1];
-                            var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span><span class="time">'+time+'</span></div></a>';
+                            var noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span> <span class="time">'+time+'</span></div></a>';
+                            $('body .notification_chat').children('a').each(function () {
+                                if ($(this).html().includes(message[0])){
+                                    $(this).hide();
+                                }
+                            });
                             $('.notification_chat').prepend(noti);
-                            $("body .point_message").show();
+                            var noti1 = '<span class="heartbit"></span> <span class="point">';
+                            $('body .chat_noti').prepend(noti1);
                             x.play();
-
-                            group_agent_Socket.send(JSON.stringify({
-                                'message' : noti,
-                                'agentName' : agentName,
-                                'type' : 'chat',
-                            }));
+                            
+                            
+                            
                         }
                     }else{
                         var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
+                        var src = "{% static 'images/avatar.png' %}"; 
                         var message2 = message[0]+'-'+message[1];
-                        var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span><span class="time">'+time+'</span></div></a>';
+                        var noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span> <span class="time">'+time+'</span></div></a>';
+                        $('body .notification_chat').children('a').each(function () {
+                            if ($(this).html().includes(message[0])){
+                                $(this).hide();
+                            }
+                        });
                         $('.notification_chat').prepend(noti);
-                        $("body .point_message").show();
+                        var noti1 = '<span class="heartbit"></span> <span class="point">';
+                        $('body .chat_noti').prepend(noti1);
                         x.play();
 
-                        group_agent_Socket.send(JSON.stringify({
-                            'message' : noti,
-                            'agentName' : agentName,
-                            'type' : 'chat',
-                        }));
+                    
+                        
                     }
                     
                 }
@@ -445,7 +604,7 @@
 
     var dict_ws = {};
     $("body").on('click', '.noti_chat', function(){
-        var tkid = $(this).children().children('span').html();
+        var tkid = $(this).children('.mail-contnet').children().html();
         $("body .noti_chat"+tkid).hide();
         $('body .chat'+tkid).show();
         $("body .mytext").focus();
@@ -560,6 +719,8 @@
         delete dict_ws[tk_id];
         $("body #chat"+tk_id+" .frame > ul").empty();
     })
+
+    
 </script>
 </body>
 </html>

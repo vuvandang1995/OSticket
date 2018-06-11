@@ -1,5 +1,5 @@
 from django.urls import path
-
+from django.views.generic import TemplateView
 from . import views
 
 app_name = 'agent'
@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', views.home_admin, name='home_admin'),
     path('topic/', views.manager_topic, name='manager_topic'),
     path('agent/', views.manager_agent, name='manager_agent'),
-    path('', views.home_agent, name="home_agent"),
+    path('', views.home_agent, name="index"),
     path('logout', views.logout, name="logout"),
     path('assign/<int:id>', views.assign_ticket, name="assign_ticket"),
     path('history/<int:id>', views.history, name="history"),
@@ -19,4 +19,5 @@ urlpatterns = [
     path('manage_user', views.manager_user, name="manage_user"),
     path('profile', views.profile, name="profile"),
     path('logout_admin/', views.logout_admin, name='logout_admin'),
+
 ]
