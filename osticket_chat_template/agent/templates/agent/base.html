@@ -209,18 +209,12 @@
                     <ul id="sidebarnav">
                         <li class="nav-devider"></li>
                         <li class="nav-label">{{ agent.fullname}}</li>
-                        <li> <a class="has-arrow  " href="#" aria-expanded="false"><i class="fa fa-tachometer"></i><span class="hide-menu">Dashboard<span class="label label-rouded label-primary pull-right">6</span></span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li>
-                                    <a href="{% url 'agent:index' %}">Home </a>
-                                </li>
-                                <li><a href="{% url 'agent:inbox' %}">Inbox </a></li>
-                                <li><a href="{% url 'agent:outbox' %}">Outbox </a></li>
-                                <li><a href="{% url 'agent:processing_ticket' %}">Processing ticket </a></li>
-                                <li><a href="{% url 'agent:closed_ticket' %}">Closed ticket </a></li>
-                                <li><a href="{% url 'agent:manage_user' %}">Manage user </a></li>
-                            </ul>
-                        </li>
+                        <li> <a href="{% url 'agent:index' %}" aria-expanded="false"><i class="fa fa-home"></i><span class="hide-menu">Home</span></a></li>
+                        <li> <a href="{% url 'agent:inbox' %}" aria-expanded="false"><i class="fa fa-envelope"></i><span class="hide-menu">Inbox</span></a></li>
+                        <li> <a href="{% url 'agent:outbox' %}" aria-expanded="false"><i class="fa fa-send-o"></i><span class="hide-menu">Outbox</span></a></li>
+                        <li> <a href="{% url 'agent:processing_ticket' %}" aria-expanded="false"><i class="fa fa-hourglass-2"></i><span class="hide-menu">Processing Ticket</span></a></li>
+                        <li> <a href="{% url 'agent:closed_ticket' %}" aria-expanded="false"><i class="fa fa-check-circle"></i><span class="hide-menu">Close Ticket</span></a></li>
+                        <li> <a href="{% url 'agent:manage_user' %}" aria-expanded="false"><i class="fa fa-user"></i><span class="hide-menu">Manage User</span></a></li>
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
@@ -330,8 +324,11 @@
             if (typeof type_save !== 'undefined'){
                 if (type_save == 're-noti'){
                     $('.noti_noti').prepend(message);
-                }else{
+                }else if (type_save == 're-noti-chat'){
                     $('.notification_chat').prepend(message);
+                }else{
+                    $('body #list_tk_history').empty();
+                    $('body #list_tk_history').append(message)
                 }
             }else{
                 // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
@@ -719,6 +716,7 @@
         delete dict_ws[tk_id];
         $("body #chat"+tk_id+" .frame > ul").empty();
     })
+
 
     
 </script>
