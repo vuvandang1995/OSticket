@@ -1,3 +1,0 @@
-<a href="/user/"><div class="mail-contnet"><span class="mail-desc">Ticket 86 is processing by admin!</span><span class="time">9:41 AM</span></div></a>
-<a href="/user/"><div class="mail-contnet"><span class="mail-desc">Ticket 86 is deleted by admin!</span><span class="time">2:00 PM</span></div></a>
-<a href="/user/"><div class="mail-contnet"><span class="mail-desc">Ticket 87 dang duoc xu ly</span><span class="time">2:10 PM</span></div></a>

@@ -10,7 +10,7 @@ $(document).ready(function(){
                 '/ws/user/' + userName + '/');
 
             var date = formatAMPM(new Date());
-            message = 'Ticket '+id+' dang duoc xu ly';
+            message = 'Ticket '+id+' is processing!';
             chatSocket1.onopen = function (event) {
                 chatSocket1.send(JSON.stringify({
                     'message' : message,

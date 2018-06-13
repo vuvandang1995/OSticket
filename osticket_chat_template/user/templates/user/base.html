@@ -144,13 +144,7 @@
     <!-- /.modal-dialog -->
   </div>
   <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-      <b>Version</b> 2.4.0
-    </div>
-    <strong>Copyright &copy; 2014-2016 <a href="https://adminlte.io">Almsaeed Studio</a>.</strong> All rights
-    reserved.
-  </footer>
+  
 </div>
 <script src="{% static 'user_interface/bower_components/jquery/dist/jquery.min.js' %}"></script>
 <script src="{% static 'user_interface/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
@@ -254,7 +248,7 @@
             }else{
                 if (message ==  'give up'){
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("body #list_tk_user").load(location.href + " #list_tk_user");
                     }, 2000);
                 }
 
@@ -298,7 +292,7 @@
                     $('body .msg').html('You have '+noti_noti1+' new notifications');
                     x.play();
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("body #list_tk_user").load(location.href + " #list_tk_user");
                     }, 1000);
 
                 }
@@ -315,7 +309,7 @@
                     $('body .msg').html('You have '+noti_noti1+' new notifications');
                     x.play();
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("body #list_tk_user").load(location.href + " #list_tk_user");
                     }, 1000);
                 }
 
@@ -330,7 +324,7 @@
                         $('body .msg').html('You have '+noti_noti1+' new notifications');
                         x.play();
                         setTimeout(function(){
-                            $("body #info_user").load(location.href + " #info_user");
+                            $("body #list_tk_user").load(location.href + " #list_tk_user");
                         }, 1000);
                 }
 
@@ -345,7 +339,7 @@
                         $('body .msg').html('You have '+noti_noti1+' new notifications');
                         x.play();
                         setTimeout(function(){
-                            $("body #info_user").load(location.href + " #info_user");
+                            $("body #list_tk_user").load(location.href + " #list_tk_user");
                         }, 1000);
                 }
 
@@ -360,7 +354,7 @@
                         $('body .msg').html('You have '+noti_noti1+' new notifications');
                         x.play();
                         setTimeout(function(){
-                            $("body #info_user").load(location.href + " #info_user");
+                            $("body #list_tk_user").load(location.href + " #list_tk_user");
                         }, 1000);
                 }
 
@@ -375,8 +369,24 @@
                         $('body .msg').html('You have '+noti_noti1+' new notifications');
                         x.play();
                         setTimeout(function(){
-                            $("body #info_user").load(location.href + " #info_user");
+                            $("body #list_tk_user").load(location.href + " #list_tk_user");
                         }, 1000);
+                }
+
+
+                if (message.includes('is processing!')){
+                    var href="{% url 'user:homeuser' %}"
+                    var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $('body .num_noti').remove();
+                    var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                    $('body .noti_fy').prepend(noti1);
+                    $('body .msg').empty();
+                    $('body .msg').html('You have '+noti_noti1+' new notifications');
+                    x.play();
+                    setTimeout(function(){
+                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                    }, 1000);
                 }
             }
         };
