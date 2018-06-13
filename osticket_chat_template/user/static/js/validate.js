@@ -14,50 +14,50 @@ $(document).ready(function(){
         $('.inputText').each(function (){
             dem++;   
             if($.trim($(this).val()) == ''){
-                $(this).next().next('div.invalid-msg').html('<em>not be empty</em>').css('color','red');
+                $(this).next('div.invalid-msg').html('<em>not be empty</em>').css('color','red');
                 return checkPass = false;
             }else{
-                    $(this).next().next('div.invalid-msg').html('');
+                    $(this).next('div.invalid-msg').html('');
                     if (dem == 2)
                     {
                         if (!filterUsername.test(username)){
-                            $(this).next().next('div.invalid-msg').html('<em>invalid username</em>').css('color','red');
+                            $(this).next('div.invalid-msg').html('<em>invalid username</em>').css('color','red');
                             return checkPass = false;
                         }else{
-                            $(this).next().next('div.invalid-msg').html('');
+                            $(this).next('div.invalid-msg').html('');
                             }
                     }
 
                     if (dem == 3)
                     {
                         if (!filterEmail.test(email)){
-                            $(this).next().next('div.invalid-msg').html('<em>email only</em>').css('color','red');
+                            $(this).next('div.invalid-msg').html('<em>email only</em>').css('color','red');
                             return checkPass = false;
                         }else{
-                            $(this).next().next('div.invalid-msg').html('');
+                            $(this).next('div.invalid-msg').html('');
                             }
                     }
 
                     if (dem == 4)
                     {
                         if (!filterPhone.test(phone)){
-                            $(this).next().next('div.invalid-msg').html('<em>phone number only</em>').css('color','red');
+                            $(this).next('div.invalid-msg').html('<em>phone number only</em>').css('color','red');
                             return checkPass = false;
                         }else{
-                            $(this).next().next('div.invalid-msg').html('');
+                            $(this).next('div.invalid-msg').html('');
                             }
                     }
 
                     if (dem == 6)
                     {
                         if (p2 != p1){
-                            $(this).next().next('div.invalid-msg').html('<em>re-password is in correct</em>').css('color','red');
+                            $(this).next('div.invalid-msg').html('<em>re-password is in correct</em>').css('color','red');
                             return checkPass = false;
                         }else{
-                            $(this).next().next('div.invalid-msg').html('');
+                            $(this).next('div.invalid-msg').html('');
                             }
-                    }   
-                } 
+                    }
+                }
         });
         return checkPass;
     });    
