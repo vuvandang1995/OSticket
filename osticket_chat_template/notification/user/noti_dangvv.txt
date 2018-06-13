@@ -1,2 +1,0 @@
-<a href="/user/"><div class="mail-contnet"><span class="mail-desc">Ticket 79 dang duoc xu ly</span><span class="time">3:14 PM</span></div></a>
-<a href="/user/"><div class="mail-contnet"><span class="mail-desc">Ticket 85 dang duoc xu ly</span><span class="time">8:43 AM</span></div></a>

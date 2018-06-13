@@ -1,0 +1,135 @@
+{% extends 'agent/base_leader.html' %}
+{% block title %}Leader{% endblock %}
+{% load static %}
+{% block js %}
+<script src="{% static 'js/manager_agent.js' %}"></script>
+{% endblock %}
+{% block content %}
+        <div class="container" id="list_agent">
+            <h2>All Agent</h2>
+            <br/>
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-title="add" data-target="#topicModal" >
+                <span class="glyphicon glyphicon-plus"></span> Create new agent
+            </button>
+            <br/>
+            <br/>
+            <table class="table table-striped table-bordered">
+                <thead class = thead-dark>
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Admin</th>
+                    <th>Status</th>
+                    <th>TK Done/Process</th>
+                    <th>TK Processing</th>
+                    <th>Tùy chọn</th>
+
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for ag in agent %}
+                <tr>
+
+                    <td>{{ag.id}}</td>
+
+                    <td id="full_name{{ag.id}}">{{ag.fullname}}</td>
+
+                    <td id="user_name{{ag.id}}">{{ag.username}}</td>
+
+                    <td id="email_agent{{ag.id}}">{{ag.email}}</td>
+
+                    <td id="phone_agent{{ag.id}}">{{ag.phone}}</td>
+
+                    {% if ag.admin == 0 %}
+                        <td><span class="label label-danger">no</span></td>
+                    {% else %}
+                        <td><span class="label label-success">yes</span></td>
+                    {% endif %}
+
+                    {% if ag.status == 0 %}
+                        <td><span class="label label-danger">inactive</span></td>
+                    {% else %}
+                        <td><span class="label label-success">active</span></td>
+                    {% endif %}
+
+                    {% for key, value in list_tk %}
+                        {% if key == ag.username %}
+                            <td>{{ value.0 }}</td>
+                            <td>{{ value.1 }}</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>
+                        {% csrf_token %}
+                        {% if ag.admin == 0 %}
+                        <button type="button" class="btn btn-primary close_"  id="{{ag.id}}" data-toggle="tooltip" title="block/unblock">
+                            <span class="glyphicon glyphicon-off"></span>
+                        </button>
+
+                        <button type="button" class="btn btn-danger" id="{{ag.id}}" data-toggle="tooltip" title="delete">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        {% else %}
+                        <button type="button" disabled class="btn btn-primary close_" id="{{ag.id}}" data-toggle="tooltip" title="block/unblock" >
+                            <span class="glyphicon glyphicon-off"></span>
+                        </button>
+
+                        <button type="button" disabled class="btn btn-danger" id="{{ag.id}}" data-toggle="tooltip" title="delete">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        {% endif %}
+                        <button type="button" class="btn btn-info" data-title="edit" id="{{ag.id}}" data-toggle="modal" data-target="#topicModal">
+                            <span class="glyphicon glyphicon-wrench" data-toggle="tooltip" title="change info"></span>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor%}
+                </tbody>
+            </table>
+        </div>
+
+    <div id="topicModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style= "color: red";><strong>Add New Agent</strong></h3>
+                </div>
+                
+                <div class="modal-body form-group">
+                    <label for="fullname"><b>Full name</b></label>
+                    <input class="inputText form-control" type="text" placeholder="Full name" name="fullname" >
+        
+                    <label for="email"><b>Email</b></label>
+                    <input class="inputText form-control" type="text" placeholder="Enter Email" name="email">
+
+                    <div id="user_agent">
+                    <label for="username"><b>Username</b></label>
+                    <input class="inputText form-control" type="text" placeholder="Enter Username" name="username" >
+                    </div>
+
+                    <label for="phone"><b>Phone</b></label>
+                    <input class="inputText form-control" type="text" placeholder="Enter your phone number" name="phone">
+                    
+                    <div id="pwd">
+                    <label for="psw"><b>Password</b></label>
+                    <input class="inputText form-control" type="password" placeholder="Enter Password" name="password" id="p1" >
+              
+                    <label for="psw-repeat"><b>Repeat Password</b></label>
+                    <input class="inputText" type="password" placeholder="Repeat Password" name="password2" id="p2">
+                    </div>
+                    <input type="hidden" name="agentid" value="">                        
+
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id = "add_agent_close">Close</button>
+                    <button type="button" id="addAgent" class="btn btn-success">Save</button>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -24,7 +24,6 @@ function close_popup(id)
             document.getElementById(id).style.display = "none";
             
             calculate_popups();
-            
             return;
         }
     }   
@@ -33,7 +32,7 @@ function close_popup(id)
 //displays the popups. Displays based on the maximum number of popups that can be displayed on the current viewport width
 function display_popups()
 {
-    var right = 220;
+    var right = 160;
     
     var iii = 0;
     for(iii; iii < total_popups; iii++)
@@ -76,9 +75,9 @@ function register_popup(id, name)
         }else{
             // var element = '<div class="live-chat popup-box chat-popup" id="'+ id +'"><header id="xxx" class="clearfix"><div class="popup-head-right"><a class="chat-close" href="javascript:close_popup(\''+ id +'\');">&#10005;</a></div><div class="popup-head-left"><h4>'+ name +'</h4></div><span class="chat-message-counter">'+popups+'</span></header><div class="chat"><div class="chat-history"><div class="chat-message clearfix"><img src="" alt="" width="32" height="32"><div class="chat-message-content clearfix"><span class="chat-time">13:35</span><h5>John Doe</h5><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, explicabo quasi ratione odio dolorum harum.</p></div> <!-- end chat-message-content --></div> <!-- end chat-message --><hr></div> <!-- end chat-history --><p class="chat-feedback">Your partner is typing…</p><form action="#" method="post"><fieldset><input type="text" placeholder="Type your message…" autofocus><input type="hidden"></fieldset></form></div></div>';
             // var element = '<div class="live-chat popup-box chat-popup" id="'+ id +'"><header id="xxx" class="clearfix"><div class="popup-head-right"><a class="chat-close" href="javascript:close_popup(\''+ id +'\');">&#10005;</a></div><div class="popup-head-left"><h4>'+ name +'</h4></div><span class="chat-message-counter">'+popups+'</span></header><div class="frame chat"><ul></ul></div></div>';
-            var element = '<div class="live-chat popup-box chat-popup" id="'+ id +'"><header class="clearfix"><div class="popup-head-right"><a class="chat-close" href="javascript:close_popup(\''+ id +'\');">&#10005;</a></div><div class="popup-head-left"><h4>'+ name +'</h4></div><span class="chat-message-counter">'+popups+'</span></header><div class="frame chat'+name+'"><ul></ul><div><div class="msj-rta macro"><div class="text text-r" style="background:whitesmoke !important"><input id="chat-message-input'+ name +'" class="mytext" placeholder="Type a message"/></div></div><div style="padding:10px;"><span id="chat-message-submit'+ name +'" class="glyphicon glyphicon-share-alt xxx"></span></div></div></div></div>';
-            document.getElementsByTagName("body")[0].innerHTML = document.getElementsByTagName("body")[0].innerHTML + element;
-
+            var element = '<div class="live-chat popup-box chat-popup" id="'+ id +'"><header class="clearfix header-chat"><div class="popup-head-right"><a class="chat-close" href="javascript:close_popup(\''+ id +'\');">&#10005;</a></div><div class="popup-head-left"><h4>'+ name +'</h4></div><span class="chat-message-counter">'+popups+'</span></header><div class="frame chat'+name+'"><ul></ul><div><div class="msj-rta macro"><div class="text text-r" style="background:whitesmoke !important"><input id="chat-message-input'+ name +'" class="mytext" placeholder="Type a message"/></div></div><div style="padding:10px;"><span id="chat-message-submit'+ name +'" class="glyphicon glyphicon-share-alt xxx"></span></div></div></div></div>';
+//            document.getElementById("info_user").innerHTML = document.getElementById("info_user").innerHTML + element;
+            $("#info_user").append(element);
             popups.push(id);
             popups2.push(id);
                     
@@ -98,49 +97,17 @@ function register_popup(id, name)
     
 }
 
-
-
-function register_popup_agent(id, name, user_tk)
-{
-    if (check_popup(id, popups) == false){
-        if (check_popup(id, popups2)){
-            popups.unshift(id);
-            calculate_popups();
-        }else{
-            // var element = '<div class="live-chat popup-box chat-popup" id="'+ id +'"><header id="xxx" class="clearfix"><div class="popup-head-right"><a class="chat-close" href="javascript:close_popup(\''+ id +'\');">&#10005;</a></div><div class="popup-head-left"><h4>'+ name +'</h4></div><span class="chat-message-counter">'+popups+'</span></header><div class="chat"><div class="chat-history"><div class="chat-message clearfix"><img src="" alt="" width="32" height="32"><div class="chat-message-content clearfix"><span class="chat-time">13:35</span><h5>John Doe</h5><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, explicabo quasi ratione odio dolorum harum.</p></div> <!-- end chat-message-content --></div> <!-- end chat-message --><hr></div> <!-- end chat-history --><p class="chat-feedback">Your partner is typing…</p><form action="#" method="post"><fieldset><input type="text" placeholder="Type your message…" autofocus><input type="hidden"></fieldset></form></div></div>';
-            // var element = '<div class="live-chat popup-box chat-popup" id="'+ id +'"><header id="xxx" class="clearfix"><div class="popup-head-right"><a class="chat-close" href="javascript:close_popup(\''+ id +'\');">&#10005;</a></div><div class="popup-head-left"><h4>'+ name +'</h4></div><span class="chat-message-counter">'+popups+'</span></header><div class="frame chat"><ul></ul></div></div>';
-            var element = '<div class="live-chat popup-box chat-popup" id="'+ id +'"><header class="clearfix header-chat"><div class="popup-head-right"><a class="chat-close" href="javascript:close_popup(\''+ id +'\');">&#10005;</a></div><div class="popup-head-left"><h4>'+ name +'</h4><input class="user_name" type="hidden" value="'+ user_tk +'"></div><span class="chat-message-counter">'+popups+'</span></header><div class="frame chat'+name+'"><ul></ul><div><div class="msj-rta macro"><div class="text text-r" style="background:whitesmoke !important"><input id="chat-message-input'+ name +'" class="mytext" placeholder="Type a message"/></div></div><div style="padding:10px;"><span id="chat-message-submit'+ name +'" class="glyphicon glyphicon-share-alt xxx"></span></div></div></div></div>';
-            document.getElementsByTagName("body")[0].innerHTML = document.getElementsByTagName("body")[0].innerHTML + element;
-            
-            popups.push(id);
-            popups2.push(id);
-                    
-            calculate_popups();
-        }
-    }else{
-        for(var iii = 0; iii < popups.length; iii++)
-        {
-            if(id == popups[iii])
-            {
-                Array.remove(popups, iii);
-                popups.unshift(id);
-                calculate_popups();
-            }
-        }
-    }
-    
-}
 //calculate the total number of popups suitable and then populate the toatal_popups variable.
 function calculate_popups()
 {
     var width = window.innerWidth;
-    if(width < 540)
+    if(width < 380)
     {
         total_popups = 0;
     }
     else
     {
-        width = width - 200;
+        width = width - 300;
         //320 is width of a single popup box
         total_popups = parseInt(width/320);
     }
