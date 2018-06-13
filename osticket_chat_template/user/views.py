@@ -220,16 +220,16 @@ def login_user(request):
         if request.method == 'POST':
             # post form để User yêu cầu reset mật khẩu, gửi link về mail
             if 'uemail' in request.POST:
-                print(request.POST)
                 form = UserResetForm(request.POST)
                 if form.is_valid():
                     to_email = form.cleaned_data['uemail']
-                    current_site = get_current_site(request)
+                    # current_site = get_current_site(request)
                     user = get_user_email(to_email)
                     mail_subject = 'Reset password your account.'
                     message = render_to_string('user/resetpwd.html', {
                         'user': user,
-                        'domain': current_site.domain,
+                        # 'domain': current_site.domain,
+                        'domain': "113.190.232.90:8892",
                         'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
                         'token':account_activation_token.make_token(user),
                     })
@@ -247,12 +247,13 @@ def login_user(request):
             elif 'fullname' and 'email' and 'password2' in request.POST:
                 form = RegistrationForm(request.POST)
                 if form.is_valid():
-                    current_site = get_current_site(request)
+                    # current_site = get_current_site(request)
                     user = form.save()
                     mail_subject = 'Activate your blog account.'
                     message = render_to_string('user/acc_active_email.html', {
                         'user': user,
-                        'domain': current_site.domain,
+                        # 'domain': current_site.domain,
+                        'domain': "113.190.232.90:8892",
                         'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
                         'token':account_activation_token.make_token(user),
                     })

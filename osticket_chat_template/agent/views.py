@@ -112,7 +112,8 @@ def home_admin(request):
                                 'Forward ticket',
                                 render_to_string('agent/mail/forward_mail_leader.html',
                                                  {'receiver': agent,
-                                                  'domain': (get_current_site(request)).domain,
+                                                #   'domain': (get_current_site(request)).domain,
+                                                  'domain': "113.190.232.90:8892",
                                                   'sender': 'Leader'}),
                                 to=[agent.email],
                             )
@@ -302,7 +303,8 @@ def assign_ticket(request, id):
                 'Assign ticket',
                 render_to_string('agent/mail/assign_mail.html',
                                  {'receiver': user,
-                                  'domain': (get_current_site(request)).domain,
+                                 'domain': "113.190.232.90:8892",
+                                #   'domain': (get_current_site(request)).domain,
                                   'sender': agent,
                                   'ticketid': ticket.id}),
                 to=[user.email],
@@ -362,7 +364,8 @@ def processing_ticket(request):
                                             'Forward ticket',
                                             render_to_string('agent/mail/forward_mail.html',
                                                             {'receiver': rc,
-                                                            'domain': (get_current_site(request)).domain,
+                                                            'domain': "113.190.232.90:8892",
+                                                            # 'domain': (get_current_site(request)).domain,
                                                             'sender': sender}),
                                             to=[rc.email],
                                         )
@@ -388,7 +391,8 @@ def processing_ticket(request):
                                             'Add in a ticket',
                                             render_to_string('agent/mail/add_mail.html',
                                                             {'receiver': rc,
-                                                            'domain': (get_current_site(request)).domain,
+                                                            'domain': "113.190.232.90:8892",
+                                                            # 'domain': (get_current_site(request)).domain,
                                                             'sender': sender}),
                                             to=[rc.email]
                                         )
@@ -545,7 +549,8 @@ def inbox(request):
                             'Deny forward request',
                             render_to_string('agent/mail/deny_mail.html',
                                              {'receiver': sender,
-                                              'domain': (get_current_site(request)).domain,
+                                             'domain': "113.190.232.90:8892",
+                                            #   'domain': (get_current_site(request)).domain,
                                               'sender': agent}),
                             to=[sender.email]
                         )
@@ -565,7 +570,8 @@ def inbox(request):
                                 'Accept forward request',
                                 render_to_string('agent/mail/accept_mail.html',
                                                  {'receiver': sender,
-                                                  'domain': (get_current_site(request)).domain,
+                                                 'domain': "113.190.232.90:8892",
+                                                #   'domain': (get_current_site(request)).domain,
                                                   'sender': agent}),
                                 to=[sender.email]
                             )
@@ -589,7 +595,8 @@ def inbox(request):
                             'Deny add request',
                             render_to_string('agent/mail/deny_mail.html',
                                              {'receiver': sender,
-                                              'domain': (get_current_site(request)).domain,
+                                             'domain': "113.190.232.90:8892",
+                                            #   'domain': (get_current_site(request)).domain,
                                               'sender': agent}),
                             to=[sender.email]
                         )
@@ -608,7 +615,8 @@ def inbox(request):
                                 'Accept add request',
                                 render_to_string('agent/mail/accept_mail.html',
                                                  {'receiver': sender,
-                                                  'domain': (get_current_site(request)).domain,
+                                                 'domain': "113.190.232.90:8892",
+                                                #   'domain': (get_current_site(request)).domain,
                                                   'sender': agent}),
                                 to=[sender.email]
                             )
