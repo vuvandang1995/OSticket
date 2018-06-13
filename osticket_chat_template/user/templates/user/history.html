@@ -1,87 +1,44 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-  <title>History</title>
-  {% load staticfiles %}
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
-  <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'history/style.css' %}" rel="stylesheet" type="text/css">
+{% extends 'user/base.html' %}
+    {% load staticfiles %}
+{% block title %}History{% endblock %}
+{% block lib %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="{% static 'history/style.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block content %}
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h3>Timeline of ticket no.{{ id }}</h3>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">Tickets</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div id="visualization"></div>
+                <br/>
+                <div class="btn-group btn-group-lg">
+                    <button class="btn btn-primary" onclick="reset()">Reset</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+{% block js%}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">    
-</head>
-<body>
-<div class="header">
-    <nav class="main-menu">
-            <ul>
-                <li class="dropdown nav-item">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-bell"></i>
-                        <div class="notify"> 
-                            <span class="point point_noti"></span>
-                        </div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
-                        <ul>
-                            <li>
-                                <div class="drop-title">Notifications</div>
-                            </li>
-                            <li>
-                                <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
-                                    <div class="message-center noti_noti" style="overflow: hidden; width: auto; height: 250px;">
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="dropdown nav-item">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-envelope"></i>
-                        <div class="notify"> 
-                            <span class="point point_message"></span>
-                        </div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
-                        <ul>
-                            <li>
-                                <div class="drop-title">Notifications</div>
-                            </li>
-                            <li>
-                                <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
-                                    <div class="message-center notification_chat" style="overflow: hidden; width: auto; height: 250px;">
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li><a class="list-group-item" href="{% url 'user:homeuser' %}"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a></li>
-                <li><a class="list-group-item" href="{% url 'user:detail_user' %}"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Settings</a></li>
-                <li><a class="list-group-item" href="{% url 'user:logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp; Logout</a></li>
-            </ul>
-    </nav>
-</div>
-<br/>
-<br/>
-<br/>
-<br/>
-<div class="container">
-
-    <h3>History of ticket no.{{ id }}</h3>
-    <div id="visualization"></div>
-    <br/>
-    <div class="btn-group btn-group-lg">
-        <button class="btn btn-primary" onclick="reset()">Reset</button>
-    </div>
-
-</div>
 <script type="text/javascript">
     var groups = new vis.DataSet([
         {
@@ -111,6 +68,4 @@
         timeline.fit();
     }
 </script>
-</body>
-</html>
-
+{% endblock %}

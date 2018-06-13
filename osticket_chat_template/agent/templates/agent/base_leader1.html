@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    {% block js %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <div class="header">
+        <nav class="main-menu">
+            <ul>
+                <li class="dropdown nav-item">
+                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-bell"></i>
+                        <div class="notify"> 
+                            <span class="point"></span>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
+                        <ul>
+                            <li>
+                                <div class="drop-title">Notifications</div>
+                            </li>
+                            <li>
+                                <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
+                                    <div class="message-center" style="overflow: hidden; width: auto; height: 250px;">
+                                            
+                                    </div>
+                                </div>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                    
+                </li>
+                <li><a class="list-group-item" href="{% url 'agent:home_admin' %}">Ticket</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:manager_agent' %}">Agent</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:manager_topic' %}">Topic</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:history_all_ticket' today|safe today|safe %}">History all ticket</a></li>
+                <li><a class="list-group-item" href="{% url 'agent:logout_admin' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="container" id="leader">
+    {% block content %}
+
+    {% endblock %}
+    </div>
+    
+<script>
+    var fullname = {{ fullname }};
+    var agentName = {{ agent_name }};
+    /*var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/agent/' + agentName + '/');*/
+    
+    var group_agent_Socket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/agent/'+agentName+'+group_agent_Socket/');
+        
+    
+
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+
+    $(".point").hide();
+
+    $(".fa-bell").click(function(){
+        $(".point").hide();
+    });
+
+
+    group_agent_Socket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
+        setTimeout(function(){
+            $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+        }, 1000);
+    };
+</script>
+</body>
+</html>

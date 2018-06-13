@@ -23,6 +23,10 @@ def home_admin(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
         agent = Agents.objects.exclude(username=request.session['admin'])
+        agent_total = Agents.objects.count()
+        tk_processing = Tickets.objects.filter(Q(status=1) | Q(status=2)).count()
+        tk_done = Tickets.objects.filter(status=3).count()
+        tk_open = Tickets.objects.filter(status=0).count()
         list_other = {}
         tk = Tickets.objects.all()
         for tk in tk:
@@ -34,7 +38,11 @@ def home_admin(request):
                    'today': timezone.now().date(),
                    'agent': agent,
                    'agent_name': mark_safe(json.dumps(admin.username)),
-                   'fullname': mark_safe(json.dumps(admin.fullname))}
+                   'fullname': mark_safe(json.dumps(admin.fullname)),
+                   'agent_total': agent_total,
+                   'tk_open': tk_open,
+                   'tk_processing': tk_processing,
+                   'tk_done': tk_done}
         if request.method == 'POST':
             if 'close' in request.POST:
                 ticketid = request.POST['close']
@@ -427,21 +435,21 @@ def history(request,id):
             else:
                 action = "<b>Agent " + str(tem.agentid.fullname) + "</b><br/>"+str(tem.action)
             if tem.action == 'create ticket':
-                cont = "<span class='glyphicon glyphicon-plus' ></span>"
+                cont = "<i class='fa fa-plus' ></i>"
             elif tem.action == 'close ticket':
-                cont = "<span class='glyphicon glyphicon-off' ></span>"
+                cont = "<i class='fa fa-power-off' ></i>"
             elif tem.action == 'assign ticket':
-                cont = "<span class='glyphicon glyphicon-pushpin' ></span>"
+                cont = "<i class='fa fa-thumb-tack' ></i>"
             elif tem.action == 'done ticket':
-                cont = "<span class='glyphicon glyphicon-ok' ></span>"
+                cont = "<i class='fa fa-check' ></i>"
             elif tem.action == 're-process ticket':
-                cont = "<span class='glyphicon glyphicon-refresh' ></span>"
+                cont = "<i class='fa fa-refresh' ></i>"
             elif tem.action == 're-open ticket':
-                cont = "<span class='glyphicon glyphicon-repeat' ></span>"
+                cont = "<i class='fa fa-repeat' ></i>"
             elif tem.action == 'give up ticket':
-                cont = "<span class='glyphicon glyphicon-log-out' ></span>"
+                cont = "<i class='fa fa-sign-out' ></i>"
             else:
-                cont = "<span class='glyphicon glyphicon-user' ></span>"
+                cont = "<i class='fa fa-user-secret></i>"
             result.append({"id": tem.id,
                            "title": action,
                            "content": cont,
@@ -476,22 +484,24 @@ def history(request,id):
 def history_all_ticket(request, date, date2):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(admin=1)
-        time = timezone.now().time()
+        # time = timezone.now().time()
         tdate1 = timezone.datetime.strptime(date, "%Y-%m-%d").date()
         tdate2 = timezone.datetime.strptime(date2, "%Y-%m-%d").date()
-        nday = str(timezone.datetime.combine(tdate2, time) - timezone.datetime.combine(tdate1, time))[:-13]
-        if nday == '':
-            nday = 1
-        else:
-            nday = int(nday)+1
-        tickets = {}
-        for x in range(0, nday):
-            thisDate = str(tdate2-timezone.timedelta(days=x))
-            tk = TicketLog.objects.filter(date=thisDate).order_by('id').reverse()
-            if tk:
-                tickets[thisDate] = tk
-
+        # nday = str(timezone.datetime.combine(tdate2, time) - timezone.datetime.combine(tdate1, time))[:-13]
+        # if nday == '':
+        #     nday = 1
+        # else:
+        #     nday = int(nday)+1
+        # tickets = {}
+        tickets = TicketLog.objects.filter(date__range=[tdate1, tdate2])
+        # for x in range(0, nday):
+        #     thisDate = str(tdate2-timezone.timedelta(days=x))
+        #     tk = TicketLog.objects.filter(date=thisDate).order_by('id').reverse()
+        #     if tk:
+        #         tickets[thisDate] = tk
         return render(request, 'agent/history_all_ticket.html', {'tickets': tickets, 'today': timezone.now().date(),
+                                                                 'day1': tdate1,
+                                                                 'day2': date2,
                                                                  'agent_name': mark_safe(json.dumps(admin.username)),
                                                                  'fullname': mark_safe(json.dumps(admin.fullname))})
     else:

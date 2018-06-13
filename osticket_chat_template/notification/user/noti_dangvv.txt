@@ -1,1 +1,7 @@
 <a href="/user/"><div class="mail-contnet"><span class="mail-desc">Ticket 79 dang duoc xu ly</span><span class="time">3:14 PM</span></div></a>
+<a href="/user/"><div class="mail-contnet"><span class="mail-desc">Ticket 82 dang duoc xu ly</span><span class="time">12:43 PM</span></div></a>
+<a href="javascript:register_popup('chat82', 82);" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">82</span><span class="time">12:43 PM</span></div></a>*&*%^chat
+<a href="javascript:register_popup('chat82', 82);" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">82</span><span class="time">12:53 PM</span></div></a>*&*%^chat
+<a href="javascript:register_popup('chat82', 82);" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">82</span><span class="time">1:33 PM</span></div></a>*&*%^chat
+<a href="javascript:register_popup('chat82', 82);" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">82</span><span class="time">1:58 PM</span></div></a>*&*%^chat
+<a href="javascript:register_popup('chat82', 82);" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">82</span><span class="time">1:58 PM</span></div></a>*&*%^chat
