@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Home</title>
+</head>
+<body>
+<div class="container" id="info_user">
+    <br/>
+    <div class="btn-group">
+        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#id01" >Login</button>
+        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#id02" >Register</button>
+        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#id04">Are you Admin?</button>
+    </div>
+    <br/>
+    <br/>
+    <font color="red" size="4">{{ mess }}</font><br/>
+    <font color="red" size="4">{{error}}</font></br/>
+</div>
+    <div class="modal fade" id="id04" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Agent login</h4>
+                </div>
+                <div class="modal-body form-group">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <label for="uname"><b>Username</b></label><br/>
+                        <input class="form-control" type="text" placeholder="Enter Username" name="agentname" required><br/>
+                        <div class="invalid-msg"></div>
+                        <label for="psw"><b>Password</b></label><br/>
+                        <input  class="form-control" type="password" placeholder="Enter Password" name="agentpass" required><br/>
+                        <div class="invalid-msg1"></div>
+                        <button type="submit" class="btn btn-primary" value="OK" id="login">Login</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="id01" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">User login</h4>
+                </div>
+                <div class="modal-body form-group">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <label for="uname"><b>Username</b></label><br/>
+                        <input class="form-control" type="text" placeholder="Enter Username" name="username" required><br/>
+                        <div class="invalid-msg"></div>
+                        <label for="psw"><b>Password</b></label><br/>
+                        <input  class="form-control" type="password" placeholder="Enter Password" name="password" required><br/>
+                        <div class="invalid-msg1"></div>
+                        <button type="submit" class="btn btn-primary" value="OK" id="login" >Login</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </form>
+                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="modal" data-target="#id03">Forgot password ?</button>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="id03" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Forgot password</h4>
+                </div>
+                <div class="modal-body form-group">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <label for="uname"><b>Your email</b></label><br/>
+                        <input class="form-control" type="text" placeholder="Enter Email" name="uemail" required><br/>
+                        <div class="invalid-msg"></div><br/>
+                        <button type="submit" class="btn btn-primary" value="OK" id="uemail" >Reset</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="id02" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Register</h4>
+                </div>
+                <div class="modal-body form-group">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <label for="fullname"><b>Full name</b></label></br>
+                        <input class="form-control inputText" type="text" placeholder="Full name" name="fullname" required></br>
+                        <div class="invalid-msg"></div>
+                        <label for="username"><b>Username</b></label></br>
+                        <input class="form-control inputText" type="text" placeholder="Enter Username" name="username" id="username_" required></br>
+                        <div class="invalid-msg"></div>
+                        <label for="email"><b>Email</b></label></br>
+                        <input class="form-control inputText" type="text" placeholder="Enter Email" name="email" id="email_" required></br>
+                        <div class="invalid-msg"></div>
+                        <label for="phone"><b>Your phone Number</b></label></br>
+                        <input class="form-control inputText" type="text" placeholder="Enter Your Phone Number" name="phone" id="phone" required></br>
+                        <div class="invalid-msg"></div>
+                        <label for="psw"><b>Password</b></label></br>
+                        <input class="form-control inputText" type="password" placeholder="Enter Password" name="password" id="p1" required></br>
+                        <div class="invalid-msg"></div>
+                        <label for="psw-repeat"><b>Repeat Password</b></label></br>
+                        <input class="form-control inputText" type="password" placeholder="Repeat Password" name="password2" id="p2" required></br>
+                        <div class="invalid-msg"></div>
+                        <button class="btn btn-primary" type="submit" value="OK" id="register">Register</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/validate.js' %}"></script>
+
+</body>
+</html>
