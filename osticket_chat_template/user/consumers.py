@@ -5,6 +5,8 @@ import json
 from user.models import *
 from channels.layers import get_channel_layer
 import fileinput
+from datetime import datetime
+from datetime import timedelta
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -206,17 +208,41 @@ class AgentConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        print(message)
+        # print(message)
         # Send message to room group
         time = text_data_json['time']
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-                'time' : time,
-            }
-        )
+        if 'date' in time:
+            print(message)
+            agent = Agents.objects.get(username=self.agent_name)
+            dtDate = datetime.strptime(message, "%Y-%m-%d") + timedelta(days=1)
+            end = dtDate + timedelta(days=1)
+            tk_by_date = Tickets.objects.filter(datestart__range=[dtDate, end], ticketagent__agentid=agent)
+            noti = ''
+            for tk in tk_by_date:
+                status = ''
+                if tk.status == 1:
+                    status = '<td><span class="label label-warning">Processing</span></td>'
+                elif tk.status == 2:
+                    status = '<td><span class="label label-success">Done</span></td>'
+                else:
+                    status = '<td><span class="label label-default">Close</span></td>'
+                noti = noti + '<tr><td>'+str(tk.id)+'</td><td>'+tk.title+'</td><td>'+tk.topicid.name+'</td><td>'+tk.sender.username+'</td>'+status+'<td>'+str(tk.dateend).split(' ')[0]+'</td></tr>'
+                # noti = r'<div class="card"><div class="card-title"><h4>History </h4></div><div class="card-body"><div class="table-responsive m-t-40"><table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%"><thead><tr><th width="10%">ID</th><th width="30%">Title</th><th width="20%">Topic</th><th width="10%">Sender</th><th width="15%">Created</th><th width="15%">Expired</th></tr></thead><tbody><tr><td>'+str(tk.id)+'</td><td>'+tk.title+'</td><td>'+tk.topicid.name+'</td><td>'+tk.sender.username+'</td><td>'+str(tk.datestart).split(' ')[0]+'</td><td>'+str(tk.dateend).split(' ')[0]+'</td></tr></tbody></table></div></div></div>'
+            self.send(text_data=json.dumps({
+                        'message': noti,
+                        'type' : 'date'
+                    }))
+        else:
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'time' : time,
+                }
+            )
+
+        
 
         if 'is closed by' in message[-1]:
             notifi = message[-1]

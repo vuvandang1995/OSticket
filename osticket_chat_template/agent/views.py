@@ -13,6 +13,8 @@ from django.utils.safestring import mark_safe
 import json
 import string
 import os
+from datetime import datetime
+from datetime import timedelta
 min_char = 8
 max_char = 12
 allchar = string.ascii_letters + string.digits
@@ -119,6 +121,7 @@ def home_admin(request):
                                                  action=action,
                                                  date=timezone.now().date(),
                                                  time=timezone.now().time())
+            
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
@@ -271,6 +274,13 @@ def home_agent(request):
             if 'noti_chat' in request.POST:
                 agent.noti_chat = 0
                 agent.save()
+            # if 'date' in request.POST:
+            #     date1 = request.POST['date']
+            #     dtDate = datetime.strptime(date1, "%Y-%m-%d").date() + timedelta(days=1)
+            #     end = dtDate + timedelta(days=1)
+            #     tk_by_date = Tickets.objects.filter(datestart__range=[dtDate, end], ticketagent__agentid=agent)
+            #     return render(request, 'agent/home_agent.html', {'tk_date': tk_by_date})
+            #     print(tk_by_date)
         return render(request, 'agent/home_agent.html', content)
     else:
         return redirect("/")

@@ -163,77 +163,38 @@
 
 
                 <div class="row">
-					<div class="col-lg-8">
-						<div class="row">
-						<div class="col-lg-6">
-							<div class="card">
-								<div class="card-title">
-									<h4>Message </h4>
-								</div>
-								<div class="recent-comment notification_chat">
-                                </div>
-							</div>
-							<!-- /# card -->
-						</div>
-						<!-- /# column -->
-						<div class="col-lg-6">
+					<div class="col-lg-4">
 							<div class="card">
 								<div class="card-body">
 									<div class="year-calendar"></div>
 								</div>
 							</div>
-						</div>
-
-
-						</div>
 					</div>
 
-				    <div class="col-lg-4">
+				    <div class="col-lg-8">
                         <div class="card">
+                            <div class="card-title">
+                                <h4>History </h4>
+                            </div>
                             <div class="card-body">
-                                <h4 class="card-title">Todo</h4>
-                                <div class="card-content">
-                                    <div class="todo-list">
-                                        <div class="tdl-holder">
-                                            <div class="tdl-content">
-                                                <ul>
-                                                    <li>
-                                                        <label>
-															<input type="checkbox"><span>Build an angular app</span>
-															<a href='#' class="ti-close"></a>
-														</label>
-                                                    </li>
-                                                    <li>
-                                                        <label>
-															<input type="checkbox" checked><span>Creating component page</span>
-															<a href='#' class="ti-close"></a>
-														</label>
-                                                    </li>
-                                                    <li>
-                                                        <label>
-															<input type="checkbox" checked><span>Follow back those who follow you</span>
-															<a href='#' class="ti-close"></a>
-														</label>
-                                                    </li>
-                                                    <li>
-                                                        <label>
-															<input type="checkbox" checked><span>Design One page theme</span>
-															<a href='#' class="ti-close"></a>
-														</label>
-                                                    </li>
-
-                                                    <li>
-                                                        <label>
-															<input type="checkbox" checked><span>Creating component page</span>
-															<a href='#' class="ti-close"></a>
-														</label>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <input type="text" class="tdl-new form-control" placeholder="Type here">
-                                        </div>
+                                    <div class="table-responsive m-t-40">
+                                        <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th width="10%">ID</th>
+                                                    <th width="35%">Title</th>
+                                                    <th width="20%">Topic</th>
+                                                    <th width="10%">Sender</th>
+                                                    <th width="10%">Status</th>
+                                                    <th width="15%">Expired</th>
+                                                </tr>
+                                            </thead>
+        
+                                            <tbody id="list_tk_history">
+                                                
+                                            </tbody>
+                                        </table>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -303,5 +264,10 @@
     <script src="{% static 'js/scripts.js' %}"></script>
 
     <script src="{% static 'js/assign.js' %}"></script>
+
+
+
+
+    
 
 {% endblock%}
