@@ -18,6 +18,8 @@ class Users(models.Model):
     receive_email = models.IntegerField(default=1)
     status = models.IntegerField(default=0)
     created = models.DateTimeField()
+    noti_noti = models.IntegerField(default=0)
+    noti_chat = models.IntegerField(default=0)
 
     class Meta:
         managed = True

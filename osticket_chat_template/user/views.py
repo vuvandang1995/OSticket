@@ -91,6 +91,8 @@ def homeuser(request):
                    'topic': topic,
                    'username': mark_safe(json.dumps(user.username)),
                    'admin': mark_safe(json.dumps(admin.username)),
+                   'noti_noti': user.noti_noti,
+                    'noti_chat': user.noti_chat
                    }
         if request.method == 'POST':
             if 'tkid' in request.POST:
@@ -116,6 +118,12 @@ def homeuser(request):
                                                                   {'receiver': rc, 'sender': user, 'id': id}),
                                                  to=[rc.email],)
                             email.send()
+            elif 'noti_noti' in request.POST:
+                user.noti_noti = 0
+                user.save()
+            elif 'noti_chat' in request.POST:
+                user.noti_chat = 0
+                user.save()
             else:
                 form = CreateNewTicketForm(request.POST,request.FILES)
                 if form.is_valid():
@@ -152,6 +160,7 @@ def homeuser(request):
                     #                         to=[admin.email],)
                     #     email.send()
                 return redirect("/user")
+            
         return render(request, 'user/home_user.html', content)
     else:
         return redirect("/")
@@ -184,7 +193,13 @@ def detail_user(request):
                 u = Users.objects.get(id=request.POST['userid'])
                 u.password = request.POST['pwd']
                 u.save()
-        return render(request, 'user/detail_user.html', {'user': user, 'username': mark_safe(json.dumps(user.username))}, )
+            elif 'noti_noti' in request.POST:
+                user.noti_noti = 0
+                user.save()
+            elif 'noti_chat' in request.POST:
+                user.noti_chat = 0
+                user.save()
+        return render(request, 'user/detail_user.html', {'user': user, 'username': mark_safe(json.dumps(user.username)), 'noti_noti': user.noti_noti, 'noti_chat': user.noti_chat})
     else:
         return redirect("/")
 

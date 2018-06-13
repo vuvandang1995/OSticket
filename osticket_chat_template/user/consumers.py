@@ -97,8 +97,7 @@ class UserConsumer(WebsocketConsumer):
             f = r'notification/user/'+self.room_group_name+'.txt'
             file = open(f, 'r')
             for line in file:
-                message = line[:len(line)-1]
-                if '*&*%^chat' in message:
+                if '*&*%^chat' in line:
                     msg = line.split('*&*%^chat')[0]
                     self.send(text_data=json.dumps({
                         'message': msg,
@@ -106,11 +105,12 @@ class UserConsumer(WebsocketConsumer):
                     }))
                 else:
                     self.send(text_data=json.dumps({
-                            'message': line,
-                            'type' : 're-noti'
-                        }))
+                        'message': line,
+                        'type' : 're-noti'
+                    }))
         except:
             pass
+      
 
     def disconnect(self, close_code):
         # Leave room group
@@ -124,30 +124,100 @@ class UserConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         
-        try:
-            type_save = text_data_json['type']
-            if type_save == 'chat':
+        # Send message to room group
+        time = text_data_json['time']
+        u = Users.objects.get(username=self.room_group_name.split('_')[1])
+        
+
+
+        if 'is done!' in message:
+            f = r'notification/user/'+self.room_group_name+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/user/"><div style="float:left;width:15%" class="btn btn-success btn-circle m-r-10"><i class="fa fa-check-circle-o"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            u.noti_noti = u.noti_noti + 1
+            u.save()
+
+        if 'is re-process!' in message:
+            f = r'notification/user/'+self.room_group_name+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/user/"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            u.noti_noti = u.noti_noti + 1
+            u.save()
+
+        if 'is closed by admin!' in message:
+            f = r'notification/user/'+self.room_group_name+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/user/"><div style="float:left;width:15%" class="btn btn-success btn-circle m-r-10"><i class="fa fa-check-circle-o"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            u.noti_noti = u.noti_noti + 1
+            u.save()
+
+        if 'is opened by admin!' in message:
+            f = r'notification/user/'+self.room_group_name+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/user/"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            u.noti_noti = u.noti_noti + 1
+            u.save()
+
+        if 'is deleted by admin!' in message:
+            f = r'notification/user/'+self.room_group_name+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/user/"><div style="float:left;width:15%" class="btn btn-danger btn-circle m-r-10"><i class="fa fa-remove"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            u.noti_noti = u.noti_noti + 1
+            u.save()
+
+        if 'is processing by admin!' in message:
+            f = r'notification/user/'+self.room_group_name+'.txt'
+            file = open(f,'a')
+            noti = '<a href="/user/"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>'
+            file.write(noti + "\n")
+            file.close()
+            u.noti_noti = u.noti_noti + 1
+            u.save()
+        
+                
+        if 'new+chat' in message:
+            tkid = message[0]
+            try:
                 f = r'notification/user/'+self.room_group_name+'.txt'
-                file = open(f,'a') 
-                file.write(str(message) + "*&*%^chat" + "\n") 
-                file.close()
-            else:
-                f = r'notification/user/'+self.room_group_name+'.txt'
-                file = open(f,'a') 
-                file.write(str(message) + "\n")
-                file.close()
-        except:
-            # Send message to room group
-            time = text_data_json['time']
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {
-                    'type': 'chat_message',
-                    'message': message,
-                    'time': time,
-                }
-            )
-            print(message)
+                file = open(f, 'r')
+                for line in fileinput.input(f, inplace=True):
+                    if '*&*%^chat' in line and tkid in line:
+                        continue
+                    print(line, end='')
+            except:
+                pass
+
+            f = r'notification/user/'+self.room_group_name+'.txt'
+            file = open(f,'a')
+            href = "javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
+            src = "/static/images/avatar.png"
+            noti = '<a href="'+href+' class="noti_chat"><div style="float:left;width:15%" class="btn btn-info btn-circle m-r-10"><i class="fa fa-envelope-o"></i></div><div style="float:right; width:80%"><p>'+message[0]+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>'
+            file.write(noti + "*&*%^chat" + "\n")
+            file.close()
+            u.noti_chat = u.noti_chat + 1
+            u.save()
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message,
+                'time': time,
+                'noti_chat': u.noti_chat,
+                'noti_noti': u.noti_noti
+            }
+        )
+        print(message)
         
         
 
@@ -155,11 +225,15 @@ class UserConsumer(WebsocketConsumer):
     def chat_message(self, event):
         message = event['message']
         time = event['time']
+        noti_chat = event['noti_chat']
+        noti_noti = event['noti_noti']
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': message,
             'time' : time,
+            'noti_chat': noti_chat,
+            'noti_noti': noti_noti
         }))
 
 

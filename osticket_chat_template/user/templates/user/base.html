@@ -37,42 +37,41 @@
       </a>
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-          <li class="dropdown nav-item">
-                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-bell"></i>
-                    <div class="notify">
-                        <span class="point point_noti"></span>
-                    </div>
+            <li class="dropdown messages-menu">
+                <a href="#" class="dropdown-toggle chat_noti" data-toggle="dropdown" onclick="chatFunction()">
+                  <i class="fa fa-envelope-o"></i>
+                  
                 </a>
-                <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
-                    <ul>
-                        <li>
-                            <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
-                                <div class="message-center noti_noti" style="overflow: hidden; width: auto; height: 250px;">
-                                </div>
-                            </div>
-                        </li>
+                <ul class="dropdown-menu">
+                  <li class="header msg-chat"></li>
+                  <li>
+                    <ul class="menu">
+                      <li class="notification_chat">
+
+                      </li>
                     </ul>
-                </div>
+                  </li>
+                  <li class="footer"><a href="#">See All Messages</a></li>
+                </ul>
             </li>
-          <li class="dropdown nav-item">
-                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-envelope"></i>
-                    <div class="notify">
-                        <span class="point point_message"></span>
-                    </div>
+              <!-- Notifications: style can be found in dropdown.less -->
+            <li class="dropdown notifications-menu">
+                <a href="#" class="dropdown-toggle noti_fy" data-toggle="dropdown" onclick="notiFunction()">
+                  <i class="fa fa-bell-o"></i>
+                  
                 </a>
-                <div class="dropdown-menu dropdown-menu-left mailbox animated zoomIn">
-                    <ul>
-                        <li>
-                            <div class="slimScrollDiv" style="position: relative; overflow-x: visible; overflow-y: hidden; width: auto; height: 250px;">
-                                <div class="message-center notification_chat" style="overflow: hidden; width: auto; height: 250px;">
-                                </div>
-                            </div>
+                <ul class="dropdown-menu">
+                  <li class="header msg"></li>
+                  <li>
+                    <ul class="menu">
+                        <li class="noti_noti">
+                          
                         </li>
-                    </ul>
-                </div>
-            </li>
+                      </ul>
+                  </li>
+                  <li class="footer"><a href="#">View all</a></li>
+                </ul>
+              </li>
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown tasks-menu">
             <a href="#" class="dropdown-toggle" data-toggle="modal" data-target="#modal-logout">
@@ -180,11 +179,70 @@
                 }
             return x;
         }
+
+
+
+        var noti_noti = {{noti_noti}};
+        var noti_chat = {{noti_chat}};
+        
+        
+        function notiFunction() {
+            if ($('body .num_noti').length){
+                var token = $("input[name=csrfmiddlewaretoken]").val();
+                $.ajax({
+                    type:'POST',
+                    url:location.href,
+                    data: {'noti_noti': 0, 'csrfmiddlewaretoken':token},
+                    success: function(){
+                        $('body .num_noti').remove();
+                    }
+                });
+            }else{
+                $('body .msg').empty();
+            }
+        }
+
+
+        function chatFunction() {
+            if ($('body .num_chat').length){
+                var token = $("input[name=csrfmiddlewaretoken]").val();
+                $.ajax({
+                    type:'POST',
+                    url:location.href,
+                    data: {'noti_chat': 0, 'csrfmiddlewaretoken':token},
+                    success: function(){
+                        $('body .num_chat').remove();
+                    }
+                });
+            }else{
+                $('body .msg-chat').empty();
+            }
+        }
+
+        
+
+        
+        if (noti_noti != 0){
+            var noti = '<span class="label label-warning num_noti">'+noti_noti+'</span>';
+            $('body .noti_fy').prepend(noti);
+            $('body .msg').html('You have '+noti_noti+' new notifications');
+        }
+
+        if (noti_chat != 0){
+            var noti = '<span class="label label-success num_chat">'+noti_chat+'</span>';
+            $('body .chat_noti').prepend(noti);
+            $('body .msg-chat').html('You have '+noti_chat+' new messages');
+        }
+
+
+
         // nhan message tu server
         chatSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);
             var message = data['message'];
             var time = data['time'];
+            var noti_noti1 = data['noti_noti'];
+            var noti_chat1 = data['noti_chat'];
             var type_save = data['type'];
             if (typeof type_save !== 'undefined'){
                 if (type_save == 're-noti'){
@@ -196,53 +254,131 @@
             }else{
                 if (message ==  'give up'){
                     setTimeout(function(){
-                        $("#info_user").load(location.href + " #info_user");
+                        $("body #info_user").load(location.href + " #info_user");
                     }, 2000);
-                }else if (message.includes('new+chat')){
+                }
+
+                if (message.includes('new+chat')){
                     var tkid = message[0];
                     if ($('body .chat'+tkid).length){
                         if ($('body .chat'+tkid).css('display') == 'none'){
                             var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
-                            var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span><span class="time">'+time+'</span></div></a>';
+                            var noti = '<a href="'+href+' class="noti_chat"><div style="float:left;width:15%" class="btn btn-info btn-circle m-r-10"><i class="fa fa-envelope-o"></i></div><div style="float:right; width:80%"><p>'+message[0]+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
                             $('.notification_chat').prepend(noti);
-                            $("body .point_message").show();
+                            $('body .num_chat').remove();
+                            var noti1 = '<span class="label label-success num_chat">'+noti_chat1+'</span>';
+                            $('body .chat_noti').prepend(noti1);
+                            $('body .msg-chat').empty();
+                            $('body .msg-chat').html('You have '+noti_chat1+' new messages');
                             x.play();
 
-                            chatSocket.send(JSON.stringify({
-                                'message' : noti,
-                                'type' : 'chat',
-                            }));
                         }
                     }else{
                         var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
-                        var noti = '<a href="'+href+'" class="noti_chat"><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span><span class="time">'+time+'</span></div></a>';
+                        var noti = '<a href="'+href+'" class="noti_chat"><div style="float:left;width:15%" class="btn btn-info btn-circle m-r-10"><i class="fa fa-envelope-o"></i></div><div style="float:right; width:80%"><p>'+message[0]+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
                         $('.notification_chat').prepend(noti);
-                        $("body .point_message").show();
+                        $('body .num_chat').remove();
+                        var noti1 = '<span class="label label-success num_chat">'+noti_chat1+'</span>';
+                        $('body .chat_noti').prepend(noti1);
+                        $('body .msg-chat').empty();
+                        $('body .msg-chat').html('You have '+noti_chat1+' new messages');
                         x.play();
 
-                        chatSocket.send(JSON.stringify({
-                            'message' : noti,
-                            'type' : 'chat',
-                        }));
                     }
-                }else{
+                }
+                    
+                if (message.includes('is done!')){
                     var href="{% url 'user:homeuser' %}"
-                    var noti = '<a href="'+href+'"><div class="mail-contnet"><span class="mail-desc">'+message+'</span><span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-success btn-circle m-r-10"><i class="fa fa-check-circle-o"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
                     $('.noti_noti').prepend(noti);
-                    $(".point_noti").show();
+                    $('body .num_noti').remove();
+                    var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                    $('body .noti_fy').prepend(noti1);
+                    $('body .msg').empty();
+                    $('body .msg').html('You have '+noti_noti1+' new notifications');
                     x.play();
                     setTimeout(function(){
-                        $("#info_user").load(location.href + " #info_user");
-                    }, 2000);
+                        $("body #info_user").load(location.href + " #info_user");
+                    }, 1000);
 
-                    chatSocket.send(JSON.stringify({
-                        'message' : noti,
-                        'type' : 'save',
-                    }));
+                }
+
+
+                if (message.includes('is re-process!')){
+                    var href="{% url 'user:homeuser' %}"
+                    var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $('body .num_noti').remove();
+                    var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                    $('body .noti_fy').prepend(noti1);
+                    $('body .msg').empty();
+                    $('body .msg').html('You have '+noti_noti1+' new notifications');
+                    x.play();
+                    setTimeout(function(){
+                        $("body #info_user").load(location.href + " #info_user");
+                    }, 1000);
+                }
+
+                if (message.includes('is closed by admin!')){
+                        var href="{% url 'user:homeuser' %}"
+                        var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-success btn-circle m-r-10"><i class="fa fa-check-circle-o"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $('body .num_noti').remove();
+                        var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                        $('body .noti_fy').prepend(noti1);
+                        $('body .msg').empty();
+                        $('body .msg').html('You have '+noti_noti1+' new notifications');
+                        x.play();
+                        setTimeout(function(){
+                            $("body #info_user").load(location.href + " #info_user");
+                        }, 1000);
+                }
+
+                if (message.includes('is opened by admin!')){
+                        var href="{% url 'user:homeuser' %}"
+                        var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $('body .num_noti').remove();
+                        var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                        $('body .noti_fy').prepend(noti1);
+                        $('body .msg').empty();
+                        $('body .msg').html('You have '+noti_noti1+' new notifications');
+                        x.play();
+                        setTimeout(function(){
+                            $("body #info_user").load(location.href + " #info_user");
+                        }, 1000);
+                }
+
+                if (message.includes('is deleted by admin!')){
+                        var href="{% url 'user:homeuser' %}"
+                        var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-danger btn-circle m-r-10"><i class="fa fa-remove"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $('body .num_noti').remove();
+                        var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                        $('body .noti_fy').prepend(noti1);
+                        $('body .msg').empty();
+                        $('body .msg').html('You have '+noti_noti1+' new notifications');
+                        x.play();
+                        setTimeout(function(){
+                            $("body #info_user").load(location.href + " #info_user");
+                        }, 1000);
+                }
+
+                if (message.includes('is processing by admin!')){
+                        var href="{% url 'user:homeuser' %}"
+                        var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $('body .num_noti').remove();
+                        var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                        $('body .noti_fy').prepend(noti1);
+                        $('body .msg').empty();
+                        $('body .msg').html('You have '+noti_noti1+' new notifications');
+                        x.play();
+                        setTimeout(function(){
+                            $("body #info_user").load(location.href + " #info_user");
+                        }, 1000);
                 }
             }
-
-
         };
 
 
@@ -269,9 +405,11 @@
             var strTime = hours + ':' + minutes + ' ' + ampm;
             return strTime;
         }
+
+
         var dict_ws = {};
         $("body").on('click', '.noti_chat', function(){
-            var tkid = $(this).children().children('span').html();
+            var tkid = $(this).children().next().children('p').html();
             $('body .chat'+tkid).show();
             $("body .mytext").focus();
             var roomName = makeid();
