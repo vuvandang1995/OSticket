@@ -1,0 +1,765 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Timeline</title>
+  {% load staticfiles %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'history/style.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/lib/bootstrap/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/lib/calendar2/semantic.ui.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/lib/calendar2/pignose.calendar.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/lib/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/lib/owl.theme.default.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/helper.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    <script src="{% static 'js/home_agent.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/home_user.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+</head>
+<body class="fix-header fix-sidebar">
+    <!-- Preloader - style you can find in spinners.css -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+			<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+    </div>
+    <!-- Main wrapper  -->
+    <div id="main-wrapper">
+        <!-- header header  -->
+        <div class="header">
+            <nav class="navbar top-navbar navbar-expand-md navbar-light">
+                <!-- Logo -->
+                <div class="navbar-header" >
+                    <a class="navbar-brand" href="{% url 'agent:index' %}">
+                        <span><img src="{% static 'images/meditech.png' %}" alt="homepage" style="width:260px;height:40px;"></span>
+                    </a>
+                </div>
+                <!-- End Logo -->
+                <div class="navbar-collapse">
+                    <!-- toggle and nav items -->
+                    <ul class="navbar-nav mr-auto mt-md-0">
+                        <!-- This is  -->
+                        <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted  " href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
+                        <li class="nav-item m-l-10"> <a class="nav-link sidebartoggler hidden-sm-down text-muted  " href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                        <!-- Messages -->
+                        <li class="nav-item dropdown mega-dropdown"> <a class="nav-link dropdown-toggle text-muted  " href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-th-large"></i></a>
+                            <div class="dropdown-menu animated zoomIn">
+                                <ul class="mega-dropdown-menu row">
+                                    <li class="col-lg-3  m-b-30">
+                                        <h4 class="m-b-20">CONTACT US</h4>
+                                        <!-- Contact -->
+                                        <form>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" id="exampleInputname1" placeholder="Enter Name"> </div>
+                                            <div class="form-group">
+                                                <input type="email" class="form-control" placeholder="Enter email"> </div>
+                                            <div class="form-group">
+                                                <textarea class="form-control" id="exampleTextarea" rows="3" placeholder="Message"></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-info">Submit</button>
+                                        </form>
+                                    </li>
+                                    <li class="col-lg-3 col-xlg-3 m-b-30">
+                                        <h4 class="m-b-20">List style</h4>
+                                        <!-- List style -->
+                                        <ul class="list-style-none">
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="col-lg-3 col-xlg-3 m-b-30">
+                                        <h4 class="m-b-20">List style</h4>
+                                        <!-- List style -->
+                                        <ul class="list-style-none">
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="col-lg-3 col-xlg-3 m-b-30">
+                                        <h4 class="m-b-20">List style</h4>
+                                        <!-- List style -->
+                                        <ul class="list-style-none">
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- End Messages -->
+                    </ul>
+                    <!-- User profile and search -->
+                    <ul class="navbar-nav my-lg-0">
+
+                        <!-- Search -->
+                        <li class="nav-item hidden-sm-down search-box"> <a class="nav-link hidden-sm-down text-muted  " href="javascript:void(0)"><i class="ti-search"></i></a>
+                            <form class="app-search">
+                                <input type="text" class="form-control" placeholder="Search here"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
+                        </li>
+                        <!-- Comment -->
+                        <li class="nav-item dropdown notify_" >
+                            <a class="nav-link dropdown-toggle text-muted " onclick="notiFunction()" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-bell"></i>
+                                <div class="notify noti_fy"> </div>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right mailbox animated zoomIn" >
+                                <ul>
+                                    <li>
+                                        <div class="drop-title noti_msg">
+
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <div class="message-center noti_noti">
+
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <a class="nav-link text-center" href="javascript:void(0);"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- End Comment -->
+                        <!-- Messages -->
+                        <li class="nav-item dropdown chat_">
+                            <a class="nav-link dropdown-toggle text-muted" onclick="chatFunction()" href="#" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-envelope"></i>
+								<div class="notify chat_noti"> </div>
+							</a>
+                            <div class="dropdown-menu dropdown-menu-right mailbox animated zoomIn" aria-labelledby="2">
+                                <ul>
+                                    <li>
+                                        <div class="drop-title chat_msg"></div>
+                                    </li>
+                                    <li>
+                                        <div class="message-center notification_chat">
+                                            <!-- Message -->
+
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-center" href="javascript:void(0);"> <strong>See all e-Mails</strong> <i class="fa fa-angle-right"></i> </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- End Messages -->
+                        <!-- Profile -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-muted"  href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{% static 'images/avatar.png' %}" alt="user" class="profile-pic" /></a>
+                            <div class="dropdown-menu dropdown-menu-right animated zoomIn">
+                                <ul class="dropdown-user">
+                                    <li><a href="{% url 'agent:profile' %}"><i class="ti-user"></i> Profile</a></li>
+                                    <li><a href="{% url 'agent:logout' %}"><i class="fa fa-power-off"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- End header header -->
+        <!-- Left Sidebar  -->
+        <div class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="nav-devider"></li>
+                        <li class="nav-label">{{ agent.fullname}}</li>
+                        <li> <a href="{% url 'agent:index' %}" aria-expanded="false"><i class="fa fa-home"></i><span class="hide-menu">Home</span></a></li>
+                        <li> <a href="{% url 'agent:inbox' %}" aria-expanded="false"><i class="fa fa-envelope"></i><span class="hide-menu">Inbox</span></a></li>
+                        <li> <a href="{% url 'agent:outbox' %}" aria-expanded="false"><i class="fa fa-send-o"></i><span class="hide-menu">Outbox</span></a></li>
+                        <li> <a href="{% url 'agent:processing_ticket' %}" aria-expanded="false"><i class="fa fa-hourglass-2"></i><span class="hide-menu">Processing Ticket</span></a></li>
+                        <li> <a href="{% url 'agent:closed_ticket' %}" aria-expanded="false"><i class="fa fa-check-circle"></i><span class="hide-menu">Close Ticket</span></a></li>
+                        <li> <a href="{% url 'agent:manage_user' %}" aria-expanded="false"><i class="fa fa-user"></i><span class="hide-menu">Manage User</span></a></li>
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </div>
+        <div class="page-wrapper">
+            <!-- Bread crumb -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-primary">Timeline of ticket no.{{ id }}</h3> </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item active">Timeline</li>
+                    </ol>
+                </div>
+            </div>
+                {% csrf_token %}
+            <div class="container-fluid" id="list_agent">
+                <!-- Start Page Content -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="visualization"></div>
+                                <br/>
+                                <div class="btn-group btn-group-lg">
+                                    <button class="btn btn-primary" onclick="reset()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End PAge Content -->
+            </div>
+            <!-- End Container fluid  -->
+            <!-- footer -->
+            <!-- End footer -->
+        </div>
+    </div>
+<audio id="myAudio">
+    <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
+</audio>
+
+    <script src="{% static 'js/lib/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'js/lib/bootstrap/js/popper.min.js' %}"></script>
+    <script src="{% static 'js/lib/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'js/sidebarmenu.js' %}"></script>
+    <script src="{% static 'js/lib/sticky-kit-master/dist/sticky-kit.min.js' %}"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<script type="text/javascript">
+    var groups = new vis.DataSet([
+        {
+            id: 'overview',
+            content:'overview'
+        },
+        {
+            id: 'period',
+            content:'period'
+        }
+    ]);
+    var tem = JSON.stringify({{tk|safe}});
+    var data = JSON.parse(tem);
+    var items = new vis.DataSet();
+    items.add(data);
+    var container = document.getElementById('visualization');
+    var options = {
+      height: '400px',
+      min: new Date(2018, 0, 1),                // lower limit of visible range
+      max: new Date(2019, 0, 1),                // upper limit of visible range
+      zoomMin: 1000 * 60 * 10 ,                     // a min in milliseconds
+      zoomMax: 1000 * 60 * 60 * 24 * 31 ,     // about a months in milliseconds
+    };
+    var timeline = new vis.Timeline(container, items, groups, options);
+    timeline.fit();
+
+    function reset(){
+        timeline.fit();
+    }
+</script>
+<script>
+    var x = document.getElementById("myAudio");
+    var fullname = {{ fullname }};
+    var agentName = {{ agent_name }};
+    /*var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/agent/' + agentName + '/');*/
+
+    var group_agent_Socket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/agent/'+agentName+'+group_agent_Socket/');
+
+
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+
+    var noti_noti = {{noti_noti}};
+    var noti_chat = {{noti_chat}};
+
+    function notiFunction() {
+        if ($('body .noti_fy .point').length){
+            var token = $("input[name=csrfmiddlewaretoken]").val();
+            $.ajax({
+                type:'POST',
+                url:location.href,
+                data: {'noti_noti': 0, 'csrfmiddlewaretoken':token},
+                success: function(){
+                    $("body .noti_fy").load(location.href + " .noti_fy");
+                }
+            });
+        }
+    }
+
+    function chatFunction() {
+        if ($('body .chat_noti .point').length){
+            var token = $("input[name=csrfmiddlewaretoken]").val();
+            $.ajax({
+                type:'POST',
+                url:location.href,
+                data: {'noti_chat': 0, 'csrfmiddlewaretoken':token},
+                success: function(){
+                    $("body .chat_noti").load(location.href + " .chat_noti");
+                }
+            });
+        }
+    }
+
+
+
+
+    if (noti_noti != 0){
+        var noti = '<span class="heartbit"></span> <span class="point">';
+        $('body .noti_fy').prepend(noti);
+        $('body .noti_msg').html('You have '+noti_noti+' new notifications');
+    }
+
+    if (noti_chat != 0){
+        var noti = '<span class="heartbit"></span> <span class="point">';
+        $('body .chat_noti').prepend(noti);
+        $('body .chat_msg').html('You have '+noti_chat+' new messages');
+    }
+
+
+    function check_exits(id, list){
+        var x = false;
+        for (var i = 0; i < list.length; i++)
+            if (list[i] == id){
+                x = true;
+                break;
+            }
+        return x;
+    }
+
+
+
+
+
+
+    group_agent_Socket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        var time = data['time'];
+        var type_save = data['type'];
+            if (typeof type_save !== 'undefined'){
+                if (type_save == 're-noti'){
+                    $('.noti_noti').prepend(message);
+                }else if (type_save == 're-noti-chat'){
+                    $('.notification_chat').prepend(message);
+                }else{
+                    $('body #list_tk_history').empty();
+                    $('body #list_tk_history').append(message)
+                }
+            }else{
+                // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
+                switch(message) {
+                    case 'You have a new ticket!':
+                        var message = 'You have a new ticket!';
+                        var href = "{% url 'agent:index' %}";
+                        var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-link"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        var noti1 = '<span class="heartbit"></span> <span class="point">';
+                        $('body .noti_fy').prepend(noti1);
+
+                        setTimeout(function(){
+                            $("body #list_ticket_home").load(location.href + " #list_ticket_home");
+                        }, 1000);
+                        x.play();
+                        break;
+
+                    case 'ticket da duoc xu ly':
+                        setTimeout(function(){
+                            $("body #list_ticket_home").load(location.href + " #list_ticket_home");
+                        }, 1000);
+                        break;
+                }
+
+                // Thong bao va load lai table processing khi ban duoc ai do forward hoac add ticket
+                if (check_exits(agentName, message) && check_exits('forward_new', message)) {
+                    var message = 'INBOX: You have a new ticket(forward)';
+                    var href="{% url 'agent:inbox' %}"
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #list_ticket_forward").load(location.href + " #list_ticket_forward");
+                    }, 2000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('add_new', message)) {
+                    var message = 'INBOX: You have a new ticket(add)';
+                    var href="{% url 'agent:inbox' %}"
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #list_ticket_add").load(location.href + " #list_ticket_add");
+                    }, 2000);
+                }
+
+                // Thong bao va load lai table inbox, processing khi co agent dong y ticket ban forward hoac add
+                if (message.includes('+'+agentName) && message.includes('agreed your ticket you forwarding')) {
+                    var message1 = message.slice(0, (message.length - agentName.length - 1));
+                    var href="{% url 'agent:processing_ticket' %}"
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }
+
+                if (message.includes('+'+agentName) && message.includes('Your ticket you forwarding refused by')) {
+                    var message1 = message.slice(0, (message.length - agentName.length - 1));
+                    var href="{% url 'agent:processing_ticket' %}"
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
+                    }, 2000);
+                }
+
+                if (message.includes('+'+agentName) && message.includes('agreed your ticket you adding')) {
+                    var message1 = message.slice(0, (message.length - agentName.length - 1));
+                    var href="{% url 'agent:processing_ticket' %}"
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }
+
+                if (message.includes('+'+agentName) && message.includes('Your ticket you adding refused by')) {
+                    var message1 = message.slice(0, (message.length - agentName.length - 1));
+                    var href="{% url 'agent:processing_ticket' %}"
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
+                    }, 2000);
+                }
+
+
+                if (check_exits(agentName, message) && check_exits('leader_forward', message)) {
+                    var message1 = 'Leader have just forwarded for you ticket '+message[message.length-1];
+                    var href="{% url 'agent:processing_ticket' %}";
+                    var noti = '<a href="'+href+'"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                    }, 2000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('admin_close_ticket', message)) {
+                    var len = message.length;
+                    var message1 = 'Leader have just closed ticket '+message[len-1];
+                    var href="{% url 'agent:closed_ticket' %}";
+                    var noti = '<a href="'+href+'"><div class="btn btn-success btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                    }, 2000);
+                }
+
+
+                if (check_exits(agentName, message) && check_exits('admin_open_ticket', message)) {
+                    var len = message.length;
+                    var href = "{% url 'agent:processing_ticket' %}";
+                    var message1 = 'Leader have just opend ticket '+message[len-1];
+                    var noti = '<a href="'+href+'"><div class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                    }, 2000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('admin_delete_ticket', message)) {
+                    var len = message.length;
+                    var message1 = 'Leader have just delete ticket '+message[len-1];
+                    var noti = '<a href="#"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-remove"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                    }, 2000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('cancle_forward', message)) {
+                    setTimeout(function(){
+                        $("body #info_user").load(location.href + " #info_user");
+                    }, 1000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('cancle_add', message)) {
+                    setTimeout(function(){
+                        $("body #info_user").load(location.href + " #info_user");
+                    }, 1000);
+                }
+
+
+                if (message.includes(agentName) && message[1].includes('is closed by')) {
+                    var len = message.length;
+                    var message1 = message[len-1];
+                    var href = "{% url 'agent:closed_ticket' %}";
+                    var noti = '<a href="'+href+'"><div class="btn btn-success btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+
+                    setTimeout(function(){
+                        $("body #info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }
+
+                if (message.includes(agentName+'+') && message.includes('give_up')) {
+                    var message1 = message[0]+' just have given up ticket no. '+message[1];
+                    var href = "{% url 'agent:processing_ticket' %}";
+                    var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-minus-circle"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+                    setTimeout(function(){
+                        $("body #info_user").load(location.href + " #info_user");
+                    }, 2000);
+                }
+
+                if (check_exits(agentName, message) && check_exits('new_chat', message)) {
+                    var tkid = message[0];
+                    if ($('body .chat'+tkid).length){
+                        if ($('body .chat'+tkid).css('display') == 'none'){
+                            var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
+                            var src = "{% static 'images/avatar.png' %}";
+                            var message2 = message[0]+'-'+message[1];
+                            var noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span> <span class="time">'+time+'</span></div></a>';
+                            $('body .notification_chat').children('a').each(function () {
+                                if ($(this).html().includes(message[0])){
+                                    $(this).hide();
+                                }
+                            });
+                            $('.notification_chat').prepend(noti);
+                            var noti1 = '<span class="heartbit"></span> <span class="point">';
+                            $('body .chat_noti').prepend(noti1);
+                            x.play();
+
+
+
+                        }
+                    }else{
+                        var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
+                        var src = "{% static 'images/avatar.png' %}";
+                        var message2 = message[0]+'-'+message[1];
+                        var noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span> <span class="time">'+time+'</span></div></a>';
+                        $('body .notification_chat').children('a').each(function () {
+                            if ($(this).html().includes(message[0])){
+                                $(this).hide();
+                            }
+                        });
+                        $('.notification_chat').prepend(noti);
+                        var noti1 = '<span class="heartbit"></span> <span class="point">';
+                        $('body .chat_noti').prepend(noti1);
+                        x.play();
+
+
+
+                    }
+
+                }
+            }
+
+    };
+
+
+    var dict_ws = {};
+    $("body").on('click', '.noti_chat', function(){
+        var tkid = $(this).children('.mail-contnet').children().html();
+        $("body .noti_chat"+tkid).hide();
+        $('body .chat'+tkid).show();
+        $("body .mytext").focus();
+
+
+        if (dict_ws[tkid] == undefined){
+            dict_ws[tkid] = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/' + tkid + '/');
+        }
+
+        var me = {};
+        me.avatar = "https://cdn2.iconfinder.com/data/icons/perfect-flat-icons-2/512/User_man_male_profile_account_person_people.png";
+
+        var you = {};
+        you.avatar = "https://cdn2.iconfinder.com/data/icons/rcons-users-color/32/support_man-512.png";
+
+        //-- No use time. It is a javaScript effect.
+        function insertChat(who, text, time){
+            if (time === undefined){
+                time = 0;
+            }
+            var control = "";
+            var date = time;
+
+            if (who == "me"){
+                control = '<li style="width:100%">' +
+                                '<div class="msj macro">' +
+                                '<div class="avatar"><img class="img-circle" style="width:100%;" src="'+ me.avatar +'" /></div>' +
+                                    '<div class="text text-l">' +
+                                        '<p>'+ text +'</p>' +
+                                        '<p><small>'+date+'</small></p>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</li>';
+            }else{
+                control = '<li style="width:100%;">' +
+                                '<div class="msj-rta macro">' +
+                                    '<div class="text text-r">' +
+                                        '<p>'+text+'</p>' +
+                                        '<p><small>'+date+'</small></p>' +
+                                    '</div>' +
+                                '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="'+you.avatar+'" /></div>' +
+                        '</li>';
+            }
+            setTimeout(
+                function(){
+                    $("body #chat"+tkid+" .frame > ul").append(control).scrollTop($("body #chat"+tkid+" .frame > ul").prop('scrollHeight'));
+                }, time);
+
+        }
+
+
+        dict_ws[tkid].onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            var who = data['who'];
+            var time = data['time'];
+            insertChat(who, message, time);
+        };
+
+
+    });
+
+    $('body').on('click', 'header', function(){
+        $(this).next().slideToggle(300, 'swing');
+    })
+
+    $('body').on('click', '.xxx', function(){
+        $("body .mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
+    })
+
+    $("body .mytext").focus();
+    $('body').on('keyup', '.mytext', function(e){
+        if (e.keyCode === 13) {
+            $(this).parent().parent().next().children('span').click();
+        }
+    })
+
+    $('body').on('click', '.xxx', function(){
+        var message = $(this).parent().parent().children().children().children('input').val();
+        var tk_id = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('h4').html();
+        var date = formatAMPM(new Date());
+        if (message != ''){
+            dict_ws[tk_id].send(JSON.stringify({
+                'message' : message,
+                'who' : 'you',
+                'time' : date
+            }));
+        }
+        $(this).parent().parent().children().children().children('input').val('');
+///////////////////////////////////////////////////
+        var userName = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('input').val();
+        var chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/user/' + userName + '/');
+        message = [];
+        message.push('new+chat');
+        message.unshift(tk_id);
+        chatSocket.onopen = function (event) {
+            chatSocket.send(JSON.stringify({
+                'message' : message,
+                'time' : date
+            }));
+        };
+    })
+
+
+    $('body').on('click', '.chat-close', function(){
+        var tk_id = $(this).parent().next().children('h4').html();
+        dict_ws[tk_id].close();
+        delete dict_ws[tk_id];
+        $("body #chat"+tk_id+" .frame > ul").empty();
+    })
+</script>
+</body>
+</html>

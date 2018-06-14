@@ -1,0 +1,7 @@
+{% autoescape off %}
+Hi {{ receiver.fullname }},
+{{sender.fullname}} just finished your ticket.
+Click link below to check
+http://{{ domain }}{% url 'user:homeuser'%}
+Thank for your patience!
+{% endautoescape %}

@@ -1,0 +1,129 @@
+{% extends 'agent/base.html' %}
+{% load static %}
+{% block title %}Agent{% endblock %}
+{% block js %}  
+{% endblock%}
+{% block content %}
+<div class="page-wrapper">
+    <!-- Bread crumb -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h3 class="text-primary">Manage user</h3> </div>
+        <div class="col-md-7 align-self-center">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                <li class="breadcrumb-item active">Manage user</li>
+            </ol>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <!-- Start Page Content -->
+        <div class="row">
+            
+            <!-- /# column -->
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-title">
+                        <h4>Manage user</h4>
+
+                    </div>
+                    
+                    <div class="card-body">
+                            <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Fullname</th>
+                                        <th>Email</th>
+                                        <th>Username</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Option</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for tk in user %}
+                                    <tr>
+                                        <th scope="row">{{tk.id}}</th>
+                                        <td>{{tk.fullname}}</td>
+                                        <td>{{tk.email}}</td>
+                                        <td>{{tk.username}}</td>
+                                        {% if tk.status == 0 %}
+                                        <td><span class="label label-danger">inactive</span></td>
+                                        <td>{{tk.created}}</td>
+                                        <td>
+                                            <button id="{{tk.id}}" class="unblock btn btn-success" type="button" data-toggle="tooltip" title="unblock" >
+                                                <span class="glyphicon glyphicon glyphicon-ok" ></span> Unblock
+                                            </button>
+                                        </td>
+                                        {% else %}
+                                        <td><span class="label label-success">active</span></td>
+                                        <td>{{tk.created}}</td>
+                                        <td>
+                                            <button id="{{tk.id}}" class="block btn btn-danger" type="button" data-toggle="tooltip" title="block" >
+                                                <span class="glyphicon glyphicon-lock" ></span> Block
+                                            </button>
+                                        </td>
+                                        {% endif %}
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+                <!-- /# card -->
+            </div>
+            <!-- /# column -->
+       </div>     
+    </div>
+<!-- End Container fluid  -->
+<!-- footer -->
+<!-- End footer -->
+</div>
+<!-- End Page wrapper  -->
+</div>
+<!-- End Wrapper -->
+
+<!-- All Jquery -->
+<script src="{% static 'js/lib/jquery/jquery.min.js' %}"></script>
+
+<!-- Bootstrap tether Core JavaScript -->
+<script src="{% static 'js/lib/bootstrap/js/popper.min.js' %}"></script>
+
+<script src="{% static 'js/lib/bootstrap/js/bootstrap.min.js' %}"></script>
+
+<!-- slimscrollbar scrollbar JavaScript -->
+<script src="{% static 'js/jquery.slimscroll.js' %}"></script>
+
+<!--Menu sidebar -->
+<script src="{% static 'js/sidebarmenu.js' %}"></script>
+
+<!--stickey kit -->
+<script src="{% static 'js/lib/sticky-kit-master/dist/sticky-kit.min.js' %}"></script>
+
+<!--Custom JavaScript -->
+<script src="{% static 'js/scripts.js' %}"></script>
+
+<script src="{% static 'js/manage_user.js' %}"></script>
+
+<script src="{% static 'js/lib/datatables/datatables.min.js' %}"></script>
+
+<script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+
+<script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js' %}"></script>
+
+<script src="{% static 'js/lib/datatables/cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js' %}"></script>
+
+<script src="{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js' %}"></script>
+
+<script src="{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js' %}"></script>
+
+<script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js' %}"></script>
+
+<script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js' %}"></script>
+
+<script src="{% static 'js/lib/datatables/datatables-init.js' %}"></script>
+
+
+{% endblock%}

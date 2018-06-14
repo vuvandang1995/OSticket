@@ -1,0 +1,128 @@
+{% extends 'agent/base_leader.html' %}
+{% block title %} Manage topics {% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <div class="page-wrapper">
+        <!-- Bread crumb -->
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-primary">Manage topics</h3> </div>
+            <div class="col-md-7 align-self-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                    <li class="breadcrumb-item active">Manage topics</li>
+                </ol>
+            </div>
+        </div>
+        <!-- End Bread crumb -->
+                {% csrf_token %}
+            <div class="container-fluid" id="list_topic">
+                <!-- Start Page Content -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-title">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-title="add" data-target="#topicModal" >
+                                    <i class="fa fa-plus"></i> Create new topic
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <table  class="table display table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Description</th>
+                                        <th>Type send</th>
+                                        <th>Option</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% csrf_token %}
+                                    {% for tp in topic %}
+                                    <tr>
+
+                                        <td>{{tp.id}}</td>
+
+                                        <td>{{tp.name}}</td>
+
+                                        {% if tp.status == 0 %}
+                                        <td><span class="label label-success">enable</span></td>
+                                        {% else %}
+                                        <td><span class="label label-danger">disable</span></td>
+                                        {% endif %}
+
+                                        <td id="description_topic{{tp.id}}">{{ tp.description}}</td>
+
+                                        {% if tp.type_send == 1 %}
+                                            <td id="type_send{{tp.id}}">All</td>
+                                        {% else %}
+                                            <td id="type_send{{tp.id}}">Leader</td>
+                                        {% endif %}
+
+                                        {% if tp.name == 'Other' %}
+                                            <td></td>
+                                        {% else %}
+                                            <td>
+                                                <button type="button" class="btn btn-primary close_" id="{{tp.id}}" data-toggle="tooltip" title="enable/disable">
+                                                    <i class="fa fa-power-off"></i>
+                                                </button>
+
+                                                <button type="button" class="btn btn-danger" id="{{tp.id}}" data-toggle="tooltip" title="delete">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+
+                                                <button type="button" class="btn btn-info" data-name="{{tp.name}}" data-title="edit" id="{{tp.id}}" data-toggle="modal" data-target="#topicModal">
+                                                    <i class="fa fa-wrench" data-toggle="tooltip" title="change"></i>
+                                                </button>
+                                            </td>
+                                        {% endif%}
+                                    </tr>
+                                    {% endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End PAge Content -->
+            </div>
+            <div id="topicModal" class="modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title" style= "color: red";><strong>Add New Topic</strong></h3>
+                        </div>
+
+                        <div class="modal-body form-group">
+                            <label for="topicname"><b>Topic name</b></label>
+                            <input class="form-control" type="text" placeholder="Enter Topic name" name="topicname" required>
+
+                            <label for="description"><b>Description</b></label>
+                            <input class="form-control" type="text" placeholder="Enter description" name="description" required>
+
+                            <input class="inputText " type="checkbox" name="type_send" > <b> Type send</b>
+
+                            <input type="hidden" name="topicid" value="">
+
+                        <div class="msg"></div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" id = "add_topic_close">Close</button>
+                            <button type="button" id="addTopic" class="btn btn-success">Save</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- End Container fluid  -->
+            <!-- footer -->
+            <!-- End footer -->
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/manager_topic.js' %}"></script>
+{% endblock %}

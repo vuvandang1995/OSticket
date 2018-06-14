@@ -1,0 +1,80 @@
+{% extends 'agent/base_leader.html' %}
+{% block title %}Timeline tickets{% endblock %}
+{% load static %}
+{% block lib %}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="{% static 'history/style.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <!-- Bread crumb -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h3 class="text-primary">Timeline of ticket no.{{ id }}</h3> </div>
+        <div class="col-md-7 align-self-center">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                <li class="breadcrumb-item active">Timeline</li>
+            </ol>
+        </div>
+    </div>
+
+        {% csrf_token %}
+    <div class="container-fluid" id="list_agent">
+        <!-- Start Page Content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="visualization"></div>
+                        <br/>
+                        <div class="btn-group btn-group-lg">
+                            <button class="btn btn-primary" onclick="reset()">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End PAge Content -->
+    </div>
+    <!-- End Container fluid  -->
+    <!-- footer -->
+    <!-- End footer -->
+</div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<script type="text/javascript">
+    var groups = new vis.DataSet([
+        {
+            id: 'overview',
+            content:'overview'
+        },
+        {
+            id: 'period',
+            content:'period'
+        }
+    ]);
+    var tem = JSON.stringify({{tk|safe}});
+    var data = JSON.parse(tem);
+    var items = new vis.DataSet();
+    items.add(data);
+    var container = document.getElementById('visualization');
+    var options = {
+      height: '400px',
+      min: new Date(2018, 0, 1),                // lower limit of visible range
+      max: new Date(2019, 0, 1),                // upper limit of visible range
+      zoomMin: 1000 * 60 * 10 ,                     // 10 mins in milliseconds
+      zoomMax: 1000 * 60 * 60 * 24 * 31 ,     // about a months in milliseconds
+    };
+    var timeline = new vis.Timeline(container, items, groups, options);
+    timeline.fit();
+
+    function reset(){
+        timeline.fit();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{% block title%}{% endblock %}</title>
+
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="{% static 'user_interface/bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'user_interface/bower_components/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'user_interface/bower_components/Ionicons/css/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'user_interface/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'user_interface/dist/css/AdminLTE.min.css' %}">
+  <link rel="stylesheet" href="{% static 'user_interface/dist/css/skins/_all-skins.min.css' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="{% static 'css/home_user.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700">
+    {% block lib %}{% endblock %}
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div class="main-header">
+    <!-- Logo -->
+    <a href="#" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>MDT</b></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>Meditech</b></span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+            <li class="dropdown messages-menu">
+                <a href="#" class="dropdown-toggle chat_noti" data-toggle="dropdown" onclick="chatFunction()">
+                  <i class="fa fa-envelope-o"></i>
+                  
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="header msg-chat"></li>
+                  <li>
+                    <ul class="menu">
+                      <li class="notification_chat">
+
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="footer"><a href="#">See All Messages</a></li>
+                </ul>
+            </li>
+              <!-- Notifications: style can be found in dropdown.less -->
+            <li class="dropdown notifications-menu">
+                <a href="#" class="dropdown-toggle noti_fy" data-toggle="dropdown" onclick="notiFunction()">
+                  <i class="fa fa-bell-o"></i>
+                  
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="header msg"></li>
+                  <li>
+                    <ul class="menu">
+                        <li class="noti_noti">
+                          
+                        </li>
+                      </ul>
+                  </li>
+                  <li class="footer"><a href="#">View all</a></li>
+                </ul>
+              </li>
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown tasks-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="modal" data-target="#modal-logout">
+              <i class="fa fa-sign-out"> Sign out</i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+     <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+      <div class="user-panel">
+        <div class="pull-left image">
+            <img src="/media/photos/avatar.png" class="img-circle" alt="User Image" >
+        </div>
+        <div class="pull-left info">
+          <p>{{ user.fullname }}</p>
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        </div>
+      </div>
+      <ul class="sidebar-menu" data-widget="tree">
+        <li>
+          <a href="{% url 'user:homeuser' %}">
+            <i class="fa fa-home"></i> <span>Home</span>
+            <span class="pull-right-container">
+              <small class="label pull-right bg-green"></small>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'user:detail_user' %}">
+            <i class="fa fa-edit"></i> <span>Settings</span>
+            <span class="pull-right-container">
+              <small class="label pull-right bg-green"></small>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+    <div id="info_user">
+    {% block content %}{% endblock %}
+    </div>
+<audio id="myAudio">
+    <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
+</audio>
+  <div class="modal fade" id="modal-logout" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span></button>
+          <h4 class="modal-title">Log out</h4>
+        </div>
+        <div class="modal-body">
+          <p>Are you ready want to leave ?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <a href="{% url 'user:logout' %}" class="btn btn-primary">Log out</a>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.content-wrapper -->
+  
+</div>
+<script src="{% static 'user_interface/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'user_interface/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'user_interface/bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'user_interface/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+<script src="{% static 'user_interface/bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'user_interface/bower_components/fastclick/lib/fastclick.js' %}"></script>
+<script src="{% static 'user_interface/dist/js/adminlte.min.js' %}"></script>
+<script src="{% static 'user_interface/dist/js/demo.js' %}"></script>
+    <script src="{% static 'js/home_user.js' %}"></script>
+
+<script>
+        var x = document.getElementById("myAudio");
+        var userName = {{ username }};
+        var chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/user/' + userName + '/');
+        $("body .point").hide();
+
+        function check_exits(id, list){
+            var x = false;
+            for (var i = 0; i < list.length; i++)
+                if (list[i] == id){
+                    x = true;
+                    break;
+                }
+            return x;
+        }
+
+
+
+        var noti_noti = {{noti_noti}};
+        var noti_chat = {{noti_chat}};
+        
+        
+        function notiFunction() {
+            if ($('body .num_noti').length){
+                var token = $("input[name=csrfmiddlewaretoken]").val();
+                $.ajax({
+                    type:'POST',
+                    url:location.href,
+                    data: {'noti_noti': 0, 'csrfmiddlewaretoken':token},
+                    success: function(){
+                        $('body .num_noti').remove();
+                    }
+                });
+            }else{
+                $('body .msg').empty();
+            }
+        }
+
+
+        function chatFunction() {
+            if ($('body .num_chat').length){
+                var token = $("input[name=csrfmiddlewaretoken]").val();
+                $.ajax({
+                    type:'POST',
+                    url:location.href,
+                    data: {'noti_chat': 0, 'csrfmiddlewaretoken':token},
+                    success: function(){
+                        $('body .num_chat').remove();
+                    }
+                });
+            }else{
+                $('body .msg-chat').empty();
+            }
+        }
+
+        
+
+        
+        if (noti_noti != 0){
+            var noti = '<span class="label label-warning num_noti">'+noti_noti+'</span>';
+            $('body .noti_fy').prepend(noti);
+            $('body .msg').html('You have '+noti_noti+' new notifications');
+        }
+
+        if (noti_chat != 0){
+            var noti = '<span class="label label-success num_chat">'+noti_chat+'</span>';
+            $('body .chat_noti').prepend(noti);
+            $('body .msg-chat').html('You have '+noti_chat+' new messages');
+        }
+
+
+
+        // nhan message tu server
+        chatSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            var time = data['time'];
+            var noti_noti1 = data['noti_noti'];
+            var noti_chat1 = data['noti_chat'];
+            var type_save = data['type'];
+            if (typeof type_save !== 'undefined'){
+                if (type_save == 're-noti'){
+                    $('.noti_noti').prepend(message);
+                }else{
+                    $('.notification_chat').prepend(message);
+                }
+
+            }else{
+                if (message ==  'give up'){
+                    setTimeout(function(){
+                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                    }, 2000);
+                }
+
+                if (message.includes('new+chat')){
+                    var tkid = message[0];
+                    if ($('body .chat'+tkid).length){
+                        if ($('body .chat'+tkid).css('display') == 'none'){
+                            var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
+                            var noti = '<a href="'+href+' class="noti_chat"><div style="float:left;width:15%" class="btn btn-info btn-circle m-r-10"><i class="fa fa-envelope-o"></i></div><div style="float:right; width:80%"><p>'+message[0]+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                            $('.notification_chat').prepend(noti);
+                            $('body .num_chat').remove();
+                            var noti1 = '<span class="label label-success num_chat">'+noti_chat1+'</span>';
+                            $('body .chat_noti').prepend(noti1);
+                            $('body .msg-chat').empty();
+                            $('body .msg-chat').html('You have '+noti_chat1+' new messages');
+                            x.play();
+
+                        }
+                    }else{
+                        var href="javascript:register_popup('chat"+message[0]+"', "+message[0]+");"
+                        var noti = '<a href="'+href+'" class="noti_chat"><div style="float:left;width:15%" class="btn btn-info btn-circle m-r-10"><i class="fa fa-envelope-o"></i></div><div style="float:right; width:80%"><p>'+message[0]+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.notification_chat').prepend(noti);
+                        $('body .num_chat').remove();
+                        var noti1 = '<span class="label label-success num_chat">'+noti_chat1+'</span>';
+                        $('body .chat_noti').prepend(noti1);
+                        $('body .msg-chat').empty();
+                        $('body .msg-chat').html('You have '+noti_chat1+' new messages');
+                        x.play();
+
+                    }
+                }
+                    
+                if (message.includes('is done!')){
+                    var href="{% url 'user:homeuser' %}"
+                    var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-success btn-circle m-r-10"><i class="fa fa-check-circle-o"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $('body .num_noti').remove();
+                    var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                    $('body .noti_fy').prepend(noti1);
+                    $('body .msg').empty();
+                    $('body .msg').html('You have '+noti_noti1+' new notifications');
+                    x.play();
+                    setTimeout(function(){
+                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                    }, 1000);
+
+                }
+
+
+                if (message.includes('is re-process!')){
+                    var href="{% url 'user:homeuser' %}"
+                    var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $('body .num_noti').remove();
+                    var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                    $('body .noti_fy').prepend(noti1);
+                    $('body .msg').empty();
+                    $('body .msg').html('You have '+noti_noti1+' new notifications');
+                    x.play();
+                    setTimeout(function(){
+                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                    }, 1000);
+                }
+
+                if (message.includes('is closed by admin!')){
+                        var href="{% url 'user:homeuser' %}"
+                        var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-success btn-circle m-r-10"><i class="fa fa-check-circle-o"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $('body .num_noti').remove();
+                        var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                        $('body .noti_fy').prepend(noti1);
+                        $('body .msg').empty();
+                        $('body .msg').html('You have '+noti_noti1+' new notifications');
+                        x.play();
+                        setTimeout(function(){
+                            $("body #list_tk_user").load(location.href + " #list_tk_user");
+                        }, 1000);
+                }
+
+                if (message.includes('is opened by admin!')){
+                        var href="{% url 'user:homeuser' %}"
+                        var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $('body .num_noti').remove();
+                        var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                        $('body .noti_fy').prepend(noti1);
+                        $('body .msg').empty();
+                        $('body .msg').html('You have '+noti_noti1+' new notifications');
+                        x.play();
+                        setTimeout(function(){
+                            $("body #list_tk_user").load(location.href + " #list_tk_user");
+                        }, 1000);
+                }
+
+                if (message.includes('is deleted by admin!')){
+                        var href="{% url 'user:homeuser' %}"
+                        var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-danger btn-circle m-r-10"><i class="fa fa-remove"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $('body .num_noti').remove();
+                        var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                        $('body .noti_fy').prepend(noti1);
+                        $('body .msg').empty();
+                        $('body .msg').html('You have '+noti_noti1+' new notifications');
+                        x.play();
+                        setTimeout(function(){
+                            $("body #list_tk_user").load(location.href + " #list_tk_user");
+                        }, 1000);
+                }
+
+                if (message.includes('is processing by admin!')){
+                        var href="{% url 'user:homeuser' %}"
+                        var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                        $('.noti_noti').prepend(noti);
+                        $('body .num_noti').remove();
+                        var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                        $('body .noti_fy').prepend(noti1);
+                        $('body .msg').empty();
+                        $('body .msg').html('You have '+noti_noti1+' new notifications');
+                        x.play();
+                        setTimeout(function(){
+                            $("body #list_tk_user").load(location.href + " #list_tk_user");
+                        }, 1000);
+                }
+
+
+                if (message.includes('is processing!')){
+                    var href="{% url 'user:homeuser' %}"
+                    var noti = '<a href="'+href+'"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>'+message+'</p><small><i class="fa fa-clock-o"></i>'+time+'</small></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    $('body .num_noti').remove();
+                    var noti1 = '<span class="label label-warning num_noti">'+noti_noti1+'</span>';
+                    $('body .noti_fy').prepend(noti1);
+                    $('body .msg').empty();
+                    $('body .msg').html('You have '+noti_noti1+' new notifications');
+                    x.play();
+                    setTimeout(function(){
+                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                    }, 1000);
+                }
+            }
+        };
+
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        $("body").on('click', '.fa-bell', function(){
+            $("body .point_noti").hide();
+        });
+
+        $("body").on('click', '.fa-envelope', function(){
+            $("body .point_message").hide();
+        });
+
+
+        function formatAMPM(date) {
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var strTime = hours + ':' + minutes + ' ' + ampm;
+            return strTime;
+        }
+
+
+        var dict_ws = {};
+        $("body").on('click', '.noti_chat', function(){
+            var tkid = $(this).children().next().children('p').html();
+            $('body .chat'+tkid).show();
+            $("body .mytext").focus();
+            var roomName = makeid();
+
+            if (dict_ws[tkid] == undefined){
+                dict_ws[tkid] = new WebSocket(
+                'ws://' + window.location.host +
+                '/ws/' + tkid + '/');
+            }
+
+        var me = {};
+        me.avatar = "https://cdn2.iconfinder.com/data/icons/perfect-flat-icons-2/512/User_man_male_profile_account_person_people.png";
+
+        var you = {};
+        you.avatar = "https://cdn2.iconfinder.com/data/icons/rcons-users-color/32/support_man-512.png";
+
+
+            //-- No use time. It is a javaScript effect.
+            function insertChat(who, text, time){
+                if (time === undefined){
+                    time = 0;
+                }
+                var control = "";
+                var date = time;
+
+                if (who == "me"){
+                    control = '<li style="width:100%">' +
+                                    '<div class="msj macro">' +
+                                    '<div class="avatar"><img class="img-circle" style="width:100%;" src="'+ me.avatar +'" /></div>' +
+                                        '<div class="text text-l">' +
+                                            '<p>'+ text +'</p>' +
+                                            '<p><small>'+date+'</small></p>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</li>';
+                }else{
+                    control = '<li style="width:100%;">' +
+                                    '<div class="msj-rta macro">' +
+                                        '<div class="text text-r">' +
+                                            '<p>'+text+'</p>' +
+                                            '<p><small>'+date+'</small></p>' +
+                                        '</div>' +
+                                    '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="'+you.avatar+'" /></div>' +
+                            '</li>';
+                }
+                setTimeout(
+                    function(){
+                        $("body #chat"+tkid+" .frame > ul").append(control).scrollTop($("body #chat"+tkid+" .frame > ul").prop('scrollHeight'));
+                    }, time);
+
+            }
+
+
+            dict_ws[tkid].onmessage = function(e) {
+                var data = JSON.parse(e.data);
+                var message = data['message'];
+                var who = data['who'];
+                var time = data['time'];
+                insertChat(who, message, time);
+            };
+
+        });
+
+        $('body').on('click', 'header', function(){
+            $(this).next().slideToggle(300, 'swing');
+        })
+
+        $('body').on('click', '.xxx', function(){
+            $("body .mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
+        })
+
+        $("body .mytext").focus();
+        $('body').on('keyup', '.mytext', function(e){
+            if (e.keyCode === 13) {
+                $(this).parent().parent().next().children('span').click();
+            }
+        })
+
+        $('body').on('click', '.xxx', function(){
+            var message = $(this).parent().parent().children().children().children('input').val();
+            var tk_id = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('h4').html();
+            var date = formatAMPM(new Date());
+            if (message != ''){
+                dict_ws[tk_id].send(JSON.stringify({
+                    'message' : message,
+                    'who' : 'me',
+                    'time' : date
+                }));
+            }
+            $(this).parent().parent().children().children().children('input').val('');
+            // Thông báo tới group_agent để báo tin nhắn mới offline
+            list_ag = [];
+            var array = $('#hd'+tk_id).html().split("<br>");
+                        for (i = 0; i < array.length-1; i++) {
+                            var agentName = array[i].replace(/\s/g,'');
+                            list_ag.push(agentName);
+                        }
+            var chatSocket1 = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/agent/agent+group_agent_Socket/');
+            var message = 'new_chat';
+            list_ag.unshift(message);
+            list_ag.unshift(userName+'_');
+            list_ag.unshift(tk_id);
+
+            chatSocket1.onopen = function (event) {
+                chatSocket1.send(JSON.stringify({
+                    'message' : list_ag,
+                    'time' : date
+                }));
+            };
+        })
+
+
+        $('body').on('click', '.chat-close', function(){
+            var tk_id = $(this).parent().next().children('h4').html();
+            dict_ws[tk_id].close();
+            delete dict_ws[tk_id];
+            $("body #chat"+tk_id+" .frame > ul").empty();
+        })
+</script>
+<script>
+  $(function () {
+    $('#list_tk_user').DataTable();
+  })
+</script>
+{% block js %}{% endblock %}
+</body>
+</html>
+

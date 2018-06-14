@@ -1,0 +1,136 @@
+{% extends 'agent/base_leader.html' %}
+{% block title %} History {% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <div class="page-wrapper">
+            <!-- Bread crumb -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-primary">History</h3> </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item active">History</li>
+                    </ol>
+                </div>
+            </div>
+            <!-- Container fluid  -->
+                {% csrf_token %}
+            <div class="container-fluid">
+                <!-- Start Page Content -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-title">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#filter">
+                                    <i class="fa fa-search"></i> Filter
+                                </button>
+                                <div style="float:right;"><h2>View from {{day1|safe}} to {{day2|safe}}</h2></div>
+                            </div>
+                            <div class="card-body">
+                                <table id="tb" class="display nowrap table table-hover table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Date</th>
+                                            <th>Ticket</th>
+                                            <th>Person</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for v in tickets %}
+                                        <tr>
+                                            <td>{{v.time}}</td>
+                                            <td>{{v.date}}</td>
+                                            <td><a target="_blank" href="{% url 'agent:home_admin' %}">#{{v.ticketid.id}}</a></td>
+                                            {% if v.userid is not None %}
+                                            <td >(user) {{v.userid.fullname}}</td>
+                                            {% else %}
+                                            <td>(agent) <a target="_blank" href="{% url 'agent:manager_agent' %}">{{v.agentid.fullname}}</a></td>
+                                            {% endif %}
+                                            <td style="text-align: center;"><a target="_blank" href="{% url 'agent:history' v.ticketid.id %}"> {{v.action}}</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End PAge Content -->
+            </div>
+            <!-- End Container fluid  -->
+            <!-- footer -->
+            <!-- End footer -->
+        </div>
+    </div>
+<div id="filter" class="modal" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Filter</h4>
+      </div>
+      <div class="modal-body">
+          <label for="content">View from</label><br/>
+             <input id="date" class="form-control" type="date" ><br/>
+          <div id="invalid-date"><font color="red"></font></div>
+         <label for="content2">to</label>
+             <input id="date2" class="form-control" type="date" ><br/>
+          <div id="invalid-date2"><font color="red"></font></div>
+            <br/>
+      </div>
+      <div class="modal-footer">
+         <button type="submit" class="btn btn-primary" id="update">Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/lib/datatables/datatables.min.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/datatables-init.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.dtt').DataTable();
+            function isValidDate(dateString) {
+                var regEx = /^\d{4}-\d{2}-\d{2}$/;
+                if(!dateString.match(regEx)) return false;
+                var d = new Date(dateString);
+                if(!d.getTime() && d.getTime() !== 0) return false;
+                return d.toISOString().slice(0,10) === dateString;
+            }
+            $('#update').click(function(){
+                var date = $("#date").val();
+                var date2 = $("#date2").val();
+                if (!isValidDate(date)){
+                    $("#invalid-date").html("invalid date");
+                }
+                else if(!isValidDate(date2)){
+                    $("#invalid-date2").html("invalid date");
+                }
+                else{
+                    location.href="/agent/history_all_ticket/"+$('#date').val()+"_"+$('#date2').val();
+                }
+            });
+        });
+    </script>
+<script>
+    $('#tb').dataTable( {
+        paging: false,
+        dom: 'Bfrtip',
+        buttons: [
+            'excel', 'pdf', 'print',
+        ]
+    } );
+</script>
+{% endblock %}

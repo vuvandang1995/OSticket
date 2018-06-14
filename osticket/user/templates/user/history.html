@@ -1,0 +1,71 @@
+{% extends 'user/base.html' %}
+    {% load staticfiles %}
+{% block title %}History{% endblock %}
+{% block lib %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="{% static 'history/style.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block content %}
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h3>Timeline of ticket no.{{ id }}</h3>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">Tickets</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div id="visualization"></div>
+                <br/>
+                <div class="btn-group btn-group-lg">
+                    <button class="btn btn-primary" onclick="reset()">Reset</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+{% block js%}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<script type="text/javascript">
+    var groups = new vis.DataSet([
+        {
+            id: 'overview',
+            content:'overview'
+        },
+        {
+            id: 'period',
+            content:'period'
+        }
+    ]);
+    var tem = JSON.stringify({{tk|safe}});
+    var data = JSON.parse(tem);
+    var items = new vis.DataSet();
+    items.add(data);
+    var container = document.getElementById('visualization');
+    var options = {
+      height: '400px',
+      min: new Date(2018, 0, 1),                // lower limit of visible range
+      max: new Date(2019, 0, 1),                // upper limit of visible range
+      zoomMin: 1000 * 60 * 10 ,                     // a min in milliseconds
+      zoomMax: 1000 * 60 * 60 * 24 * 31 ,     // about a months in milliseconds
+    };
+    var timeline = new vis.Timeline(container, items, groups, options);
+    timeline.fit();
+    function reset(){
+        timeline.fit();
+    }
+</script>
+{% endblock %}

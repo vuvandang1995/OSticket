@@ -1,0 +1,153 @@
+<!-- chat/templates/chat/room.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    {% load staticfiles %}
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}" type="text/css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>  
+    <title>Chat Room</title>
+</head>
+<body>
+    <h2>Chat Messages</h2>
+
+    <div class="col-sm-3 col-sm-offset-4 frame">
+        <ul></ul>
+        <div>
+            <div class="msj-rta macro">                        
+                <div class="text text-r" style="background:whitesmoke !important">
+                    <input id="chat-message-input" class="mytext" placeholder="Type a message"/>
+                </div>
+            </div>
+            <div style="padding:10px;">
+                <span id="chat-message-submit" class="glyphicon glyphicon-share-alt"></span>
+            </div>                
+        </div>
+    </div>
+    <input id="who" type="hidden" value="{{ who }}"/>
+
+</body>
+<script>
+    var roomName = {{ room_name_json }};
+
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/' + roomName + '/');
+
+    var me = {};
+    me.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/22885865_1722296451175676_8315630450281336486_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeF3N32BRG1HfiI6wYFOD0syQnWULRna1ynbA4X_9isP5U9OTYpX393weyHM7i53ld34rFsOa0PdREWLJij8FWXIF0EfX1p8u3GUsxq_xcyEsw&oh=733c482517a19a82689b73cea0f35a4e&oe=5B58D2E3";
+
+    var you = {};
+    you.avatar = "https://scontent.fhan3-2.fna.fbcdn.net/v/t1.0-9/14732373_1224510360954290_7402332525860387467_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeHKXwDy_s1iK9FoOwayfi1qoOsIZlCm_H_ILhjIlp7LpK_1UzL2lTNdV6hbvFqTDhhJngiHagzjXZdsq1veAd6UGPEJKNXC4eyjPt-BNHGNUA&oh=6e9c0ee4c9352e7446fdef79a9037cd7&oe=5B5799DF";
+
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }            
+
+    //-- No use time. It is a javaScript effect.
+    function insertChat(who, text, time){
+        if (time === undefined){
+            time = 0;
+        }
+        var control = "";
+        var date = formatAMPM(new Date());
+        
+        if (who == "me"){
+            control = '<li style="width:100%">' +
+                            '<div class="msj macro">' +
+                            '<div class="avatar"><img class="img-circle" style="width:100%;" src="'+ me.avatar +'" /></div>' +
+                                '<div class="text text-l">' +
+                                    '<p>'+ text +'</p>' +
+                                    '<p><small>'+date+'</small></p>' +
+                                '</div>' +
+                            '</div>' +
+                        '</li>';                    
+        }else{
+            control = '<li style="width:100%;">' +
+                            '<div class="msj-rta macro">' +
+                                '<div class="text text-r">' +
+                                    '<p>'+text+'</p>' +
+                                    '<p><small>'+date+'</small></p>' +
+                                '</div>' +
+                            '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="'+you.avatar+'" /></div>' +                                
+                    '</li>';
+        }
+        setTimeout(
+            function(){                        
+                $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
+            }, time);
+        
+    }
+
+    function resetChat(){
+        $("ul").empty();
+    }
+
+    /*$(".mytext").on("keydown", function(e){
+        if (e.which == 13){
+            var text = $(this).val();
+            if (text !== ""){
+                insertChat("me", text);              
+                $(this).val('');
+            }
+        }
+    });*/
+
+    $('body > div > div > div:nth-child(2) > span').click(function(){
+        $(".mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
+    })
+
+    //-- Clear Chat
+    //resetChat();
+
+    //-- Print Messages
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        var who = data['who'];
+        //document.querySelector('#chat-log').value += (message + '\n');
+        insertChat(who, message, 0);
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+    
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        var hi = document.querySelector('#who');
+        var who = hi.value;
+
+        if (message != ""){
+            chatSocket.send(JSON.stringify({
+                'message' : message,
+                'who' : who
+            }));
+    
+        }
+        messageInputDom.value = '';
+    };
+
+</script>
+</html>

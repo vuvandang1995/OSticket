@@ -1,0 +1,257 @@
+.main-menu {
+	float: right;
+}
+
+
+span.noti {
+	color: #7FFF00;
+  }
+
+.fa-bell {
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.d-lg-none {
+    display: none!important;
+}
+*, ::after, ::before {
+    box-sizing: inherit;
+}
+
+.dropdown-menu {
+    border-radius: 10px;
+    margin-top: -5px;
+}
+.dropdown-item {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.notification {
+	position: absolute;
+	text-align: center;
+	border-radius: 10px;
+	min-width: 18px;
+	padding: 0 5px;
+	height: 18px;
+	font-size: 12px;
+	color: #FFFFFF;
+	font-weight: bold;
+	line-height: 18px;
+	top: 10px;
+	left: 7px;
+}
+
+
+.nav-link {
+    color: #888888;
+    padding: 10px 15px;
+    margin: 10px 3px;
+    position: relative;
+    display: inline-flex;
+    line-height: 40px;
+}
+
+li {
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+.main-menu ul {
+	list-style: none;
+}
+
+.main-menu ul li {
+	display: inline;
+}
+
+.main-menu ul li a {
+	display: inline-block;
+	text-transform: uppercase;
+	font-size: 16px;
+	color: #000000;
+	padding: 15px;
+	margin-right: 10px;
+	position: relative;
+}
+
+.main-menu .dropdown-menu a {
+	display: inline-block;
+	text-transform: uppercase;
+	font-size: 12px;
+	color: #000000;
+	padding: 15px;
+	margin-right: 10px;
+	position: relative;
+}
+
+
+.main-menu ul li a:after {
+	position: absolute;
+	content: '';
+	width: 0;
+	height: 2px;
+	background: #fff;
+	left: 50%;
+	top: 26px;
+	margin-left: -17px;
+	-webkit-transform: rotate(-45deg);
+	    -ms-transform: rotate(-45deg);
+	        transform: rotate(-45deg);
+	opacity: 0;
+	-webkit-transform-origin: top center;
+	    -ms-transform-origin: top center;
+	        transform-origin: top center;
+	-webkit-transition: all 0.4s;
+	-o-transition: all 0.4s;
+	transition: all 0.4s;
+}
+
+.main-menu ul li a:hover:after {
+	opacity: 1;
+	width: 34px;
+}
+
+.notify .heartbit {
+    position: absolute;
+    top: -20px;
+    right: -4px;
+    height: 25px;
+    width: 25px;
+    z-index: 10;
+    border: 5px solid #ef5350;
+    border-radius: 70px;
+    animation-iteration-count: infinite;
+}
+
+.notify .point {
+    display: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 30px;
+    background-color: #ef5350;
+    position: absolute;
+    right: 6px;
+    top: -10px;
+}
+
+.notify .point2 {
+    display: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 30px;
+    background-color: #ef5350;
+    position: absolute;
+    right: 6px;
+    top: -10px;
+}
+.notify {
+    position: relative;
+    top: -22px;
+    right: -9px;
+}
+.dropdown-menu li {
+    font-size: 14px;
+    padding: 5px 15px;
+}
+
+.header .top-navbar .mailbox {
+    width: 300px;
+}
+.navbar-expand-md .navbar-nav .dropdown-menu-right {
+    right: 0;
+    left: auto;
+}
+.navbar-expand-md .navbar-nav .dropdown-menu {
+    position: absolute;
+}
+.header .dropdown-menu {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    border-color: rgba(120, 130, 140, 0.13);
+}
+.navbar-nav .dropdown-menu {
+    position: static;
+    float: none;
+}
+.dropdown-menu.show {
+    display: block;
+}
+.zoomIn {
+    animation-name: zoomIn;
+}
+.animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 10rem;
+    padding: .5rem 0;
+    margin: .125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+}
+
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+}
+
+.fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+}
+.message-center a {
+    border-bottom: 1px solid rgba(120, 130, 140, 0.13);
+    display: block;
+    text-decoration: none;
+    padding: 9px 15px;
+}
+.mailbox .message-center a .mail-contnet {
+    display: inline-block;
+    width: 75%;
+    vertical-align: middle;
+}
+.mailbox .message-center a div {
+    white-space: normal;
+}
+
+.mailbox .message-center a .mail-contnet .mail-desc {
+    font-size: 12px;
+    margin: 1px 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #67757c;
+    white-space: nowrap;
+}
+
+.mailbox .message-center a .mail-contnet .time {
+    font-size: 12px;
+    display: block;
+    margin: 1px 0;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    color: #67757c;
+    white-space: nowrap;
+}
+
+.not-active {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}
