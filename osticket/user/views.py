@@ -90,6 +90,7 @@ def homeuser(request):
                    'handler': handler,
                    'topic': topic,
                    'username': mark_safe(json.dumps(user.username)),
+                   'fullname': mark_safe(json.dumps(user.fullname)),
                    'admin': mark_safe(json.dumps(admin.username)),
                    'noti_noti': user.noti_noti,
                     'noti_chat': user.noti_chat
@@ -199,7 +200,7 @@ def detail_user(request):
             elif 'noti_chat' in request.POST:
                 user.noti_chat = 0
                 user.save()
-        return render(request, 'user/detail_user.html', {'user': user, 'username': mark_safe(json.dumps(user.username)), 'noti_noti': user.noti_noti, 'noti_chat': user.noti_chat})
+        return render(request, 'user/detail_user.html', {'user': user, 'username': mark_safe(json.dumps(user.username)),'fullname': mark_safe(json.dumps(user.fullname)), 'noti_noti': user.noti_noti, 'noti_chat': user.noti_chat})
     else:
         return redirect("/")
 

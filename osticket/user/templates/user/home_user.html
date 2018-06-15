@@ -78,10 +78,15 @@
                         {% endif %}
 
                         {% if 1 == tk.status or tk.status == 2 %}
-                            <a href="javascript:register_popup('chat{{tk.id}}', {{tk.id}});" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_agent">
-                                <span class="glyphicon glyphicon-comment" ></span>
-                                <input type="hidden" value="{{tk.id}}"/>
-                            </a>
+                                {% for hd in handler %}
+                                    {% if hd.ticketid == tk %}
+                                        <a href="javascript:register_popup('chat{{tk.id}}', {{tk.id}}, '{{hd.agentid.username}}');" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_agent">
+                                            <span class="glyphicon glyphicon-comment" ></span>
+                                            <input type="hidden" value="{{tk.id}}"/>
+                                        </a>
+                                    {% endif%}
+                                {% endfor%}
+                            
                         {% else %}
                             <a  type="button" disabled class="btn btn-primary not-active" data-toggle="tooltip" title="conversation">
                                 <span class="glyphicon glyphicon-comment" ></span>

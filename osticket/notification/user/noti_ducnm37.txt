@@ -1,2 +1,0 @@
-<a href="/user/"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>Ticket 113 is processing!</p><small><i class="fa fa-clock-o"></i>4:49 PM</small></div></a>
-<a href="javascript:register_popup('chat113', 113);" class="noti_chat"><div style="float:left;width:15%" class="btn btn-info btn-circle m-r-10"><i class="fa fa-envelope-o"></i></div><div style="float:right; width:80%"><p>113</p><small><i class="fa fa-clock-o"></i>4:49 PM</small></div></a>*&*%^chat

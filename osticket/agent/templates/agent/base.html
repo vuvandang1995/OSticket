@@ -560,13 +560,12 @@
                     var tkid = message[0];
                     if ($('body .chat'+tkid).length){
                         if ($('body .chat'+tkid).css('display') == 'none'){
-                            var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
+                            var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[2]+"', '"+message[1].split('_')[0]+"');"
                             var src = "{% static 'images/avatar.png' %}"; 
-                            var message2 = message[0]+'-'+message[1];
-                            var noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span> <span class="time">'+time+'</span></div></a>';
+                            var noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+message[0]+'-'+message[2]+'</span> <span class="time">'+time+'</span></div></a>';
                             $('body .notification_chat').children('a').each(function () {
                                 if ($(this).html().includes(message[0])){
-                                    $(this).hide();
+                                    $(this).remove();
                                 }
                             });
                             $('.notification_chat').prepend(noti);
@@ -578,13 +577,12 @@
                             
                         }
                     }else{
-                        var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[1]+"');"
-                        var src = "{% static 'images/avatar.png' %}"; 
-                        var message2 = message[0]+'-'+message[1];
-                        var noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+message[0]+'</span> <span class="time">'+time+'</span></div></a>';
+                        var href="javascript:register_popup_agent('chat"+message[0]+"', "+message[0]+", '"+message[2]+"', '"+message[1].split('_')[0]+"');"
+                        var src = "{% static 'images/avatar.png' %}";
+                        var noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+message[0]+'-'+message[2]+'</span> <span class="time">'+time+'</span></div></a>';
                         $('body .notification_chat').children('a').each(function () {
                             if ($(this).html().includes(message[0])){
-                                $(this).hide();
+                                $(this).remove();
                             }
                         });
                         $('.notification_chat').prepend(noti);
@@ -604,7 +602,7 @@
 
     var dict_ws = {};
     $("body").on('click', '.noti_chat', function(){
-        var tkid = $(this).children('.mail-contnet').children().html();
+        var tkid = $(this).children('.mail-contnet').children().html().split('-')[0].replace(/\s/g,'');
         $("body .noti_chat"+tkid).hide();
         $('body .chat'+tkid).show();
         $("body .mytext").focus();
@@ -686,7 +684,7 @@
 
     $('body').on('click', '.xxx', function(){
         var message = $(this).parent().parent().children().children().children('input').val();
-        var tk_id = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('h4').html();
+        var tk_id = $(this).parent().parent().parent().parent().children().children('.popup-head-left').children('h4').html().split('-')[0].replace(/\s/g,'');
         var date = formatAMPM(new Date());
         if (message != ''){
             dict_ws[tk_id].send(JSON.stringify({
@@ -714,7 +712,7 @@
 
 
     $('body').on('click', '.chat-close', function(){
-        var tk_id = $(this).parent().next().children('h4').html();
+        var tk_id = $(this).parent().next().children('h4').html().split('-')[0].replace(/\s/g,'');
         dict_ws[tk_id].close();
         delete dict_ws[tk_id];
         $("body #chat"+tk_id+" .frame > ul").empty();

@@ -195,6 +195,8 @@ class UserConsumer(WebsocketConsumer):
         
                 
         if 'new+chat' in message:
+            print(message)
+
             tkid = message[0]
             try:
                 f = r'notification/user/'+self.room_group_name+'.txt'
@@ -344,9 +346,12 @@ class AgentConsumer(WebsocketConsumer):
                 ag.save()
                 
         if 'new_chat' in message:
+            print(message)
             list_agent = message
             tkid = message[0]
             user = message[1].split('_')[0]
+            fullname = message[2]
+            del list_agent[0]
             del list_agent[0]
             del list_agent[0]
             del list_agent[0]
@@ -363,9 +368,9 @@ class AgentConsumer(WebsocketConsumer):
             for agent in list_agent:
                 f = r'notification/agent/noti_'+agent+'.txt'
                 file = open(f,'a')
-                href = "javascript:register_popup_agent('chat"+tkid+"', "+tkid+", '"+user+"');"
+                href = "javascript:register_popup_agent('chat"+tkid+"', "+tkid+", '"+fullname+"', '"+user+"');"
                 src = "/static/images/avatar.png"
-                noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+tkid+'</span> <span class="time">'+time+'</span></div></a>'
+                noti = '<a href="'+href+'" class="noti_chat"><div class="user-img"> <img src="'+src+'" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div><div class="mail-contnet"><span class="mail-desc">'+tkid+'-'+fullname+'</span> <span class="time">'+time+'</span></div></a>'
                 file.write(noti + "*&*%^chat" + "\n")
                 file.close()
                 ag = Agents.objects.get(username=agent)
