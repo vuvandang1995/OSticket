@@ -69,24 +69,24 @@
                                     </tr>
                             
                                     <div class="modal" id="{{tk.ticketid.id}}content1" role="dialog">
-                                        <div class="modal-dialog">
+                                        <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                             <div class="modal-header">
                                                 <h4 class="modal-title">Ticket no.{{tk.ticketid.id}}</h4>
                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                             </div>
                                             <div class="modal-body form-group">
-                                                <label for="content">Owner:</label>
+                                                <label>Owner:</label>
                                                 <p><b>{{tk.ticketid.sender.fullname}}</b></p><br>
-                                                <label for="content">Title:</label>
+                                                <label>Title:</label>
                                                 <p><b>{{tk.ticketid.title}}</b></p><br>
-                                                <label for="content">Topic:</label>
+                                                <label>Topic:</label>
                                                 <p><b>{{tk.ticketid.topicid.name}}</b></p><br>
-                                                <label for="content">Content:</label>
+                                                <label>Content:</label>
                                                 <p><b>{{tk.ticketid.content}}</b></p><br>
-                                                <label for="datestart">Date Start:</label>
+                                                <label>Date Start:</label>
                                                 <p><b>{{ tk.ticketid.datestart}}</b></p><br>
-                                                <label for="dateend">Date End:</label>
+                                                <label>Date End:</label>
                                                 <p><b>{{tk.ticketid.dateend}}</b></p>
                                                 {% if tk.ticketid.attach != '' %}
                                                 <label for="dateend">Attach:</label>

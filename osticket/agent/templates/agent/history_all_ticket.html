@@ -31,11 +31,11 @@
                                 <table id="tb" class="display nowrap table table-hover table-striped table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Time</th>
-                                            <th>Date</th>
-                                            <th>Ticket</th>
-                                            <th>Person</th>
-                                            <th>Action</th>
+                                            <th width="12%">Time</th>
+                                            <th width="18%">Date</th>
+                                            <th width="5%">Ticket</th>
+                                            <th width="20%">Person</th>
+                                            <th width="45%" style="text-align: left;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -45,11 +45,11 @@
                                             <td>{{v.date}}</td>
                                             <td><a target="_blank" href="{% url 'agent:home_admin' %}">#{{v.ticketid.id}}</a></td>
                                             {% if v.userid is not None %}
-                                            <td >(user) {{v.userid.fullname}}</td>
+                                            <td >(user) {{v.userid.username}}</td>
                                             {% else %}
-                                            <td>(agent) <a target="_blank" href="{% url 'agent:manager_agent' %}">{{v.agentid.fullname}}</a></td>
+                                            <td>(agent) <a target="_blank" href="{% url 'agent:manager_agent' %}">{{v.agentid.username}}</a></td>
                                             {% endif %}
-                                            <td style="text-align: center;"><a target="_blank" href="{% url 'agent:history' v.ticketid.id %}"> {{v.action}}</a></td>
+                                            <td style="text-align: left;"><a target="_blank" href="{% url 'agent:history' v.ticketid.id %}"> {{v.action}}</a></td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -74,10 +74,10 @@
       </div>
       <div class="modal-body">
           <label for="content">View from</label><br/>
-             <input id="date" class="form-control" type="date" ><br/>
+             <input id="date" class="form-control" type="date" value="{{day1|safe}}" ><br/>
           <div id="invalid-date"><font color="red"></font></div>
          <label for="content2">to</label>
-             <input id="date2" class="form-control" type="date" ><br/>
+             <input id="date2" class="form-control" type="date" value="{{day2|safe}}" ><br/>
           <div id="invalid-date2"><font color="red"></font></div>
             <br/>
       </div>
@@ -128,9 +128,8 @@
     $('#tb').dataTable( {
         paging: false,
         dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf', 'print',
-        ]
+        buttons: ['excel', 'pdf', 'print'],
+        "order": [[ 1, "desc" ],[ 0, "desc" ],],
     } );
 </script>
 {% endblock %}

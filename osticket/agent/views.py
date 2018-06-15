@@ -83,7 +83,7 @@ def home_admin(request):
                         tkag1.delete()
                         tk.status = 0
                         tk.save()
-                        action = "received ticket forward from (admin)" + admin.fullname
+                        action = "received ticket forward from (admin)" + admin.username
                         tklog = TicketLog.objects.filter(action=action)
                         tklog.delete()
                     except:
@@ -94,7 +94,7 @@ def home_admin(request):
                         tk = Tickets.objects.get(id=ticketid)
                         tkag1 = TicketAgent.objects.filter(ticketid=tk)
                         tkag1.delete()
-                        action = "received ticket forward from (admin)" + admin.fullname
+                        action = "received ticket forward from (admin)" + admin.username
                         tklog = TicketLog.objects.filter(action=action)
                         tklog.delete()
                     except:
@@ -106,7 +106,7 @@ def home_admin(request):
                         tkag.save()
                         tk.status = 1
                         tk.save()
-                        action = "received ticket forward from (admin)" + admin.fullname
+                        action = "received ticket forward from (admin)" + admin.username
                         if agent.receive_email == 1:
                             email = EmailMessage(
                                 'Forward ticket',
@@ -239,7 +239,7 @@ def home_agent(request):
         tk_open = Tickets.objects.filter(status=0, topicid__in=topic).count()
         tk_processing = TicketAgent.objects.filter(agentid=agent, ticketid__in=process).count()
         tk_done = TicketAgent.objects.filter(agentid=agent, ticketid__in=done).count()
-        content = {'ticket': Tickets.objects.filter(status=0, topicid__in=topic).order_by('datestart'),
+        content = {'ticket': Tickets.objects.filter(status=0, topicid__in=topic).order_by('-id'),
                     'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username)),
                     'fullname': mark_safe(json.dumps(agent.fullname)),
                     'user_total': user_total,
@@ -445,9 +445,9 @@ def history(request,id):
         result = []
         for tem in tems:
             if tem.userid is not None:
-                action = "<b>User " + str(tem.userid.fullname) + "</b><br/>"+str(tem.action)
+                action = "<b>User " + str(tem.userid.username) + "</b><br/>"+str(tem.action)
             else:
-                action = "<b>Agent " + str(tem.agentid.fullname) + "</b><br/>"+str(tem.action)
+                action = "<b>Agent " + str(tem.agentid.username) + "</b><br/>"+str(tem.action)
             if tem.action == 'create ticket':
                 cont = "<i class='fa fa-plus' ></i>"
             elif tem.action == 'close ticket':
@@ -561,7 +561,7 @@ def inbox(request):
                     except TicketAgent.DoesNotExist:
                         agticket.agentid = agent
                         agticket.save()
-                        action = "received ticket forward from (agent)" + sender.fullname
+                        action = "received ticket forward from (agent)" + sender.username
                         TicketLog.objects.create(agentid=agent, ticketid=ticket, action=action,
                                                  date=timezone.now().date(),
                                                  time=timezone.now().time())

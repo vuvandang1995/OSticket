@@ -73,7 +73,7 @@
                 </div>
             <!-- Container fluid  -->
                 {% csrf_token %}
-            <div class="container-fluid">
+            <div class="container-fluid" id="tbody">
                 <!-- Start Page Content -->
                 <div class="row">
                     <div class="col-12">
@@ -85,16 +85,16 @@
                                 <table  class="table display table-bordered table-striped" id="list_ticket_leader">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Title</th>
-                                        <th>Topic</th>
-                                        <th>Sender</th>
-                                        <th>Status</th>
-                                        <th>Handler</th>
-                                        <th>Option</th>
+                                        <th width="5%">ID</th>
+                                        <th width="20%">Title</th>
+                                        <th width="20%">Topic</th>
+                                        <th width="10%">Sender</th>
+                                        <th width="5%">Status</th>
+                                        <th width="10%">Handler</th>
+                                        <th width="30%">Option</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody >
                                     {% for tk in ticket %}
                                     <tr>
                                         <td>
@@ -151,7 +151,7 @@
                                     </tr>
 
                                     <div class="modal" id="{{tk.id}}content" role="dialog">
-                                        <div class="modal-dialog">
+                                        <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
@@ -193,7 +193,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h3 class="modal-title" style= "color: red";><strong> Agent List</strong></h3>
+                            <h3 class="modal-title">Agent List</h3>
                         </div>
                         <div class="modal-body form-group">
                             {% for agent in agent %}
@@ -203,8 +203,8 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default closefd" data-dismiss="modal" id = "forward_ticket_close">Close</button>
                             <button type="button" class="btn btn-success forward_ticket">Forward</button>
+                            <button type="button" class="btn btn-default closefd" data-dismiss="modal" id = "forward_ticket_close">Close</button>
                             <center class="loading" hidden><i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i></center>
                         </div>
                     </div>
@@ -227,9 +227,4 @@
     <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js' %}"></script>
     <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js' %}"></script>
     <script src="{% static 'js/lib/datatables/datatables-init.js' %}"></script>
-    <script>
-    $(function () {
-        $('#list_ticket_leader').DataTable();
-    })
-    </script>
 {% endblock %}
