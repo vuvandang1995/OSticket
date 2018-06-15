@@ -1,5 +1,9 @@
 $(document).ready(function(){
-
+    var table = $('#list_ticket_leader').DataTable({
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "order": [[ 0, "desc" ]],
+            "displayLength": 25,
+        });
     $("#list_ticket_leader").on('click', '.btn-primary', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
@@ -11,15 +15,15 @@ $(document).ready(function(){
         for (i = 0; i < array.length-1; i++) {
             array2.push(array[i].replace(/\s/g,''));
         }
-        
         if (r == true){
             $.ajax({
                 type:'POST',
                 url:location.href,
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-                    // window.location.reload();
-                    $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+//                     window.location.reload();
+//                    $('#list_ticket_leader').load(' #list_ticket_leader');
+                    $('#list_ticket_leader').load(' #list_ticket_leader');
                     if (stt != 'closed'){
                         array2.push('admin_close_ticket');
                         array2.push(id);

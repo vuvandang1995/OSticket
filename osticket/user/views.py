@@ -29,9 +29,9 @@ def history(request, id):
         result = []
         for tem in tems:
             if tem.userid is not None:
-                action = "<b>User " + str(tem.userid.fullname) + "</b><br/>" + str(tem.action)
+                action = "<b>User " + str(tem.userid.username) + "</b><br/>" + str(tem.action)
             else:
-                action = "<b>Agent " + str(tem.agentid.fullname) + "</b><br/>" + str(tem.action)
+                action = "<b>Agent " + str(tem.agentid.username) + "</b><br/>" + str(tem.action)
             if tem.action == 'create ticket':
                 cont = "<span class='glyphicon glyphicon-plus' ></span>"
             elif tem.action == 'close ticket':
@@ -81,8 +81,8 @@ def homeuser(request):
         user = Users.objects.get(username=request.session['user'])
         admin = Agents.objects.get(admin=1)
         form = CreateNewTicketForm()
-        topic = Topics.objects.all()
-        ticket = Tickets.objects.filter(sender=user.id).order_by('datestart').reverse()
+        topic = Topics.objects.filter().order_by('-id')
+        ticket = Tickets.objects.filter(sender=user.id).order_by('-id')
         handler = TicketAgent.objects.all()
         content = {'ticket': ticket,
                    'form': form,

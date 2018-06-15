@@ -34,7 +34,7 @@
                                     <tbody>
                                         <tr>
                                             <td>Position</td>
-                                            <td>Admin</td>
+                                            <td>Agent</td>
                                         </tr>
                                         <tr>
                                             <td>Username</td>
@@ -42,7 +42,7 @@
                                         </tr>
                                         <tr>
                                             <td>Email</td>
-                                            <td><a href="{{agent.email}}" id="email_user">{{ agent.email }}</a></td>
+                                            <td><a href="#" id="email_user">{{ agent.email }}</a></td>
                                         </tr>
                                         <tr>
                                             <td>Phone</td>
@@ -67,12 +67,12 @@
                                     </tbody>
                                 </table>
                             
-                                <button type="button" class="btn btn-success info_agent" id="{{ agent.id }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
-                                        <i class="fa fa-wrench">Change info</i>
+                                <button type="button" class="btn btn-primary info_agent" id="{{ agent.id }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
+                                        <i class="fa fa-wrench"> Change info</i>
                                 </button>
                             
-                                <button type="button" class="btn btn-danger pwd_agent" id="{{ agent.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
-                                        <i class="fa fa-wrench" id="{{agent.password}}" name='pwd_current'>Change password</i>
+                                <button type="button" class="btn btn-primary pwd_agent" id="{{ agent.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
+                                        <i class="fa fa-wrench" id="{{agent.password}}" name='pwd_current'> Change password</i>
                                 </button>
                             </div>
                             {% csrf_token %}
@@ -80,9 +80,9 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h3 class="modal-title" style= "color: red";><strong id="title"></strong></h3>
+                                            <h3 class="modal-title" id="title"></h3>
                                         </div>
-                                            
+
                                             <div class="modal-body form-group">
                                                 <div id="info">
                                                     <label for="fullname"><b>Full name</b></label>
@@ -112,7 +112,7 @@
 
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" id="changeuser" class="btn btn-success">Save</button>
+                                                <button type="button" id="changeuser" class="btn btn-primary">Save</button>
                                                 <button type="button" class="btn btn-default" data-dismiss="modal" id = "change_user_close">Close</button>
                                             </div>
                                     </div>
