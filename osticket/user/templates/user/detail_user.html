@@ -60,12 +60,12 @@
                     </tr>
                   </tbody>
                 </table>
-                <button type="button" class="btn btn-success info_agent" id="{{ user.id }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
-                        <span class="glyphicon glyphicon-wrench">Change info</span>
+                <button type="button" class="btn btn-primary info_agent" id="{{ user.id }}" data-toggle="modal" data-title="change" data-target="#topicModal" >
+                        <span class="glyphicon glyphicon-wrench"> Change info</span>
                 </button>
 
-                <button type="button" class="btn btn-danger pwd_agent" id="{{ user.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
-                        <span class="glyphicon glyphicon-wrench" id="{{user.password}}" name='pwd_current'>Change password</span>
+                <button type="button" class="btn btn-primary pwd_agent" id="{{ user.id }}" data-toggle="modal" data-title="change_pwd" data-target="#topicModal" >
+                        <span class="glyphicon glyphicon-wrench" id="{{user.password}}" name='pwd_current'> Change password</span>
                 </button>
               </table>
             </div>
@@ -79,41 +79,40 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" style= "color: red";><strong id="title"></strong></h3>
+                <h3 class="modal-title" id="title"></h3>
             </div>
+            <div class="modal-body form-group">
+                <div id="info">
+                    <label for="fullname"><b>Full name</b></label>
+                    <input class="inputText form-control" type="text" placeholder="Full name" name="fullname" >
 
-                <div class="modal-body form-group">
-                    <div id="info">
-                        <label for="fullname"><b>Full name</b></label>
-                        <input class="inputText form-control" type="text" placeholder="Full name" name="fullname" >
+                    <label for="email"><b>Email</b></label>
+                    <input class="inputText form-control" type="text" placeholder="Enter Email" name="email">
 
-                        <label for="email"><b>Email</b></label>
-                        <input class="inputText form-control" type="text" placeholder="Enter Email" name="email">
-
-                        <label for="phone"><b>Phone</b></label>
-                        <input class="inputText form-control" type="text" placeholder="Enter your phone number" name="phone">
-                        <br/>
-                        <input class="inputText" style="transform: scale(2)" type="checkbox" name="receive_mail" > <b>   Receive Email?</b>
-                    </div>
-
-                    <div id="pwd">
-                        <label for="psw-current"><b>Current Password</b></label>
-                        <input class="inputText form-control" type="password" placeholder="Enter current Password" name="current_password">
-
-                        <label for="psw"><b>Password</b></label>
-                        <input class="inputText form-control" type="password" placeholder="Enter new Password" name="password">
-
-                        <label for="psw-repeat"><b>Repeat Password</b></label>
-                        <input class="inputText form-control" type="password" placeholder="Repeat new Password" name="password2">
-                    </div>
-
-                    <input type="hidden" name="userid" value="">
-
+                    <label for="phone"><b>Phone</b></label>
+                    <input class="inputText form-control" type="text" placeholder="Enter your phone number" name="phone">
+                    <br/>
+                    <input class="inputText" style="transform: scale(2)" type="checkbox" name="receive_mail" > <b>   Receive Email?</b>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" id="changeuser" class="btn btn-success">Save</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id = "change_user_close">Close</button>
+
+                <div id="pwd">
+                    <label for="psw-current"><b>Current Password</b></label>
+                    <input class="inputText form-control" type="password" placeholder="Enter current Password" name="current_password">
+
+                    <label for="psw"><b>Password</b></label>
+                    <input class="inputText form-control" type="password" placeholder="Enter new Password" name="password">
+
+                    <label for="psw-repeat"><b>Repeat Password</b></label>
+                    <input class="inputText form-control" type="password" placeholder="Repeat new Password" name="password2">
                 </div>
+
+                <input type="hidden" name="userid" value="">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="changeuser" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id = "change_user_close">Close</button>
+            </div>
         </div>
     </div>
 </div>

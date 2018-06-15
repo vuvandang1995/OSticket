@@ -543,7 +543,9 @@
 </script>
 <script>
   $(function () {
-    $('#list_tk_user').DataTable();
+    $('#list_tk_user').DataTable({
+      "order":[[0, "desc"]],
+    });
   })
 </script>
 {% block js %}{% endblock %}

@@ -29,11 +29,11 @@
               <table id="list_tk_user" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                      <th>ID</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Handler</th>
-                        <th>Option</th>
+                        <th width="5%">ID</th>
+                        <th width="40%">Title</th>
+                        <th width="10%">Status</th>
+                        <th width="25%">Handler</th>
+                        <th width="20%">Option</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -94,23 +94,23 @@
                     </tr>
 
                     <div class="modal fade" id="{{tk.id}}content" role="dialog">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <h4 class="modal-title">Ticket no.{{tk.id}}</h4>
                                 </div>
                                 <div class="modal-body form-group">
-                                    <label for="content">Title:</label>
-                                    <p><b>{{tk.title}}</b></p><br>
-                                    <label for="content">Topic:</label>
-                                    <p><b>{{tk.topicid.name}}</b></p><br>
-                                    <label for="content">Content:</label>
-                                    <p><b>{{tk.content}}</b></p><br>
-                                    <label for="datestart">Date Start:</label>
-                                    <p><b>{{ tk.datestart}}</b></p><br>
-                                    <label for="dateend">Date End:</label>
-                                    <p><b>{{tk.dateend}}</b></p>
+                                    <label>Title:</label>
+                                    <p>{{tk.title}}</p>
+                                    <label>Topic:</label>
+                                    <p>{{tk.topicid.name}}</p>
+                                    <label>Content:</label>
+                                    <p>{{tk.content}}</p>
+                                    <label>Date Start:</label>
+                                    <p>{{ tk.datestart}}</p>
+                                    <label>Date End:</label>
+                                    <p>{{tk.dateend}}</p>
                                     <br/>
                                     {% if tk.attach != '' %}
                                     <label for="dateend">Attach:</label>
@@ -133,7 +133,7 @@
     </section>
   </div>
     <div class="modal fade" id="id02" role="dialog" >
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content ">
                 <form method="POST" enctype="multipart/form-data" onsubmit="return validateSize()">
                     <div class="modal-header">
