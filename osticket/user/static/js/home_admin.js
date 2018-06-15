@@ -21,8 +21,9 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-                     window.location.reload();
-//                    $("#list_ticket_leader").load(" #list_ticket_leader");
+//                     window.location.reload();
+//                    $('#list_ticket_leader').load(' #list_ticket_leader');
+                    $('#list_ticket_leader').load(' #list_ticket_leader');
                     if (stt != 'closed'){
                         array2.push('admin_close_ticket');
                         array2.push(id);
