@@ -9,8 +9,10 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'stt': 1},
                  success: function(){
                     //  $("body .stt"+id).empty();
-                     $("body #stt"+id).load(" #stt"+id);
-                     $("body #button"+id).load(" #button"+id);
+                    //  $("body #stt"+id).load(location.href + " #stt"+id);
+                    //  $("body #button"+id).load(location.href + " #button"+id);
+                    $("body #example23").load(location.href + " #example23");
+                    load_js();
                  }
              });
         }
@@ -26,8 +28,10 @@ $(document).ready(function(){
                  success: function(){
                     //  $("body #xx").load(location.href + " #xx");
                     // $("body #stt"+id).empty();
-                    $("body #stt"+id).load(" #stt"+id);
-                    $("body #button"+id).load(" #button"+id);
+                    // $("body #stt"+id).load(location.href + " #stt"+id);
+                    // $("body #button"+id).load(location.href + " #button"+id);
+                    $("body #example23").load(location.href + " #example23");
+                    load_js();
                  }
              });
         }
