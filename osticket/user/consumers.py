@@ -349,6 +349,7 @@ class AgentConsumer(WebsocketConsumer):
                 
         if 'new_chat' in message:
             list_agent = message
+            print(list_agent)
             tkid = message[0]
             user = message[1].split('_')[0]
             fullname = message[2]

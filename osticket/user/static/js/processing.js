@@ -110,7 +110,7 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'stt': 2, 'type': 'process_done'},
                  success: function(){
                      var date = formatAMPM(new Date());
-                     $("#list_ticket_processing").DataTable().ajax.reload()
+                     $("#list_ticket_processing").DataTable().ajax.reload();
 
                      var userName = $('#user'+id).val();
 
@@ -145,7 +145,7 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'stt': 1, 'type': 'process_done'},
                  success: function(){
                      var date = formatAMPM(new Date());
-                     $("#list_ticket_processing").DataTable().ajax.reload()
+                     $("#list_ticket_processing").DataTable().ajax.reload();
 
                      var userName = $('#user'+id).val();
 
@@ -179,7 +179,7 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'type': 'give_up'},
                  success: function(){
                      // window.location.reload();
-                     $("#list_ticket_processing").DataTable().ajax.reload()
+                     $("#list_ticket_processing").DataTable().ajax.reload();
 
                      var userName = $('#user'+id).val();
                      var Socket1 = new WebSocket(
