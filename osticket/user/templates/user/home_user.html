@@ -39,7 +39,7 @@
                   <tbody>
                     {% csrf_token %}
                     {% for tk in ticket %}
-                    <tr>
+                    {% comment %} <tr>
                         <th>
                             <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.id}}content">{{tk.id}}</button>
                         </th>
@@ -78,14 +78,10 @@
                         {% endif %}
 
                         {% if 1 == tk.status or tk.status == 2 %}
-                                {% for hd in handler %}
-                                    {% if hd.ticketid == tk %}
-                                        <a href="javascript:register_popup('chat{{tk.id}}', {{tk.id}}, '{{hd.agentid.username}}');" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_agent">
-                                            <span class="glyphicon glyphicon-comment" ></span>
-                                            <input type="hidden" value="{{tk.id}}"/>
-                                        </a>
-                                    {% endif%}
-                                {% endfor%}
+                            <a href="javascript:register_popup('chat{{tk.id}}', {{tk.id}});" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_agent">
+                                <span class="glyphicon glyphicon-comment" ></span>
+                                <input type="hidden" value="{{tk.id}}"/>
+                            </a>
                             
                         {% else %}
                             <a  type="button" disabled class="btn btn-primary not-active" data-toggle="tooltip" title="conversation">
@@ -96,7 +92,7 @@
                                 <span class="glyphicon glyphicon-floppy-disk"></span>
                             </a>
                         </th>
-                    </tr>
+                    </tr> {% endcomment %}
 
                     <div class="modal fade" id="{{tk.id}}content" role="dialog">
                         <div class="modal-dialog modal-lg">
@@ -177,6 +173,19 @@
 {% block js%}
 <script>
         $(document).ready(function(){
+            var table = $('#list_tk_user').DataTable({
+                "ajax": {
+                    "type": "GET",
+                    "url": location.href +"data/",
+                    "contentType": "application/json; charset=utf-8",
+                    "data": function(result){
+                        return JSON.stringify(result);
+                    }
+                },
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "order": [[ 0, "desc" ]],
+                "displayLength": 25,
+            });
             $('body').on('click', '.close_ticket', function(){
                 var id = $(this).attr('id');
                 var token = $("input[name=csrfmiddlewaretoken]").val();
@@ -189,8 +198,7 @@
                         data: {'tkid':id, 'csrfmiddlewaretoken':token},
                         success: function(){
                             // window.location.reload();
-                            $("body #list_tk_user").load(location.href + " #list_tk_user");
-
+                            $("#list_tk_user").DataTable().ajax.reload();
                             var array = $('#hd'+id).html().split("<br>");
                             for (i = 0; i < array.length-1; i++) {
                                 var agentName = array[i].replace(/\s/g,'');
@@ -218,7 +226,6 @@
                 var tkid = $(this).children('input').val();
                 $('body .chat'+tkid).show();
                 $("body .mytext").focus();
-                var roomName = makeid();
 
                 if (dict_ws[tkid] == undefined){
                     dict_ws[tkid] = new WebSocket(

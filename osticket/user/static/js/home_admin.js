@@ -193,7 +193,6 @@ $(document).ready(function(){
             var value = $.inArray(array[i].replace(/\s/g,''), list_agent)
             if (value > -1){
                 $('input[name='+array[i].replace(/\s/g,'')+']').prop('checked', true);
-                // $('#forward input:checkbox').prop('checked', true);
             }
         }
         

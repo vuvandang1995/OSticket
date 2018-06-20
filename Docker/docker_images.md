@@ -16,5 +16,41 @@
 	- Trong đó, TAG là phiên bản của images, mặc định không khai báo tag thì docker sẽ hiểu là latest
 
 ## Thực hành với image
-- Tìm kiếm một image từ docker hub. Ví dụ tìm kiếm image về apace:
+1. Tìm kiếm một image từ docker hub. Ví dụ tìm kiếm image về apache:
+
 `docker search apache`
+
+- hoặc tìm chính xác phiên bản
+
+`docker search ubuntu:16.04`
+
+- Lệnh này sẽ thực hiện tìm kiếm images có tên là ubuntu từ trên internet, kết quả trả về các images có tên là ubuntu
+
+<img src="https://files.slack.com/files-pri/T43EZN8L8-FBAMUU9HT/image.png">
+
+
+- Trong đó:
+	- Cột NAME: tên images
+	- Cột Description: Mô tả ngắn gọn về images
+	- Cột offcial: Là images chính thức do công ty Docker cung cấp, trạng thái OK
+	
+2. Tải images từ Docker hub về host
+- Ví dụ tải images có tên là ubuntu về host
+
+`docker pull ubuntu`
+
+- Để tạo một container từ image `ubuntu`, dùng lệnh 
+
+`docker run unbuntu`
+
+3. Kiểm tra các images có tồn tại trên host
+
+`docker images`
+
+4. Tạo container từ images
+
+- Để chạy container và tương tác với container, ta sử dụng tùy chọn `-it` trong lệnh `docker run`. Ví dụ:
+
+`docker run -it ubuntu`
+
+- Trong đó, tùy chọn `-i` là tùy chọn sử dụng để tạo container với chế độ tương tác, tùy chọn `-t` là tùy chọn mở ra phiên làm việc. Nghĩa là nếu chỉ sử dụng `-i` thì sẽ mở ra một secsion và đóng lại luôn, nếu chỉ sử dụng tùy chọn `-t` thì sẽ mở ra secsion và không thao tác được.
