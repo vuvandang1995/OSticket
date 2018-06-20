@@ -6,7 +6,7 @@ from . import views
 app_name = 'agent'
 urlpatterns = [
     path('admin/', views.home_admin, name='home_admin'),
-    path('admin/data/', views.home_admin_data, name='home_admin_data'),
+    path('admin_data/', views.home_admin_data, name='home_admin_data'),
     path('topic/', views.manager_topic, name='manager_topic'),
     path('agent/', views.manager_agent, name='manager_agent'),
     path('', views.home_agent, name="index"),
@@ -17,8 +17,10 @@ urlpatterns = [
     path('inbox', views.inbox, name="inbox"),
     path('outbox', views.outbox, name="outbox"),
     path('processing_ticket', views.processing_ticket, name="processing_ticket"),
+    path('processing_ticket_data', views.processing_ticket_data, name="processing_ticket_data"),
     path('closed_ticket', views.closed_ticket, name='closed_ticket'),
     path('manage_user', views.manager_user, name="manage_user"),
+    path('manage_user_data', views.manage_user_data, name="manage_user_data"),
     path('profile', views.profile, name="profile"),
     path('logout_admin/', views.logout_admin, name='logout_admin'),
 ]

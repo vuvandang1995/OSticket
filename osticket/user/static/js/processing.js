@@ -1,4 +1,16 @@
 $(document).ready(function(){
+    var table = $('#list_ticket_processing').DataTable({
+        "ajax": {
+            "type": "GET",
+            "url": location.href +"_data",
+            "contentType": "application/json; charset=utf-8",
+            "data": function(result){
+                return JSON.stringify(result);
+            }
+        },
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "order": [[ 0, "desc" ]],
+    });
 
     $('body').on('click', '.fw_agent', function(){
         var tkid = $(this).attr('id');
@@ -98,7 +110,7 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'stt': 2, 'type': 'process_done'},
                  success: function(){
                      var date = formatAMPM(new Date());
-                     $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                     $("#list_ticket_processing").DataTable().ajax.reload()
 
                      var userName = $('#user'+id).val();
 
@@ -133,7 +145,7 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'stt': 1, 'type': 'process_done'},
                  success: function(){
                      var date = formatAMPM(new Date());
-                     $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                     $("#list_ticket_processing").DataTable().ajax.reload()
 
                      var userName = $('#user'+id).val();
 
@@ -167,7 +179,7 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'type': 'give_up'},
                  success: function(){
                      // window.location.reload();
-                     $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                     $("#list_ticket_processing").DataTable().ajax.reload()
 
                      var userName = $('#user'+id).val();
                      var Socket1 = new WebSocket(

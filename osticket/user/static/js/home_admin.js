@@ -2,7 +2,7 @@ $(document).ready(function(){
     var table = $('#list_ticket_leader').DataTable({
         "ajax": {
             "type": "GET",
-            "url": location.href +"data/",
+            "url": location.href +"_data",
             "contentType": "application/json; charset=utf-8",
             "data": function(result){
                 return JSON.stringify(result);
