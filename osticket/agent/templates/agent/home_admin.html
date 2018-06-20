@@ -81,7 +81,7 @@
                             <div class="card-title">
                                 Tickets
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" id="tabdiv">
                                 <table  class="table display table-bordered table-striped" id="list_ticket_leader">
                                     <thead>
                                     <tr>
@@ -89,99 +89,11 @@
                                         <th width="20%">Title</th>
                                         <th width="20%">Topic</th>
                                         <th width="10%">Sender</th>
-                                        <th width="5%">Status</th>
+                                        <th width="10%">Status</th>
                                         <th width="10%">Handler</th>
-                                        <th width="30%">Option</th>
+                                        <th width="25%">Option</th>
                                     </tr>
                                     </thead>
-                                    <tbody >
-                                    {% for tk in ticket %}
-                                    <tr>
-                                        <td>
-                                            <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.id}}content">{{ tk.id}}</button>
-                                        </td>
-
-                                        <td>{{tk.title}}</td>
-
-                                        <td>{{tk.topicid.name}}</td>
-
-                                        <td id="sender{{tk.id}}">{{tk.sender.username}}</td>
-
-                                        {% if tk.status == 0 %}
-                                        <td><span class="label label-danger" id="leader{{tk.id}}">pending</span></td>
-                                        {% elif tk.status == 1 %}
-                                        <td><span class="label label-warning" id="leader{{tk.id}}">processing</span></td>
-                                        {% elif tk.status == 2 %}
-                                        <td><span class="label label-success" id="leader{{tk.id}}">done</span></td>
-                                        {% else %}
-                                        <td><span class="label label-default" id="leader{{tk.id}}">closed</span></td>
-                                        {% endif %}
-
-                                        {% if tk.status == 0 %}
-                                            <td id="hd{{tk.id}}">Nobody</td>
-                                        {% else %}
-                                            <td id="hd{{tk.id}}">
-                                                {% for hd in handler %}
-                                                    {% if hd.ticketid == tk %}
-                                                        {{hd.agentid.username}}<br>
-                                                    {% endif%}
-                                                {% endfor%}
-                                            </td>
-                                        {% endif %}
-
-                                        <td>
-
-                                            <button type="button" class="btn btn-primary" id="{{tk.id}}" data-toggle="tooltip" title="open/close">
-                                                <i class="fa fa-power-off"></i>
-                                            </button>
-
-                                            <button type="button" class="btn btn-danger" id="{{tk.id}}" data-toggle="tooltip" title="delete">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button>
-
-                                            <button type="button" class="btn btn-info" data-title="forward" id="{{tk.id}}"data-toggle="modal" data-target="#forward_modal">
-                                                <i class="fa fa-share-square-o" data-toggle="tooltip" title="forward" ></i>
-                                            </button>
-
-                                            <a type="button" class="btn btn-warning" href="{% url 'agent:history' tk.id %}" data-toggle="tooltip" title="history">
-                                                <i class="fa fa-history"></i>
-                                            </a>
-                                        </td>
-
-                                    </tr>
-
-                                    <div class="modal" id="{{tk.id}}content" role="dialog">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
-                                                    <h4 class="modal-title">Ticket no.{{tk.id}}</h4>
-                                                </div>
-                                                <div class="modal-body form-group">
-                                                    <label for="content">Title:</label>
-                                                    <p><b>{{tk.title}}</b></p>
-                                                    <label for="content">Topic:</label>
-                                                    <p><b>{{tk.topicid.name}}</b></p>
-                                                    <label for="content">Content:</label>
-                                                    <p><b>{{tk.content}}</b></p>
-                                                    <label for="datestart">Date Start:</label>
-                                                    <p><b>{{ tk.datestart}}</b></p>
-                                                    <label for="dateend">Date End:</label>
-                                                    <p><b>{{tk.dateend}}</b></p>
-                                                    <br/>
-                                                    {% if tk.attach != '' %}
-                                                    <label for="dateend">Attach:</label>
-                                                    <img src="/media/{{tk.attach}}" alt="none" style="width:100%;height:100%;">
-                                                    {% endif %}
-                                                </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                    </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endfor%}
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -189,6 +101,38 @@
                 </div>
                 <!-- End PAge Content -->
             </div>
+                {% for tk in ticket %}
+                    <div class="modal" id="{{tk.id}}content" role="dialog">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                                    <h4 class="modal-title">Ticket no.{{tk.id}}</h4>
+                                </div>
+                                <div class="modal-body form-group">
+                                    <label for="content">Title:</label>
+                                    <p><b>{{tk.title}}</b></p>
+                                    <label for="content">Topic:</label>
+                                    <p><b>{{tk.topicid.name}}</b></p>
+                                    <label for="content">Content:</label>
+                                    <p><b>{{tk.content}}</b></p>
+                                    <label for="datestart">Date Start:</label>
+                                    <p><b>{{ tk.datestart}}</b></p>
+                                    <label for="dateend">Date End:</label>
+                                    <p><b>{{tk.dateend}}</b></p>
+                                    <br/>
+                                    {% if tk.attach != '' %}
+                                    <label for="dateend">Attach:</label>
+                                    <img src="/media/{{tk.attach}}" alt="none" style="width:100%;height:100%;">
+                                    {% endif %}
+                                </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor%}
             <div id="forward_modal" class="modal">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -217,14 +161,6 @@
     </div>
 {% endblock %}
 {% block js %}
-    <script src="{% static 'js/home_admin.js' %}"></script>
     <script src="{% static 'js/lib/datatables/datatables.min.js' %}"></script>
-    <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js' %}"></script>
-    <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js' %}"></script>
-    <script src="{% static 'js/lib/datatables/cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js' %}"></script>
-    <script src="{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js' %}"></script>
-    <script src="{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js' %}"></script>
-    <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js' %}"></script>
-    <script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js' %}"></script>
-    <script src="{% static 'js/lib/datatables/datatables-init.js' %}"></script>
+    <script src="{% static 'js/home_admin.js' %}"></script>
 {% endblock %}
