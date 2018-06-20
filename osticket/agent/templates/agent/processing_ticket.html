@@ -78,7 +78,7 @@
                                                 <input type="hidden" id="user{{tk.id}}" value="{{tk.sender.username}}">
                                                 {% endif %}
                                                 
-                                                <a href="javascript:register_popup_agent('chat{{tk.id}}', {{tk.id}}, '{{tk.sender.username}}');" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_user">
+                                                <a href="javascript:register_popup_agent('chat{{tk.id}}', {{tk.id}}, '{{tk.sender.fullname}}', '{{tk.sender.username}}');" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_user">
                                                         <i class="fa fa-commenting"></i>
                                                     <div class="notify">
                                                         <span class="point2 noti_chat{{tk.id}}"></span>

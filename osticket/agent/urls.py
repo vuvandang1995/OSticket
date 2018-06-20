@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import url
 from django.views.generic import TemplateView
 from . import views
 
@@ -20,5 +21,5 @@ urlpatterns = [
     path('manage_user', views.manager_user, name="manage_user"),
     path('profile', views.profile, name="profile"),
     path('logout_admin/', views.logout_admin, name='logout_admin'),
-
+    url(r'^ajax/get_data/(?P<name>[^/]+)/$', views.get_data, name='get_data'),
 ]

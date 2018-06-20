@@ -25,56 +25,55 @@
                 <div class="card">
                     <div class="card-title">
                         <h4>Manage user</h4>
-
                     </div>
                     
                     <div class="card-body">
-                            <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Fullname</th>
-                                        <th>Email</th>
-                                        <th>Username</th>
-                                        <th>Status</th>
-                                        <th>Created</th>
-                                        <th>Option</th>
-                                    </tr>
-                                </thead>
+                        <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fullname</th>
+                                    <th>Email</th>
+                                    <th>Username</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Option</th>
+                                </tr>
+                            </thead>
 
-                                <tbody>
-                                    {% for tk in user %}
-                                    <tr>
-                                        <th scope="row">{{tk.id}}</th>
-                                        <td>{{tk.fullname}}</td>
-                                        <td>{{tk.email}}</td>
-                                        <td>{{tk.username}}</td>
-                                        {% if tk.status == 0 %}
-                                        <td><span class="label label-danger">inactive</span></td>
-                                        <td>{{tk.created}}</td>
-                                        <td>
-                                            <button id="{{tk.id}}" class="unblock btn btn-success" type="button" data-toggle="tooltip" title="unblock" >
-                                                <span class="glyphicon glyphicon glyphicon-ok" ></span> Unblock
-                                            </button>
-                                        </td>
-                                        {% else %}
-                                        <td><span class="label label-success">active</span></td>
-                                        <td>{{tk.created}}</td>
-                                        <td>
-                                            <button id="{{tk.id}}" class="block btn btn-danger" type="button" data-toggle="tooltip" title="block" >
-                                                <span class="glyphicon glyphicon-lock" ></span> Block
-                                            </button>
-                                        </td>
-                                        {% endif %}
-                                    </tr>
-                                    {%endfor%}
-                                </tbody>
-                            </table>
+                            
+                            <tbody>
+                                {% for tk in user %}
+                                <tr>
+                                    <th scope="row">{{tk.id}}</th>
+                                    <td>{{tk.fullname}}</td>
+                                    <td>{{tk.email}}</td>
+                                    <td>{{tk.username}}</td>
+                                    {% if tk.status == 0 %}
+                                    <td id="stt{{tk.id}}"><span class="label label-danger">inactive</span></td>
+                                    <td>{{tk.created}}</td>
+                                    <td id="button{{tk.id}}">
+                                        <button id="{{tk.id}}" class="unblock btn btn-success" type="button" data-toggle="tooltip" title="unblock" >
+                                            <span class="glyphicon glyphicon glyphicon-ok" ></span> Unblock
+                                        </button>
+                                    </td>
+                                    {% else %}
+                                    <td id="stt{{tk.id}}"><span class="label label-success">active</span></td>
+                                    <td>{{tk.created}}</td>
+                                    <td id="button{{tk.id}}">
+                                        <button id="{{tk.id}}" class="block btn btn-danger" type="button" data-toggle="tooltip" title="block" >
+                                            <span class="glyphicon glyphicon-lock" ></span> Block
+                                        </button>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                            
+                        </table>
                     </div>
                 </div>
-                <!-- /# card -->
             </div>
-            <!-- /# column -->
        </div>     
     </div>
 <!-- End Container fluid  -->
@@ -107,23 +106,7 @@
 
 <script src="{% static 'js/manage_user.js' %}"></script>
 
-<script src="{% static 'js/lib/datatables/datatables.min.js' %}"></script>
 
-<script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
-
-<script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js' %}"></script>
-
-<script src="{% static 'js/lib/datatables/cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js' %}"></script>
-
-<script src="{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js' %}"></script>
-
-<script src="{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js' %}"></script>
-
-<script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js' %}"></script>
-
-<script src="{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js' %}"></script>
-
-<script src="{% static 'js/lib/datatables/datatables-init.js' %}"></script>
-
+<head></head>
 
 {% endblock%}

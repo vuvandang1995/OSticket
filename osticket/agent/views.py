@@ -6,6 +6,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import timezone
 
+from django.http import HttpResponseRedirect, HttpResponse
+from django.http import JsonResponse
+
 from user.models import *
 from .forms import ForwardForm, AddForm
 from django.core.mail import EmailMessage
@@ -753,6 +756,11 @@ def manager_user(request):
     else:
         return redirect("/")
 
+def get_data(request, name):
+    res = name
+    json_data = name
+    # return HttpResponse(json_data, content_type="application/json")
+    return JsonResponse(json_data, safe=False)
 
 
 
