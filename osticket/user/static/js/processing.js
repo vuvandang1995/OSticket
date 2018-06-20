@@ -212,7 +212,6 @@ $(document).ready(function(){
          $("body .noti_chat"+tkid).hide();
          $('body .chat'+tkid).show();
          $("body .mytext").focus();
-         var roomName = makeid();
          
 
          if (dict_ws[tkid] == undefined){
