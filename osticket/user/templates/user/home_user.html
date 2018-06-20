@@ -39,59 +39,6 @@
                   <tbody>
                     {% csrf_token %}
                     {% for tk in ticket %}
-                    {% comment %} <tr>
-                        <th>
-                            <button type="button" class="btn" data-toggle="modal" data-target="#{{tk.id}}content">{{tk.id}}</button>
-                        </th>
-                        <th>{{tk.title}}</th>
-                        {% if tk.status == 0 %}
-                        <th><span class="label label-danger">pending</span></th>
-                        {% elif tk.status == 1 %}
-                        <th><span class="label label-warning">processing</span></th>
-                        {% elif tk.status == 2 %}
-                        <th><span class="label label-success">done</span></th>
-                        {% else %}
-                        <th><span class="label label-default">closed</span></th>
-                        {% endif %}
-
-
-                        {% if tk.status == 0 %}
-                            <th id="hd{{tk.id}}">Nobody</th>
-                        {% else %}
-                            <th id="hd{{tk.id}}">
-                                {% for hd in handler %}
-                                    {% if hd.ticketid == tk %}
-                                        {{hd.agentid.username}}<br>
-                                    {% endif%}
-                                {% endfor%}
-                            </th>
-                        {% endif %}
-                        <th>
-                        {% if tk.status < 3 %}
-                            <button type="button" class="btn btn-danger close_ticket" data-toggle="tooltip" title="close" id="{{tk.id}}" >
-                                <span class="glyphicon glyphicon-off"></span>
-                            </button>
-                        {% else %}
-                            <button disabled type="button" class="btn btn-danger close_ticket" data-toggle="tooltip" title="close" id="{{tk.id}}">
-                                <span class="glyphicon glyphicon-off"></span>
-                            </button>
-                        {% endif %}
-
-                        {% if 1 == tk.status or tk.status == 2 %}
-                            <a href="javascript:register_popup('chat{{tk.id}}', {{tk.id}});" type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_agent">
-                                <span class="glyphicon glyphicon-comment" ></span>
-                                <input type="hidden" value="{{tk.id}}"/>
-                            </a>
-                        {% else %}
-                            <a  type="button" disabled class="btn btn-primary not-active" data-toggle="tooltip" title="conversation">
-                                <span class="glyphicon glyphicon-comment" ></span>
-                            </a>
-                        {% endif %}
-                            <a target="_blank" href="{% url 'user:history' tk.id %}" type="button" class="btn btn-warning" data-toggle="tooltip" title="history">
-                                <span class="glyphicon glyphicon-floppy-disk"></span>
-                            </a>
-                        </th>
-                    </tr> {% endcomment %}
 
                     <div class="modal fade" id="{{tk.id}}content" role="dialog">
                         <div class="modal-dialog modal-lg">
