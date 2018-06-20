@@ -15,6 +15,5 @@ urlpatterns = [
     path(r'^resetpassword/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.resetpwd, name='resetpassword'),
     path('user/history_<int:id>', views.history, name='history'),
-
-    
+    path('user/data/', views.user_data, name='user_data'),
 ]

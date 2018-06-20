@@ -248,7 +248,7 @@
             }else{
                 if (message ==  'give up'){
                     setTimeout(function(){
-                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                        $("#list_tk_user").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -292,7 +292,7 @@
                     $('body .msg').html('You have '+noti_noti1+' new notifications');
                     x.play();
                     setTimeout(function(){
-                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                        $("#list_tk_user").DataTable().ajax.reload();
                     }, 1000);
 
                 }
@@ -309,7 +309,7 @@
                     $('body .msg').html('You have '+noti_noti1+' new notifications');
                     x.play();
                     setTimeout(function(){
-                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                        $("#list_tk_user").DataTable().ajax.reload();
                     }, 1000);
                 }
 
@@ -324,7 +324,7 @@
                         $('body .msg').html('You have '+noti_noti1+' new notifications');
                         x.play();
                         setTimeout(function(){
-                            $("body #list_tk_user").load(location.href + " #list_tk_user");
+                            $("#list_tk_user").DataTable().ajax.reload();
                         }, 1000);
                 }
 
@@ -339,7 +339,7 @@
                         $('body .msg').html('You have '+noti_noti1+' new notifications');
                         x.play();
                         setTimeout(function(){
-                            $("body #list_tk_user").load(location.href + " #list_tk_user");
+                            $("#list_tk_user").DataTable().ajax.reload();
                         }, 1000);
                 }
 
@@ -354,7 +354,7 @@
                         $('body .msg').html('You have '+noti_noti1+' new notifications');
                         x.play();
                         setTimeout(function(){
-                            $("body #list_tk_user").load(location.href + " #list_tk_user");
+                            $("#list_tk_user").DataTable().ajax.reload();
                         }, 1000);
                 }
 
@@ -369,7 +369,7 @@
                         $('body .msg').html('You have '+noti_noti1+' new notifications');
                         x.play();
                         setTimeout(function(){
-                            $("body #list_tk_user").load(location.href + " #list_tk_user");
+                            $("#list_tk_user").DataTable().ajax.reload();
                         }, 1000);
                 }
 
@@ -385,7 +385,7 @@
                     $('body .msg').html('You have '+noti_noti1+' new notifications');
                     x.play();
                     setTimeout(function(){
-                        $("body #list_tk_user").load(location.href + " #list_tk_user");
+                        $("#list_tk_user").DataTable().ajax.reload();
                     }, 1000);
                 }
             }
@@ -412,7 +412,7 @@
             hours = hours % 12;
             hours = hours ? hours : 12; // the hour '0' should be '12'
             minutes = minutes < 10 ? '0'+minutes : minutes;
-            var strTime = hours + ':' + minutes + ' ' + ampm;
+            var strTime = hours + ':' + minutes + ' ' + ampm + ' ' +date.getDate()+'/'+date.getMonth()+'/'+date.getFullYear();
             return strTime;
         }
 
@@ -541,13 +541,6 @@
             delete dict_ws[tk_id];
             $("body #chat"+tk_id+" .frame > ul").empty();
         })
-</script>
-<script>
-  $(function () {
-    $('#list_tk_user').DataTable({
-      "order":[[0, "desc"]],
-    });
-  })
 </script>
 {% block js %}{% endblock %}
 </body>

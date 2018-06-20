@@ -4,7 +4,7 @@ $(document).ready(function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         if(confirm("Are you sure ?")){
-            /*var userName = document.getElementById('user_name'+id).value;
+            var userName = document.getElementById('user_name'+id).value;
             var chatSocket1 = new WebSocket(
                 'ws://' + window.location.host +
                 '/ws/user/' + userName + '/');
@@ -29,17 +29,6 @@ $(document).ready(function(){
                 data: {'tkid':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     chatSocket1.close();
-                }
-            });*/
-
-
-
-            $.ajax({
-                type:"GET",
-                url: '/agent/ajax/get_data/ok',
-                dataType: 'json',
-                success: function (data) {
-                    alert(JSON.stringify(data))   
                 }
             });
         }

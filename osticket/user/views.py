@@ -9,6 +9,7 @@ from .tokens import account_activation_token
 from django.core.mail import EmailMessage
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.utils.safestring import mark_safe
+from django.http import JsonResponse
 import json
 from .forms import *
 import string
@@ -165,6 +166,43 @@ def homeuser(request):
         return render(request, 'user/home_user.html', content)
     else:
         return redirect("/")
+
+
+def user_data(request):
+    if request.session.has_key('user') and (Users.objects.get(username=request.session['user'])).status == 1:
+        user = Users.objects.get(username=request.session['user'])
+        tk = Tickets.objects.filter(sender=user.id).order_by('-id')
+        data = []
+        for tk in tk:
+            if tk.status == 0:
+                status = r'<span class ="label label-danger"> pending</span>'
+                handler = '<p id="hd' + str(tk.id) + '">Nobody</p>'
+            else:
+                if tk.status == 1:
+                    status = r'<span class ="label label-warning"> processing </span>'
+                elif tk.status == 2:
+                    status = r'<span class ="label label-success"> done </span>'
+                else:
+                    status = r'<span class ="label label-default"> closed </span>'
+                handler = '<p id="hd' + str(tk.id) + '">'
+                for t in TicketAgent.objects.filter(ticketid=tk.id):
+                    handler += t.agentid.username + "<br>"
+                handler += '</p>'
+            id = '''<button type="button" class="btn" data-toggle="modal" data-target="#'''+str(tk.id)+'''content">'''+str(tk.id)+'''</button>'''
+            option = ''
+            if tk.status < 3:
+                option += '''<button type="button" class="btn btn-danger close_ticket" data-toggle="tooltip" title="close" id="'''+str(tk.id)+'''" ><span class="glyphicon glyphicon-off"></span></button>'''
+            else:
+                option += '''<button disabled type="button" class="btn btn-danger close_ticket" data-toggle="tooltip" title="close" id="'''+str(tk.id)+'''"><span class="glyphicon glyphicon-off"></span></button>'''
+            if 1 == tk.status or tk.status == 2:
+                option += '''<a href='javascript:register_popup("chat'''+str(tk.id)+'''", '''+str(tk.id)+''');' type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_agent"><span class="glyphicon glyphicon-comment" ></span><input type="hidden" value="'''+str(tk.id)+'''"/></a>'''
+            else:
+                option += '''<a  type="button" disabled class="btn btn-primary not-active" data-toggle="tooltip" title="conversation"><span class="glyphicon glyphicon-comment" ></span></a>'''
+            option += '''<a type="button" target=_blank class="btn btn-warning" href="/user/history_'''+str(tk.id)+ '''" data-toggle="tooltip" title="history"><i class="fa fa-history"></i></a>'''
+            data.append([id, tk.title, status, handler, option])
+        ticket = {"data": data}
+        tickets = json.loads(json.dumps(ticket))
+        return JsonResponse(tickets, safe=False)
 
 
 def handle_uploaded_file(f):
