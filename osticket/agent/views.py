@@ -152,8 +152,8 @@ def home_admin_data(request):
             <button type="button" class="btn btn-info" data-title="forward" id="'''+str(tk.id)+'''"data-toggle="modal" data-target="#forward_modal"><i class="fa fa-share-square-o" data-toggle="tooltip" title="forward" ></i></button>
             <a type="button" target=_blank class="btn btn-warning" href="/agent/history/'''+str(tk.id)+ '''" data-toggle="tooltip" title="history"><i class="fa fa-history"></i></a>'''
             data.append([id, tk.title, tk.topicid.name, sender, status, handler, option])
-            ticket = {"data": data}
-            tickets = json.loads(json.dumps(ticket))
+        ticket = {"data": data}
+        tickets = json.loads(json.dumps(ticket))
         return JsonResponse(tickets, safe=False)
 
 
@@ -352,19 +352,13 @@ def processing_ticket(request):
         sender = Agents.objects.get(username=request.session['agent'])
         tksd = TicketAgent.objects.filter(agentid=sender)
         tksdpr = Tickets.objects.filter(id__in=tksd.values('ticketid'),status__in=[1, 2])
-        agk = {}
-        agc = {}
-        gua = {}
-        for tk in tksdpr:
-            agt = TicketAgent.objects.filter(ticketid=tk).values('agentid')
-            tem = [x.username for x in Agents.objects.filter(id__in=agt, admin=0)]
-            if len(tem) > 1:
-                gua[tk.id] = 'yes'
-            else:
-                gua[tk.id] = 'no'
-            agc[tk.id] = tem
         content = {'noti_noti': sender.noti_noti,
-                    'noti_chat': sender.noti_chat, 'agent': agent, 'ticket': tksdpr, 'agc': agc, 'form': form, 'form1': form1, 'gua': gua, 'agent_name': mark_safe(json.dumps(sender.username)), 'fullname': mark_safe(json.dumps(sender.fullname))}
+                   'noti_chat': sender.noti_chat,
+                   'agent': agent, 'ticket': tksdpr,
+                   'form': form,
+                   'form1': form1,
+                   'agent_name': mark_safe(json.dumps(sender.username)),
+                   'fullname': mark_safe(json.dumps(sender.fullname))}
         if request.method == 'POST':
             if 'noti_noti' in request.POST:
                 sender.noti_noti = 0
@@ -466,6 +460,42 @@ def processing_ticket(request):
         return render(request, 'agent/processing_ticket.html', content)
     else:
         return redirect("/")
+
+
+def processing_ticket_data(request):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
+        agent = Agents.objects.get(username=request.session['agent'])
+        tksd = TicketAgent.objects.filter(agentid=agent)
+        tksdpr = Tickets.objects.filter(id__in=tksd.values('ticketid'), status__in=[1, 2])
+        data = []
+        for tk in tksdpr:
+            option = ''
+            if tk.status == 1:
+                status = r'<span class ="label label-warning" > Processing</span>'
+                option += r'''<button id="''' + str(tk.id) + '''" type="button" class="btn btn-success handle_done" data-toggle="tooltip" title="done" ><i class="fa fa-check"></i></button>'''
+            else:
+                status = r'<span class ="label label-success" > Done</span>'
+                option += r'''<button id="''' + str(tk.id) + '''" type="button" class="btn btn-success handle_processing" data-toggle="tooltip" title="process" ><i class="fa fa-wrench"></i></button>'''
+            id = r'''<th scope="row"><button type="button" class="btn" data-toggle="modal" data-target="#''' + str(tk.id) + '''content">''' + str(tk.id) + '''</button></th>'''
+            handler = '<p id="hd' + str(tk.id) + '">'
+            tem = 0
+            for t in TicketAgent.objects.filter(ticketid=tk.id):
+                tem += 1
+                handler += t.agentid.username + "<br>"
+            handler += '</p>'
+            option += r'''<input type="hidden" id="user''' + str(tk.id) + '''" value="'''+tk.sender.username+'''">
+            <a href='javascript:register_popup_agent("chat''' + str(tk.id) + '''", ''' + str(tk.id) + ''', "'''+tk.sender.fullname+'''", "'''+tk.sender.username+'''");' type="button" class="btn btn-primary" data-toggle="tooltip" title="conversation" id="chat_with_user"><i class="fa fa-commenting"></i><input type="hidden" value="''' + str(tk.id) + '''"/></a>
+            <button id="''' + str(tk.id) + '''" type="button" class="btn btn-info fw_agent" data-toggle="modal" data-title="forward" data-target="#forward_add"><i class="fa fa-share-square-o" data-toggle="tooltip" title="forward" ></i></button>
+            <button id="''' + str(tk.id) + '''" type="button" class="btn btn-info add_agent" data-toggle="modal" data-title="add" data-target="#forward_add"><i class="fa fa-user-plus" data-toggle="tooltip" title="add" ></i></button>'''
+            if tem == 1:
+                option += r'''<button id="''' + str(tk.id) + '''" disabled type="button" class="btn btn-danger give_up" data-toggle="tooltip" title="give up" ><i class="fa fa-minus-circle"></i></button>'''
+            else:
+                option += r'''<button id="''' + str(tk.id) + '''" type="button" class="btn btn-danger give_up" data-toggle="tooltip" title="give up" ><i class="fa fa-minus-circle"></i></button>'''
+            option +='''<a target="_blank" href="/agent/history/'''+str(tk.id)+ '''" type="button" class="btn btn-warning" data-toggle="tooltip" title="history" ><span class="glyphicon glyphicon-floppy-disk" ></span><i class="fa fa-history"></i></a>'''
+            data.append([id, tk.title, handler, status, option])
+        ticket = {"data": data}
+        tickets = json.loads(json.dumps(ticket))
+        return JsonResponse(tickets, safe=False)
 
 
 def history(request,id):
@@ -660,8 +690,6 @@ def inbox(request):
         return redirect("/")
 
 
-
-
 def outbox(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
@@ -755,6 +783,24 @@ def manager_user(request):
                     'noti_chat': agent.noti_chat, 'user':users, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
     else:
         return redirect("/")
+
+
+def manage_user_data(request):
+    if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
+        users = Users.objects.all()
+        data = []
+        for us in users:
+            if us.status == 0:
+                st = r'''<p id="stt''' + str(us.id) +'''"><span class="label label-danger">inactive</span></p>'''
+                option = r'''<p id="button''' + str(us.id) +'''"><button id="''' + str(us.id) + '''" class="unblock btn btn-success" type="button" data-toggle="tooltip" title="unblock" ><span class="glyphicon glyphicon glyphicon-ok" ></span> Unblock</button></p>'''
+            else:
+                st = r'''<p id="stt''' + str(us.id) +'''"><span class="label label-success">active</span></p>'''
+                option = r'''<p id="button''' + str(us.id) +'''"><button id="''' + str(us.id) + '''" class="block btn btn-danger" type="button" data-toggle="tooltip" title="block" ><span class="glyphicon glyphicon-lock" ></span> Block</button></p>'''
+            data.append([us.id, us.fullname, us.email, us.username, st, str(us.created)[:-13], option])
+        ticket = {"data": data}
+        tickets = json.loads(json.dumps(ticket))
+        return JsonResponse(tickets, safe=False)
+
 
 def get_data(request, name):
     res = name

@@ -28,7 +28,7 @@
                     </div>
                     
                     <div class="card-body">
-                        <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                        <table id="list_user" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -42,33 +42,33 @@
                             </thead>
 
                             
-                            <tbody>
-                                {% for tk in user %}
-                                <tr>
-                                    <th scope="row">{{tk.id}}</th>
-                                    <td>{{tk.fullname}}</td>
-                                    <td>{{tk.email}}</td>
-                                    <td>{{tk.username}}</td>
-                                    {% if tk.status == 0 %}
-                                    <td id="stt{{tk.id}}"><span class="label label-danger">inactive</span></td>
-                                    <td>{{tk.created}}</td>
-                                    <td id="button{{tk.id}}">
-                                        <button id="{{tk.id}}" class="unblock btn btn-success" type="button" data-toggle="tooltip" title="unblock" >
-                                            <span class="glyphicon glyphicon glyphicon-ok" ></span> Unblock
-                                        </button>
-                                    </td>
-                                    {% else %}
-                                    <td id="stt{{tk.id}}"><span class="label label-success">active</span></td>
-                                    <td>{{tk.created}}</td>
-                                    <td id="button{{tk.id}}">
-                                        <button id="{{tk.id}}" class="block btn btn-danger" type="button" data-toggle="tooltip" title="block" >
-                                            <span class="glyphicon glyphicon-lock" ></span> Block
-                                        </button>
-                                    </td>
-                                    {% endif %}
-                                </tr>
-                                {%endfor%}
-                            </tbody>
+                            <!--<tbody>-->
+                                <!--{% for tk in user %}-->
+                                <!--<tr>-->
+                                    <!--<th scope="row">{{tk.id}}</th>-->
+                                    <!--<td>{{tk.fullname}}</td>-->
+                                    <!--<td>{{tk.email}}</td>-->
+                                    <!--<td>{{tk.username}}</td>-->
+                                    <!--{% if tk.status == 0 %}-->
+                                    <!--<td id="stt{{tk.id}}"><span class="label label-danger">inactive</span></td>-->
+                                    <!--<td>{{tk.created}}</td>-->
+                                    <!--<td id="button{{tk.id}}">-->
+                                        <!--<button id="{{tk.id}}" class="unblock btn btn-success" type="button" data-toggle="tooltip" title="unblock" >-->
+                                            <!--<span class="glyphicon glyphicon glyphicon-ok" ></span> Unblock-->
+                                        <!--</button>-->
+                                    <!--</td>-->
+                                    <!--{% else %}-->
+                                    <!--<td id="stt{{tk.id}}"><span class="label label-success">active</span></td>-->
+                                    <!--<td>{{tk.created}}</td>-->
+                                    <!--<td id="button{{tk.id}}">-->
+                                        <!--<button id="{{tk.id}}" class="block btn btn-danger" type="button" data-toggle="tooltip" title="block" >-->
+                                            <!--<span class="glyphicon glyphicon-lock" ></span> Block-->
+                                        <!--</button>-->
+                                    <!--</td>-->
+                                    <!--{% endif %}-->
+                                <!--</tr>-->
+                                <!--{%endfor%}-->
+                            <!--</tbody>-->
                             
                         </table>
                     </div>
@@ -103,6 +103,7 @@
 
 <!--Custom JavaScript -->
 <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="{% static 'js/lib/datatables/datatables.min.js' %}"></script>
 
 <script src="{% static 'js/manage_user.js' %}"></script>
 
