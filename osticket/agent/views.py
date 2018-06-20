@@ -1,6 +1,7 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -29,14 +30,9 @@ def home_admin(request):
         tk_processing = Tickets.objects.filter(Q(status=1) | Q(status=2)).count()
         tk_done = Tickets.objects.filter(status=3).count()
         tk_open = Tickets.objects.filter(status=0).count()
-        list_other = {}
-        tk = Tickets.objects.all()
-        for tk in tk:
-            list_other[tk.id] = list_hd(tk.id)
-        content = {'ticket': Tickets.objects.all(),
+        content = {'ticket': Tickets.objects.filter().order_by("-id"),
                    'handler': TicketAgent.objects.all(),
                    'admin': admin,
-                   'list_other': list_other.items(),
                    'today': timezone.now().date(),
                    'agent': agent,
                    'agent_name': mark_safe(json.dumps(admin.username)),
@@ -122,16 +118,46 @@ def home_admin(request):
                                                  action=action,
                                                  date=timezone.now().date(),
                                                  time=timezone.now().time())
-            
         return render(request, 'agent/home_admin.html', content)
     else:
         return redirect('/')
 
 
+def home_admin_data(request):
+    if request.session.has_key('admin'):
+        tk = Tickets.objects.filter().order_by("-id")
+        data = []
+        for tk in tk:
+            if tk.status == 0:
+                status = r'<span class ="label label-danger" id="leader'+str(tk.id)+'"> pending</span>'
+                handler = '<p id="hd' + str(tk.id) + '">Nobody</p>'
+            else:
+                if tk.status == 1:
+                    status = r'<span class ="label label-warning" id="leader'+str(tk.id)+'"> processing </span>'
+                elif tk.status == 2:
+                    status = r'<span class ="label label-success" id="leader'+str(tk.id)+'"> done </span>'
+                else:
+                    status = r'<span class ="label label-default" id="leader'+str(tk.id)+'"> closed </span>'
+                handler = '<p id="hd' + str(tk.id) + '">'
+                for t in TicketAgent.objects.filter(ticketid=tk.id):
+                    handler += t.agentid.username + "<br>"
+                handler += '</p>'
+            id = r'''<button type="button" class="btn" data-toggle="modal" data-target="#'''+str(tk.id)+'''content">'''+str(tk.id)+'''</button>'''
+            sender = '<p id="sender' + str(tk.id) + '">' + tk.sender.username + '</p>'
+            option = r'''<button type="button" class="btn btn-primary" id="'''+str(tk.id)+'''" data-toggle="tooltip" title="open/close"><i class="fa fa-power-off"></i></button>
+            <button type="button" class="btn btn-danger" id="'''+str(tk.id)+'''" data-toggle="tooltip" title="delete"><i class="fa fa-trash-o"></i></button>
+            <button type="button" class="btn btn-info" data-title="forward" id="'''+str(tk.id)+'''"data-toggle="modal" data-target="#forward_modal"><i class="fa fa-share-square-o" data-toggle="tooltip" title="forward" ></i></button>
+            <a type="button" target=_blank class="btn btn-warning" href="/agent/history/'''+str(tk.id)+ '''" data-toggle="tooltip" title="history"><i class="fa fa-history"></i></a>'''
+            data.append([id, tk.title, tk.topicid.name, sender, status, handler, option])
+            ticket = {"data": data}
+            tickets = json.loads(json.dumps(ticket))
+        return JsonResponse(tickets, safe=False)
+
+
 def manager_topic(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
-        content = {'topic': Topics.objects.all(), 'admin': admin,'today': timezone.now().date(), 'agent_name': mark_safe(json.dumps(admin.username)),
+        content = {'topic': Topics.objects.all(), 'admin': admin, 'today': timezone.now().date(), 'agent_name': mark_safe(json.dumps(admin.username)),
                    'fullname': mark_safe(json.dumps(admin.fullname))}
         if request.method == 'POST':
             if 'close' in request.POST:
@@ -498,7 +524,6 @@ def history(request,id):
 def history_all_ticket(request, date, date2):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(admin=1)
-        # time = timezone.now().time()
         tdate1 = timezone.datetime.strptime(date, "%Y-%m-%d").date()
         tdate2 = timezone.datetime.strptime(date2, "%Y-%m-%d").date()
         # nday = str(timezone.datetime.combine(tdate2, time) - timezone.datetime.combine(tdate1, time))[:-13]

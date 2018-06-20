@@ -1,9 +1,17 @@
 $(document).ready(function(){
     var table = $('#list_ticket_leader').DataTable({
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-            "order": [[ 0, "desc" ]],
-            "displayLength": 25,
-        });
+        "ajax": {
+            "type": "GET",
+            "url": location.href +"data/",
+            "contentType": "application/json; charset=utf-8",
+            "data": function(result){
+                return JSON.stringify(result);
+            }
+        },
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "order": [[ 0, "desc" ]],
+        "displayLength": 25,
+    });
     $("#list_ticket_leader").on('click', '.btn-primary', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
@@ -21,9 +29,7 @@ $(document).ready(function(){
                 url:location.href,
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
-//                     window.location.reload();
-//                    $('#list_ticket_leader').load(' #list_ticket_leader');
-                    $('#list_ticket_leader').load(' #list_ticket_leader');
+                    $('#list_ticket_leader').DataTable().ajax.reload();
                     if (stt != 'closed'){
                         array2.push('admin_close_ticket');
                         array2.push(id);
@@ -36,8 +42,8 @@ $(document).ready(function(){
                         var Socket1 = new WebSocket(
                         'ws://' + window.location.host +
                         '/ws/user/' + sender + '/');
-        
-                        message = 'Ticket '+id+' is closed by admin!' 
+
+                        message = 'Ticket '+id+' is closed by admin!'
                         Socket1.onopen = function (event) {
                             setTimeout(function(){
                                 Socket1.send(JSON.stringify({
@@ -58,8 +64,8 @@ $(document).ready(function(){
                         var Socket1 = new WebSocket(
                         'ws://' + window.location.host +
                         '/ws/user/' + sender + '/');
-        
-                        message = 'Ticket '+id+' is opened by admin!' 
+
+                        message = 'Ticket '+id+' is opened by admin!'
                         Socket1.onopen = function (event) {
                             setTimeout(function(){
                                 Socket1.send(JSON.stringify({
@@ -100,7 +106,7 @@ $(document).ready(function(){
                         'time' : date,
                     }));
 
-                    $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+                    $('#list_ticket_leader').DataTable().ajax.reload();
                     var sender = $('#sender'+id).html();
                     var Socket1 = new WebSocket(
                     'ws://' + window.location.host +
@@ -141,7 +147,7 @@ $(document).ready(function(){
             data: {'list_agent[]': JSON.stringify(list_agent),'csrfmiddlewaretoken':token, 'ticketid': id},
             success: function(){
                 document.getElementById("forward_ticket_close").click();
-                $("#list_ticket_leader").load(location.href + " #list_ticket_leader");
+                $('#list_ticket_leader').DataTable().ajax.reload();
                 list_agent.push('leader_forward');
                 list_agent.push(id);
                 group_agent_Socket.send(JSON.stringify({
