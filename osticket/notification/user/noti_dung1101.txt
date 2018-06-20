@@ -29,3 +29,4 @@
 =======
 <a href="/user/"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>Ticket 92 is opened by admin!</p><small><i class="fa fa-clock-o"></i>5:38 PM</small></div></a>
 >>>>>>> cfe2445cc381ef3a0bd00d7f281bd47b29a59fdb
+<a href="/user/"><div style="float:left;width:15%" class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div style="float:right; width:80%"><p>Ticket 92 is re-process!</p><small><i class="fa fa-clock-o"></i>2:54 PM</small></div></a>

@@ -27,3 +27,5 @@
 <a href="/agent/closed_ticket"><div class="btn btn-success btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">Leader have just closed ticket 101</span> <span class="time">5:37 PM</span></div></a>
 <a href="/agent/closed_ticket"><div class="btn btn-success btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">Leader have just closed ticket 91</span> <span class="time">5:39 PM</span></div></a>
 >>>>>>> cfe2445cc381ef3a0bd00d7f281bd47b29a59fdb
+<a href="/agent/inbox"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span> <span class="time">2:55 PM</span></div></a>
+<a href="/agent/inbox"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span> <span class="time">2:55 PM</span></div></a>

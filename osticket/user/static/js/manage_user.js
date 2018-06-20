@@ -1,4 +1,17 @@
 $(document).ready(function(){
+    var table = $('#list_user').DataTable({
+        "ajax": {
+            "type": "GET",
+            "url": location.href +"_data",
+            "contentType": "application/json; charset=utf-8",
+            "data": function(result){
+                return JSON.stringify(result);
+            }
+        },
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "order": [[ 0, "desc" ]],
+        "displayLength": 25,
+    });
     $("#info_user").on('click', '.unblock', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
@@ -11,8 +24,7 @@ $(document).ready(function(){
                     //  $("body .stt"+id).empty();
                     //  $("body #stt"+id).load(location.href + " #stt"+id);
                     //  $("body #button"+id).load(location.href + " #button"+id);
-                    $("body #example23").load(location.href + " #example23");
-                    load_js();
+                    $('#list_user').DataTable().ajax.reload()
                  }
              });
         }
@@ -30,8 +42,7 @@ $(document).ready(function(){
                     // $("body #stt"+id).empty();
                     // $("body #stt"+id).load(location.href + " #stt"+id);
                     // $("body #button"+id).load(location.href + " #button"+id);
-                    $("body #example23").load(location.href + " #example23");
-                    load_js();
+                    $('#list_user').DataTable().ajax.reload()
                  }
              });
         }

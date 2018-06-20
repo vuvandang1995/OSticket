@@ -66,3 +66,4 @@
 =======
 <a href="/agent/processing_ticket"><div class="btn btn-warning btn-circle m-r-10"><i class="fa fa-folder-open"></i></div><div class="mail-contnet"><span class="mail-desc">Leader have just opend ticket 92</span> <span class="time">5:38 PM</span></div></a>
 >>>>>>> cfe2445cc381ef3a0bd00d7f281bd47b29a59fdb
+<a href="/agent/inbox"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span> <span class="time">4:33 PM</span></div></a>
