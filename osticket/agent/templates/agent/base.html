@@ -253,10 +253,6 @@
     }
 
 
-    
-
-
-
     group_agent_Socket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         var message = data['message'];
@@ -338,7 +334,8 @@
 
                     
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("#list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -368,7 +365,8 @@
 
                     
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -383,7 +381,7 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
+                        $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
                     }, 2000);
                 }
                 
@@ -399,7 +397,7 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
                 
@@ -415,7 +413,7 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -432,7 +430,7 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -447,19 +445,21 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
                 if (check_exits(agentName, message) && check_exits('cancle_forward', message)) {
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("body #list_ticket_forward").load(location.href + " #list_ticket_forward");
+                        $("body #list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
                     }, 1000);
                 }
 
                 if (check_exits(agentName, message) && check_exits('cancle_add', message)) {
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("body #list_ticket_add").load(location.href + " #list_ticket_add");
+                        $("body #list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
                     }, 1000);
                 }
 
@@ -476,7 +476,8 @@
 
                     
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("#example23").load(location.href + " #example23");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -490,7 +491,7 @@
                     x.play();
 
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 

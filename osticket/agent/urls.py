@@ -6,7 +6,7 @@ from . import views
 app_name = 'agent'
 urlpatterns = [
     path('admin/', views.home_admin, name='home_admin'),
-    path('admin_data/', views.home_admin_data, name='home_admin_data'),
+    path('admin/data', views.home_admin_data, name='home_admin_data'),
     path('topic/', views.manager_topic, name='manager_topic'),
     path('agent/', views.manager_agent, name='manager_agent'),
     path('', views.home_agent, name="index"),
