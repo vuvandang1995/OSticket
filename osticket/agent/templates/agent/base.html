@@ -13,10 +13,6 @@
         <title>Agent</title>
         <!-- Bootstrap Core CSS -->
         <link rel="stylesheet" href="{% static 'css/lib/bootstrap/bootstrap.min.css' %}" type="text/css">
-        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"> -->
-        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script> -->
-        <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script> -->
         <!-- Custom CSS -->
     
         <link rel="stylesheet" href="{% static 'css/lib/calendar2/semantic.ui.min.css' %}" type="text/css">
@@ -70,71 +66,12 @@
                         <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted  " href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
                         <li class="nav-item m-l-10"> <a class="nav-link sidebartoggler hidden-sm-down text-muted  " href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
                         <!-- Messages -->
-                        <li class="nav-item dropdown mega-dropdown"> <a class="nav-link dropdown-toggle text-muted  " href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-th-large"></i></a>
-                            <div class="dropdown-menu animated zoomIn">
-                                <ul class="mega-dropdown-menu row">
-
-
-                                    <li class="col-lg-3  m-b-30">
-                                        <h4 class="m-b-20">CONTACT US</h4>
-                                        <!-- Contact -->
-                                        <form>
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" id="exampleInputname1" placeholder="Enter Name"> </div>
-                                            <div class="form-group">
-                                                <input type="email" class="form-control" placeholder="Enter email"> </div>
-                                            <div class="form-group">
-                                                <textarea class="form-control" id="exampleTextarea" rows="3" placeholder="Message"></textarea>
-                                            </div>
-                                            <button type="submit" class="btn btn-info">Submit</button>
-                                        </form>
-                                    </li>
-                                    <li class="col-lg-3 col-xlg-3 m-b-30">
-                                        <h4 class="m-b-20">List style</h4>
-                                        <!-- List style -->
-                                        <ul class="list-style-none">
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="col-lg-3 col-xlg-3 m-b-30">
-                                        <h4 class="m-b-20">List style</h4>
-                                        <!-- List style -->
-                                        <ul class="list-style-none">
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="col-lg-3 col-xlg-3 m-b-30">
-                                        <h4 class="m-b-20">List style</h4>
-                                        <!-- List style -->
-                                        <ul class="list-style-none">
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> This Is Another Link</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
+                       
                         <!-- End Messages -->
                     </ul>
                     <!-- User profile and search -->
                     <ul class="navbar-nav my-lg-0">
 
-                        <!-- Search -->
-                        <li class="nav-item hidden-sm-down search-box"> <a class="nav-link hidden-sm-down text-muted  " href="javascript:void(0)"><i class="ti-search"></i></a>
-                            <form class="app-search">
-                                <input type="text" class="form-control" placeholder="Search here"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
-                        </li>
                         <!-- Comment -->
                         <li class="nav-item dropdown notify_" >
                             <a class="nav-link dropdown-toggle text-muted " onclick="notiFunction()" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -253,9 +190,10 @@
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
         minutes = minutes < 10 ? '0'+minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
+        var strTime = hours + ':' + minutes + ' ' + ampm + ' ' +date.getDate()+'/'+date.getMonth()+'/'+date.getFullYear();
         return strTime;
     }
+
 
     var noti_noti = {{noti_noti}};
     var noti_chat = {{noti_chat}};
@@ -313,10 +251,6 @@
             }
         return x;
     }
-
-
-    
-
 
 
     group_agent_Socket.onmessage = function(e) {
@@ -400,7 +334,8 @@
 
                     
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("#list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -430,7 +365,8 @@
 
                     
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -445,7 +381,7 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
+                        $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
                     }, 2000);
                 }
                 
@@ -461,7 +397,7 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
                 
@@ -477,7 +413,7 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -494,7 +430,7 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -509,19 +445,21 @@
 
                     
                     setTimeout(function(){
-                        $("body #list_ticket_processing").load(location.href + " #list_ticket_processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
                 if (check_exits(agentName, message) && check_exits('cancle_forward', message)) {
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("body #list_ticket_forward").load(location.href + " #list_ticket_forward");
+                        $("body #list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
                     }, 1000);
                 }
 
                 if (check_exits(agentName, message) && check_exits('cancle_add', message)) {
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("body #list_ticket_add").load(location.href + " #list_ticket_add");
+                        $("body #list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
                     }, 1000);
                 }
 
@@ -538,7 +476,8 @@
 
                     
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("#example23").load(location.href + " #example23");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -552,7 +491,7 @@
                     x.play();
 
                     setTimeout(function(){
-                        $("body #info_user").load(location.href + " #info_user");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
 
@@ -719,47 +658,6 @@
     })
 
 
-    /*function load_js()
-   {
-      var head= document.getElementsByTagName('head')[1];
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/datatables.min.js' %}";
-      head.appendChild(script);
-
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js' %}";
-      head.appendChild(script);
-
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js' %}";
-      head.appendChild(script);
-
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js' %}";
-      head.appendChild(script);
-
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js' %}";
-      head.appendChild(script);
-
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js' %}";
-      head.appendChild(script);
-
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js' %}";
-      head.appendChild(script);
-
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js' %}";
-      head.appendChild(script);
-
-      var script= document.createElement('script');
-      script.src= "{% static 'js/lib/datatables/datatables-init.js' %}";
-      head.appendChild(script);
-      alert('ok')
-   }*/
-    
 </script>
 </body>
 </html>

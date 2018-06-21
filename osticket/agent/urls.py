@@ -23,5 +23,4 @@ urlpatterns = [
     path('manage_user/data', views.manage_user_data, name="manage_user_data"),
     path('profile', views.profile, name="profile"),
     path('logout_admin/', views.logout_admin, name='logout_admin'),
-    url(r'^ajax/get_data/(?P<name>[^/]+)/$', views.get_data, name='get_data'),
 ]

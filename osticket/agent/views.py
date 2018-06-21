@@ -700,15 +700,17 @@ def outbox(request):
         if request.method == 'POST':
             if 'forward' in request.POST:
                 fwticket = ForwardTickets.objects.get(id=request.POST['tkid'])
+                fwticket.delete()
             elif 'add' in request.POST:
                 fwticket = AddAgents.objects.get(id=request.POST['tkid'])
+                fwticket.delete()
             elif 'noti_noti' in request.POST:
                 agent.noti_noti = 0
                 agent.save()
             elif 'noti_chat' in request.POST:
                 agent.noti_chat = 0
                 agent.save()
-            fwticket.delete()
+            
         return render(request,'agent/outbox.html',content)
     else:
         return redirect("/")

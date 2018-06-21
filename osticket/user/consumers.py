@@ -93,21 +93,24 @@ class UserConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
+        dem = 0
         try:
             f = r'notification/user/'+self.room_group_name+'.txt'
             file = open(f, 'r')
             for line in file:
-                if '*&*%^chat' in line:
-                    msg = line.split('*&*%^chat')[0]
-                    self.send(text_data=json.dumps({
-                        'message': msg,
-                        'type' : 're-noti-chat'
-                    }))
-                else:
-                    self.send(text_data=json.dumps({
-                        'message': line,
-                        'type' : 're-noti'
-                    }))
+                dem = dem + 1
+                if dem < 15:
+                    if '*&*%^chat' in line:
+                        msg = line.split('*&*%^chat')[0]
+                        self.send(text_data=json.dumps({
+                            'message': msg,
+                            'type' : 're-noti-chat'
+                        }))
+                    else:
+                        self.send(text_data=json.dumps({
+                            'message': line,
+                            'type' : 're-noti'
+                        }))
         except:
             pass
       
@@ -195,8 +198,6 @@ class UserConsumer(WebsocketConsumer):
         
                 
         if 'new+chat' in message:
-            print(message)
-
             tkid = message[0]
             try:
                 f = r'notification/user/'+self.room_group_name+'.txt'
@@ -228,7 +229,6 @@ class UserConsumer(WebsocketConsumer):
                 'noti_noti': u.noti_noti
             }
         )
-        print(message)
         
         
 
@@ -263,22 +263,24 @@ class AgentConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
+        dem = 0
         try:
-            
             f = r'notification/agent/noti_'+agentName+'.txt'
             file = open(f, 'r')
             for line in file:
-                if '*&*%^chat' in line:
-                    msg = line.split('*&*%^chat')[0]
-                    self.send(text_data=json.dumps({
-                        'message': msg,
-                        'type' : 're-noti-chat'
-                    }))
-                else:
-                    self.send(text_data=json.dumps({
-                        'message': line,
-                        'type' : 're-noti'
-                    }))
+                dem = dem + 1
+                if dem < 15:
+                    if '*&*%^chat' in line:
+                        msg = line.split('*&*%^chat')[0]
+                        self.send(text_data=json.dumps({
+                            'message': msg,
+                            'type' : 're-noti-chat'
+                        }))
+                    else:
+                        self.send(text_data=json.dumps({
+                            'message': line,
+                            'type' : 're-noti'
+                        }))
         except:
             pass
 
@@ -346,8 +348,8 @@ class AgentConsumer(WebsocketConsumer):
                 ag.save()
                 
         if 'new_chat' in message:
-            print(message)
             list_agent = message
+            print(list_agent)
             tkid = message[0]
             user = message[1].split('_')[0]
             fullname = message[2]
