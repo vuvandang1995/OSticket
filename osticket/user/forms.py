@@ -100,6 +100,26 @@ class UserResetForm(forms.Form):
             raise forms.ValidationError("Email isn't registered")
         return uemail
 
+# form reset mật khẩu cho Agent
+class AgentResetForm(forms.Form):
+    aemail = forms.CharField(widget=forms.TextInput(
+        attrs={               
+            'class': 'form-control',
+            'placeholder': 'email',
+        }
+    ))
+
+    # check email xem đã tồn tại chưa, đúng định dạng không
+    def clean_aemail(self):
+        aemail = self.cleaned_data['aemail']
+        try:
+            validate_email(aemail)
+        except:
+            raise forms.ValidationError("Email is invalid")
+        if get_agent_email(aemail) is None:
+            raise forms.ValidationError("Email isn't registered")
+        return aemail
+
 
 # form thay đổi mật khẩu mới khi User bấm vào link xác nhận trong email
 class ResetForm(forms.Form):
@@ -175,6 +195,21 @@ class AgentLoginForm(forms.Form):
             'placeholder': 'User name',
         }
     ))
+
+    def clean_agentpass(self):
+        agentpass = self.cleaned_data['agentpass']
+        return agentpass
+
+    def clean_agentname(self):
+        if 'agentpass' in self.cleaned_data:
+            agentname = self.cleaned_data['agentname']
+            agentpass = self.cleaned_data['agentpass']
+            if authenticate_agent(agentname=agentname, agentpass=agentpass) is None:
+                raise forms.ValidationError('Account is not exist!')
+            ag = get_agent(agentname)
+            if ag.status == 0:
+                raise forms.ValidationError('Your account has been blocked or inactive!')
+        return agentname
 
 
 # form tạo tịcket
