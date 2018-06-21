@@ -175,9 +175,21 @@ def get_user_email(email1):
     except Users.DoesNotExist:
         return None
 
+def get_agent_email(email2):
+    try:
+        return Agents.objects.get(email=email2)
+    except Agents.DoesNotExist:
+        return None
+
 
 def active(user):
     if user.status == 0:
+        return False
+    else:
+        return True
+
+def agactive(ag):
+    if ag.status == 0:
         return False
     else:
         return True

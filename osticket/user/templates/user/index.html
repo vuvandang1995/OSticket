@@ -87,6 +87,7 @@
               </div>
 
                 <button type="submit" class="btn btn-primary" value="OK" id="login">Login</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="modal" data-target="#id04">Forgot password ?</button>
                 <br>
                 <br>
                 <font color="red" size="4">{{ mess }}</font>
@@ -157,6 +158,27 @@
                     {% csrf_token %}
                     <label for="uname"><b>Your email</b></label><br/>
                     <input class="form-control" type="text" placeholder="Enter Email" name="uemail" required><br/>
+                    <div class="invalid-msg"></div><br/>
+                    <button type="submit" class="btn btn-primary" value="OK" id="uemail" >Reset</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="id04" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Forgot password</h4>
+            </div>
+            <div class="modal-body form-group">
+                <form method="POST">
+                    {% csrf_token %}
+                    <label for="uname"><b>Your email</b></label><br/>
+                    <input class="form-control" type="text" placeholder="Enter Email" name="aemail" required><br/>
                     <div class="invalid-msg"></div><br/>
                     <button type="submit" class="btn btn-primary" value="OK" id="uemail" >Reset</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -5,7 +5,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
-from .tokens import account_activation_token
+from .tokens import account_activation_token, account_activation_token1
 from django.core.mail import EmailMessage
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.utils.safestring import mark_safe
@@ -262,15 +262,39 @@ def login_user(request):
                 form = UserResetForm(request.POST)
                 if form.is_valid():
                     to_email = form.cleaned_data['uemail']
-                    # current_site = get_current_site(request)
+                    current_site = get_current_site(request)
                     user = get_user_email(to_email)
                     mail_subject = 'Reset password your account.'
                     message = render_to_string('user/resetpwd.html', {
                         'user': user,
-                        # 'domain': current_site.domain,
-                        'domain': "113.190.232.90:8892",
+                        'domain': current_site.domain,
+                        # 'domain': "113.190.232.90:8892",
                         'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
                         'token':account_activation_token.make_token(user),
+                    })
+                    email = EmailMessage(
+                                mail_subject, message, to=[to_email]
+                    )
+                    email.send()
+                    return render(request, 'user/index.html',{'mess': mess_resetpwd_ok})
+                else:
+                    error = ''
+                    for field in form:
+                        error += field.errors
+                    return render(request, 'user/index.html',{'mess': mess_resetpwd_error, 'error':error})
+            elif 'aemail' in request.POST:
+                form = AgentResetForm(request.POST)
+                if form.is_valid():
+                    to_email = form.cleaned_data['aemail']
+                    current_site = get_current_site(request)
+                    user = get_agent_email(to_email)
+                    mail_subject = 'Reset password your account.'
+                    message = render_to_string('user/agresetpwd.html', {
+                        'user': user,
+                        'domain': current_site.domain,
+                        # 'domain': "113.190.232.90:8892",
+                        'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
+                        'token':account_activation_token1.make_token(user),
                     })
                     email = EmailMessage(
                                 mail_subject, message, to=[to_email]
@@ -286,13 +310,13 @@ def login_user(request):
             elif 'fullname' and 'email' and 'password2' in request.POST:
                 form = RegistrationForm(request.POST)
                 if form.is_valid():
-                    # current_site = get_current_site(request)
+                    current_site = get_current_site(request)
                     user = form.save()
                     mail_subject = 'Activate your blog account.'
                     message = render_to_string('user/acc_active_email.html', {
                         'user': user,
-                        # 'domain': current_site.domain,
-                        'domain': "113.190.232.90:8892",
+                        'domain': current_site.domain,
+                        # 'domain': "113.190.232.90:8892",
                         'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
                         'token':account_activation_token.make_token(user),
                     })
@@ -334,7 +358,6 @@ def login_user(request):
                         # return redirect('/submitadmin')
                     elif authenticate_agent(agentname=agentname, agentpass=agentpass) == 0:
                         ag = Agents.objects.get(username=agentname)
-                        print(ag.status)
                         if ag.status == 1:
                             request.session['agent'] = agentname
                             return redirect('/agent')
@@ -391,6 +414,27 @@ def resetpwd(request, uidb64, token):
             if form.is_valid():
                 user.password = form.cleaned_data
                 user.save()
+                return redirect('/')
+            else:
+                return redirect('/')
+        return render(request, 'user/formresetpass.html', {})
+    else:
+        return HttpResponse('Activation link is invalid!')
+
+
+def agresetpwd(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        ag = Agents.objects.get(id=uid)
+    except(TypeError, ValueError, OverflowError, Agents.DoesNotExist):
+        ag = None
+    print(uid)
+    if ag is not None and account_activation_token1.check_token(ag, token):
+        if request.method == 'POST':
+            form = ResetForm(request.POST)
+            if form.is_valid():
+                ag.password = form.cleaned_data
+                ag.save()
                 return redirect('/')
             else:
                 return redirect('/')
