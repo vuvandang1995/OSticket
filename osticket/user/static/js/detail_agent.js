@@ -51,7 +51,7 @@ $(document).ready(function(){
         var agentid = $("input[name=agentid]").val();
         var pwd1 = $("input[name=password]").val();
         var pwd2 = $("input[name=password2]").val();
-        var authen_pwd = $("span[name=pwd_current]").attr('id');
+        var authen_pwd = $("i[name=pwd_current]").attr('id');
         
         if (fullname == 'no'){
             if (pwd_current == authen_pwd){

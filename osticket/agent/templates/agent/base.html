@@ -445,6 +445,11 @@
 
                     
                     setTimeout(function(){
+                        $("#example23").load(location.href + " #example23");
+                        $("#list_ticket_add_outbox").load(location.href + " #list_ticket_add_outbox");
+                        $("#list_ticket_forward_outbox").load(location.href + " #list_ticket_forward_outbox");
+                        $("body #list_ticket_forward").load(location.href + " #list_ticket_forward");
+                        $("body #list_ticket_add").load(location.href + " #list_ticket_add");
                         $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
@@ -483,6 +488,35 @@
 
                 if (message.includes(agentName+'+') && message.includes('give_up')) {
                     var message1 = message[0]+' just have given up ticket no. '+message[1];
+                    var href = "{% url 'agent:processing_ticket' %}";
+                    var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-minus-circle"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+                    setTimeout(function(){
+                        $("#list_ticket_processing").DataTable().ajax.reload();
+                    }, 2000);
+                }
+
+
+                if (message.includes(agentName+'+') && message[2].includes(' is done!')) {
+                    var message1 = message[0]+' just have done ticket no. '+message[1];
+                    var href = "{% url 'agent:processing_ticket' %}";
+                    var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-minus-circle"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+                    setTimeout(function(){
+                        $("#list_ticket_processing").DataTable().ajax.reload();
+                    }, 2000);
+                }
+
+                if (message.includes(agentName+'+') && message[2].includes(' is re-process!')) {
+                    var message1 = message[0]+' just have process ticket no. '+message[1];
                     var href = "{% url 'agent:processing_ticket' %}";
                     var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-minus-circle"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);

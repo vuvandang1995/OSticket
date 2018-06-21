@@ -128,6 +128,24 @@ $(document).ready(function(){
                              Socket1.close();
                          }, 1000);
                      };
+
+                    // con thong bao toi agent khac, load lai trang cua agent va admin
+                    list_agent = [];
+                    var date = formatAMPM(new Date());
+                    var array = $('body #hd'+id).html().split("<br>");
+                    for (i = 0; i < array.length-1; i++) {
+                        if (agentName !=  array[i].replace(/\s/g,'')){
+                            list_agent.push(array[i].replace(/\s/g,'')+'+');
+                        }
+                    }
+
+                    list_agent.unshift(message);
+                    list_agent.unshift(id);
+                    list_agent.unshift(agentName);
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : list_agent,
+                        'time' : date
+                    }));
                          
                  }
              });
@@ -163,6 +181,24 @@ $(document).ready(function(){
                              Socket1.close();
                          }, 1000);
                      };
+
+                     // con thong bao toi agent khac, load lai trang cua agent va admin
+                    list_agent = [];
+                    var date = formatAMPM(new Date());
+                    var array = $('body #hd'+id).html().split("<br>");
+                    for (i = 0; i < array.length-1; i++) {
+                        if (agentName !=  array[i].replace(/\s/g,'')){
+                            list_agent.push(array[i].replace(/\s/g,'')+'+');
+                        }
+                    }
+
+                    list_agent.unshift(message);
+                    list_agent.unshift(id);
+                    list_agent.unshift(agentName);
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : list_agent,
+                        'time' : date
+                    }));
                          
                  }
              });
@@ -200,7 +236,7 @@ $(document).ready(function(){
                      // con thong bao toi agent khac, load lai trang cua agent va admin
                      list_agent = [];
                      var date = formatAMPM(new Date());
-                     var array = $('body #hd'+id).html().split(",");
+                     var array = $('body #hd'+id).html().split("<br>");
                      for (i = 0; i < array.length-1; i++) {
                          if (agentName !=  array[i].replace(/\s/g,'')){
                              list_agent.push(array[i].replace(/\s/g,'')+'+');

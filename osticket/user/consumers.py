@@ -131,6 +131,7 @@ class UserConsumer(WebsocketConsumer):
         time = text_data_json['time']
         u = Users.objects.get(username=self.room_group_name.split('_')[1])
         
+        print(message)
 
 
         if 'is done!' in message:
@@ -298,6 +299,8 @@ class AgentConsumer(WebsocketConsumer):
         # print(message)
         # Send message to room group
         time = text_data_json['time']
+        print(message)
+
         if 'date' in time:
             print(message)
             agent = Agents.objects.get(username=self.agent_name)
@@ -328,6 +331,8 @@ class AgentConsumer(WebsocketConsumer):
                     'time' : time,
                 }
             )
+        
+
 
         
         
