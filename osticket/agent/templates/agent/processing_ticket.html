@@ -22,85 +22,84 @@
                 <div class="card">
                     <div class="card-title">
                         <h4>Processing tickets </h4>
-
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover " id="list_ticket_processing">
+                            <table style="width:100%;" class="display nowrap table table-hover table-striped table-bordered" id="list_ticket_processing">
                                 <thead>
                                     <tr>
-                                        <th width="10%">ID</th>
-                                        <th width="25%">Title</th>
-                                        <th width="20%">Handler</th>
-                                        <th width="15%">Status</th>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Handler</th>
+                                        <th>Status</th>
                                         <th>Option</th>
                                     </tr>
                                 </thead>
                             </table>
-                            {% for tk in ticket %}
-                                <div class="modal" id="{{tk.id}}content" role="dialog">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Ticket no.{{tk.id}}</h4>
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <div class="modal-body form-group">
-                                                <label>Owner:</label>
-                                                <p><b>{{tk.sender.fullname}}</b></p><br>
-                                                <label>Title:</label>
-                                                <p><b>{{tk.title}}</b></p><br>
-                                                <label>Topic:</label>
-                                                <p><b>{{tk.topicid.name}}</b></p><br>
-                                                <label>Content:</label>
-                                                <p><b>{{tk.content}}</b></p><br>
-                                                <label>Date Start:</label>
-                                                <p><b>{{ tk.datestart}}</b></p><br>
-                                                <label>Date End:</label>
-                                                <p><b>{{tk.dateend}}</b></p>
-                                                {% if tk.attach != '' %}
-                                                <label>Attach:</label>
-                                                <img src="/media/{{tk.attach}}" alt="none" style="width:100%;height:100%;">
-                                                    {% endif %}
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor%}
-                            <div class="modal forward-add" id="forward_add" >
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title" id="title"></h4>
-                                        </div>
-                                        <div class="modal-body form-group">
-                                            <label><b>Content</b></label>
-                                            <br />
-                                            <textarea class="form-control" type="text" placeholder="Enter content" id="content" required></textarea>
-                                            <br />
-                                            <label><b>Receiver</b></label>
-                                            <br />
-                                            {% for agent in agent %}
-                                            <div id="{{ agent.username }}">
-                                                <input class="inputText" type="checkbox" name="{{ agent.username }}" > {{ agent.username }} <br>
-                                            </div>
-                                            {% endfor%}
-                                            <br>
-                                            <input type="hidden" name="ticketid" value="">
-                                            <button type="submit" class="btn btn-info" value="OK" id="fw_add"><span class="glyphicon glyphicon-share"></span>Submit</button>
-                                            <button type="button" class="btn btn-default" data-dismiss="modal" id="close_fw_add">Close</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
        </div>
+    </div>
+</div>
+{% for tk in ticket %}
+    <div class="modal" id="{{tk.id}}content" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ticket no.{{tk.id}}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body form-group">
+                    <label>Owner:</label>
+                    <p><b>{{tk.sender.fullname}}</b></p><br>
+                    <label>Title:</label>
+                    <p><b>{{tk.title}}</b></p><br>
+                    <label>Topic:</label>
+                    <p><b>{{tk.topicid.name}}</b></p><br>
+                    <label>Content:</label>
+                    <p><b>{{tk.content}}</b></p><br>
+                    <label>Date Start:</label>
+                    <p><b>{{ tk.datestart}}</b></p><br>
+                    <label>Date End:</label>
+                    <p><b>{{tk.dateend}}</b></p>
+                    {% if tk.attach != '' %}
+                    <label>Attach:</label>
+                    <img src="/media/{{tk.attach}}" alt="none" style="width:100%;height:100%;">
+                        {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor%}
+<div class="modal forward-add" id="forward_add" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="title"></h4>
+            </div>
+            <div class="modal-body form-group">
+                <label><b>Content</b></label>
+                <br />
+                <textarea class="form-control" type="text" placeholder="Enter content" id="content" required></textarea>
+                <br />
+                <label><b>Receiver</b></label>
+                <br />
+                {% for agent in agent %}
+                <div id="{{ agent.username }}">
+                    <input class="inputText" type="checkbox" name="{{ agent.username }}" > {{ agent.username }} <br>
+                </div>
+                {% endfor%}
+                <br>
+                <input type="hidden" name="ticketid" value="">
+                <button type="submit" class="btn btn-info" value="OK" id="fw_add"><span class="glyphicon glyphicon-share"></span>Submit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="close_fw_add">Close</button>
+            </div>
+        </div>
     </div>
 </div>
 <script src="{% static 'js/lib/jquery/jquery.min.js' %}"></script>
