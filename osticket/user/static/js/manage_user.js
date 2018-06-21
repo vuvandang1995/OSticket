@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var table = $('#list_user').DataTable({
+    $('#list_user').DataTable({
         "ajax": {
             "type": "GET",
             "url": location.href +"data",

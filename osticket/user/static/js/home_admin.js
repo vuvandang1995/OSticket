@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var table = $('#list_ticket_leader').DataTable({
+    $('#list_ticket_leader').DataTable({
         "ajax": {
             "type": "GET",
             "url": location.href +"data",

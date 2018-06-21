@@ -160,16 +160,16 @@
             </div>
             <!-- End Sidebar scroll-->
         </div>
-
-<div id="info_user">
-{% csrf_token %}
-{% block content %}
-{% endblock %}
-</div>
+        <div id="info_user">
+        {% csrf_token %}
+        {% block content %}
+        {% endblock %}
+        </div>
+    </div>
 <audio id="myAudio">
     <source src="{% static 'ping.mp3' %}" type="audio/mpeg">
 </audio>
-
+<script src="{% static 'js/lib/datatables/datatables.min.js' %}"></script>
 <script>
     var x = document.getElementById("myAudio"); 
     var fullname = {{ fullname }};
