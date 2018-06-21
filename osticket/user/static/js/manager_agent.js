@@ -10,7 +10,7 @@ $(document).ready(function(){
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     // window.location.reload();
-                    $("#list_agent").load(location.href + " #list_agent");
+                    $("body #list_agent").load(location.href + " #list_agent");
                 }
            });
         }
@@ -28,7 +28,7 @@ $(document).ready(function(){
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     // window.location.reload();
-                    $("#list_agent").load(location.href + " #list_agent");
+                    $("body #list_agent").load(location.href + " #list_agent");
                 }
            });
         }
@@ -48,7 +48,7 @@ $(document).ready(function(){
             data: {'add_agent': fullname, 'email': email, 'username': username, 'phone': phone, 'csrfmiddlewaretoken':token, 'agentid': agentid, 'password': password},
             success: function(){
                 // window.location.reload();
-                $("#list_agent").load(location.href + " #list_agent");
+                $("body #list_agent").load(location.href + " #list_agent");
                 document.getElementById("add_agent_close").click();
             }
         });

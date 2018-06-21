@@ -252,6 +252,12 @@
                     }, 2000);
                 }
 
+                if (message ==  'process'){
+                    setTimeout(function(){
+                        $("#list_tk_user").DataTable().ajax.reload();
+                    }, 2000);
+                }
+
                 if (message.includes('new+chat')){
                     var tkid = message[0];
                     if ($('body .chat'+tkid).length){

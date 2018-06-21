@@ -16,7 +16,7 @@ $(document).ready(function(){
                  'ws://' + window.location.host +
                  '/ws/user/' + userName + '/');
 
-             message = 'give up' 
+             message = 'process' 
              Socket1.onopen = function (event) {
                  setTimeout(function(){
                      Socket1.send(JSON.stringify({
@@ -32,7 +32,7 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'forward': 'forward', 'agree': 'agree'},
                  success: function(){
                      $("body #info_user").load(location.href + " #info_user");
-                     Socket1.close();
+                    //  Socket1.close();
                  }
              });
         }
@@ -79,7 +79,7 @@ $(document).ready(function(){
                  'ws://' + window.location.host +
                  '/ws/user/' + userName + '/');
 
-             message = 'give up' 
+             message = 'process' 
              Socket1.onopen = function (event) {
                  setTimeout(function(){
                      Socket1.send(JSON.stringify({
@@ -95,7 +95,7 @@ $(document).ready(function(){
                  data: {'tkid':id, 'csrfmiddlewaretoken':token, 'add': 'add', 'agree': 'agree'},
                  success: function(){
                      $("body #info_user").load(location.href + " #info_user");
-                     Socket1.close();
+                    //  Socket1.close();
                  }
              });
         }
