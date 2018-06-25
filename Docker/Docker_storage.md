@@ -50,258 +50,122 @@ drwx------ 3 root root 17 Apr 11 13:25 8c56e1d6822091e11edfb1b14b586ba29788de5bc
 drwx------ 3 root root 17 Apr 11 13:34 c154bf1e4f992ce599b497da5fb554e52d32127eb4ecc3a141cbf48331788dba
 drwx------ 3 root root 17 Apr 11 13:25 e8ef46122ade93666dd7c1218580063d0f4e0869f940707b2a3cdbf7ea83e9cb
 ```
+- Docker cung cấp 3 cách khác nhau để có thể chia sẻ dữ liệu (mount data) từ Docker host tới container đó là:
 
-When a container starts, this initial read write layer is empty until changes are made by the running container process. When a process attempts to write a new file or update an existing one, the filesystem creates a copy of the new file on the upper writeable layer.
+        + volumes
+        + bind mounts
+        + tmpfs mounts
 
-[root@host ~]# docker run --name ubuntu -it ubuntu:15.04
-root@3b927950034f:/# useradd adriano
-root@3b927950034f:/# passwd adriano
-Enter new UNIX password:
-Retype new UNIX password:
-passwd: password updated successfully
-...
-Unfortunately, when the container dies the upper writeable layer is removed and all its content is lost unless a new image is created while the container is living. When a new image is created from a running container, only the changes made to the writeable layer, are added into the new layer.
+        volumes thường luôn là cách được lựa chọn sử dụng nhiều nhất đối với mọi trường hợp
 
-To create a new layer from a running container
+    - Không có vấn đề nào xảy ra khi ta lựa chọn cách chia sẻ dữ liệu để sử dụng, vì các dữ liệu đều giống nhau trong container. Chúng được quy định giống như một thư mục hoặc một file trong filesystem của containers. Sự khác biệt giữa `volumes`, `bind mounts` và `tmpfs mounts` chỉ đơn giản là khác nhau về vị trí lưu trữ dữ liệu trên Docker host.
 
-[root@host ~]# docker commit -m "added a new user" ubuntu ubuntu:latest
-sha256:e46141824bfc8118d6f960b9be1d70bb917e2b159734ee2d2d26e2336521528a
+        > ![types-of-mounts.png](../../images/types-of-mounts.png)
 
-[root@host ~]# docker images
-REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-ubuntu              latest              e46141824bfc        2 minutes ago       132 MB
-ubuntu              15.04               d1b55fd07600        14 months ago       131 MB
+    - Hình ảnh trên mô tả vị trí lưu trữ dữ liệu của container trên Docker host. Theo đó, ta có thể thấy được:
+
+        + `volumes` được lưu trữ như một phần của filesystem trên Docker host và được quản lý bởi Docker (xuất hiện trong /var/lib/docker/volumes trên Linux).  Đây được xem là cách tốt nhất để duy trì dữ liệu trong Docker
+
+        + `bind mounts` cho phép lưu trữ bất cứ đâu trong host system. 
+
+        + `tmpfs mounts` cho phép lưu trữ tạm thời dữ liệu vào bộ nhớ của Docker host, không bao giờ ghi vào filesystem của Docker host.
+
+- ### <a name="volumes">3.2 Trường hợp nào thì sử dụng volumes</a>
+
+    - volumes được tạo và quản lý bởi Docker. Ta có thể tạo volumes với câu lệnh `docker volume create` hoặc tạo volumes trong khi tạo containers, ...
+
+    - Khi tạo ra volumes, nó sẽ được lưu trữ trong một thư mục trên Docker host. Khi ta thực hiện mount volumes vào container thì thư mục này sẽ được mount vào container. Điều này tương tự như cách `bind mounts` hoạt động ngoại trừ việc được Docker quản lý.
+
+    - volumes có thể được mount vào nhiểu containers cùng một lúc. Khi không có containers nào sử dụng volumes thì volumes vẫn ở trạng thái cho phép mount vào containers và không bị xóa một cách tự động.
+
+    - volumes hỗ trợ volume drivers, do đó ta có thể sử dụng để lưu trữ dữ liệu từ remote hosts hoặc cloud providers.
+
+    - Đây là cách phổ biến được lựa chọn để duy trì dữ liệu trong services và containers. Một số trường hợp sử dụng volumes có thể bao gồm:
+
+        + Chia sẻ dữ liệu với nhiều containers đang chạy. Dữ liệu yêu cầu phải tồn tại kể cả khi dừng hoặc loại bỏ containers.
+
+        + Khi Docker host có cấu trúc filesystem không thống nhất, ổn định, thường xuyên thay đổi.
+
+        + Khi muốn lưu trữ dữ liệu containers trên remote hosts, cloud thay vì Docker host.
+
+        + Khi có nhu cầu sao lưu, backup hoặc migrate dữ liệu tới Docker host khác thì volumes là một sự lựa tốt. Ta cần phải dừng containers sử dụng volumes sau đó thực hiện backup tại đường dẫn `/var/lib/docker/volumes/<volume-name>`
 
 
-[root@host ~]# docker history ubuntu:latest
-IMAGE               CREATED             CREATED BY                                      SIZE      COMMENT
-e46141824bfc        40 seconds ago      /bin/bash                                       330 kB    added a new user
-d1b55fd07600        14 months ago       /bin/sh -c #(nop) CMD ["/bin/bash"]             0 B
-<missing>           14 months ago       /bin/sh -c sed -i 's/^#\s*\(deb.*universe\...   1.88 kB
-<missing>           14 months ago       /bin/sh -c echo '#!/bin/sh' > /usr/sbin/po...   701 B
-<missing>           14 months ago       /bin/sh -c #(nop) ADD file:3f4708cf445dc1b...   131 MB
-Notice the new changed ubuntu image does not have its own copies of every layer. The new image is sharing its underlying layers with the previous image as following
+- ### <a name="bind-mounts">3.3 Trường hợp nào thì sử dụng bind mounts</a>
 
+    - `bind mounts` có chức năng hạn chế so với `volumes`. Khi ta sử dụng `bind mounts` thì một file hoặc một thư mục trên Docker host sẽ được mount tới containers với đường dẫn đầy đủ.
 
+    - Đây là các trường hợp phổ biến lựa chọn `bind mounts` đối với containers:
 
-All containers started from the latest image will share layers with all containers started from the first image. This will lead to optimize both image space usage and system performances.
+        + Chia sẻ các file cấu hình từ Docker host tới containers. 
 
-Persistent Volumes
-Containers often require persistent storage for using, capturing, or saving data beyond the container life cycle. Utilizing persistent volume storage is required to keep data persistence. As a best practice, it is recommended to isolate the data from a containers, i.e. data management should be distinctly separate from the container life cycle.
+        + Chia sẻ khi các file hoặc cấu trúc thư mục trên Docker host có cấu trúc cố định phù hợp với yêu cầu của containers.
 
-Persistent storage is an important use case, especially for things like databases, images, file and folder sharing among containers. To achieve this goal, there are two different approaches:
+        + Kiểm soát được các thay đổi của containers đối với filesystem trên Docker host. Do khi sử dụng `bind mounts`, containers có thể trực tiếp thay đổi filesystem trên Docker host.
 
-host based volumes
-shared volumes
-In the first case, persisten volumes reside on the same host where container is running. In the latter, volumes reside on a shared filesystem like NFS, GlusterFS or others. In the first case, data are persistent to the host, meaning if the container is moved to an another host, the content of the volume is no more accessible to the new container. In the second case, since the mount point is accessible from all nodes, the volume can be mounted by any container, no matter the host is running the container. The latter case provides data persistence across a cluster of hosts.
+- ### <a name="tmpfs">3.4 Trường hợp nào thì sử dụng tmpfs mount</a>
 
-Persistent volumes are mapped from volumes defined into Dockerfile to filesystem on the host running the container. For example, the following Dockerfile defines a volume /var/log where the web app stores its access logs
+    - `tmpfs mounts` được sử dụng trong các trường hợp ta không muốn dữ liệu tồn tại trên Docker host hay containers vì lý do bảo mật hoặc đảm bảo hiệu suất của containers khi ghi một lượng lớn dữ liệu một cách không liên tục.
 
-# Create the image from the latest nodejs
-# The image is stored on Docker Hub at docker.io/kalise/nodejs-web-app:latest
+____
 
-FROM node:latest
+- `bind mounts` và `volumes` đều có thể được mount vào container khi sử dụng flag `-v` hoặc `--volume` nhưng cú pháp sử dụng có một chút khác nhau. Đối với `tmpfs mounts` có thể sử dụng flag `--tmpfs`. Tuy nhiên, từ bản Docker 17.06 trở đi, chúng ta được khuyến cáo dùng flag `--mount` cho cả 3 cách, để cú pháp câu lệnh minh bạch hơn.
 
-MAINTAINER kalise <https://github.com/kalise/>
+- Sự khác nhau giữa `--volume, -v` và `--mount` đơn giản chỉ là về cách khai báo các giá trị:
 
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+    + `--volume, -v` các giá trị cách nhau bới `:`. theo dạng source:target. Ví dụ: `-v myvol2:/app`
+    + `--mount` khai báo giá trị theo dạng `key=values`. Ví dụ: `--mount source=myvol2,target=/app`. Trong đó `source` có thể thay thế bằng `src`, `target` có thể thay thế bằng `destination` hoặc `dst`.
 
-# Install app dependencies
-COPY package.json /usr/src/app/
-RUN npm install
+- Khi sử dụng volumes cho services thì chỉ `--mount` mới có thể sử dụng.
 
-# Bundle app source
-COPY . /usr/src/app
+- ### <a name="use-volumes">3.5 Cách sử dụng volumes</a>
 
-# Declare Env variables
-ENV MESSAGE "Hello World!"
+    - Volumes là cơ chế ưa thích cho việc duy trì dữ liệu được tạo ra bởi Docker containers và được quản lý bởi Docker. Trong khi `bind mounts` phụ thuộc vào cấu trúc thư mục của Docker host. Do đó, volumes có một số tính năng khác biệt so với `bind mounts` như sau:
 
-# Define the log mount point
-VOLUME /var/log
+        + Volumes dễ dàng backups, migrate hơn so với `bind mounts`.
+        + Có thể quản lý volumes sử dụng Docker CLI hoặc Docker API.
+        + Volumes làm việc trên cả Linux containers và Winodws containers.
+        + Volumes an toàn hơn khi sử dụng để chi sẻ giữa nhiều containers.
 
-# Expose the port server listen to
-EXPOSE 8080
-CMD [ "npm", "start" ]
-Start a container from the nodejs image creating the volume
+    - Để tạo một volume, ta sử dụng câu lệnh:
 
-[root@centos ~]# docker run --name=nodejs \
-   -p 80:8080 -d \
-   -e MESSAGE="Hello" \
-docker.io/kalise/nodejs-web-app:latest
-All persistent volumes are created under /var/lib/docker/volumes/ directory. Inspect the container to check the volumes used by
+            docker volume create my-vol
 
-[root@centos ~]# docker inspect nodejs
-...
-"Mounts": [
-      {
-          "Name": "84894a09fe25f503cd0f2d3a30eaa00a08d72190a92e2568d395cea5a277c456",
-          "Source": "/var/lib/docker/volumes/84894a09fe25f503cd0f2d3a30eaa00a08d72190a92e2568d395cea5a277c456/_data",
-          "Destination": "/var/log",
-          "Driver": "local",
-          "Mode": "",
-          "RW": true,
-          "Propagation": ""
-      } ]
-...
-A volume persist even if the container itself is deleted.
+    - Khi khởi chạy containers với volume chưa có (tồn tại) thì Docker sẽ tự động tạo ra volume với tên được khai báo hoặc với một tên ngẫu nhiên và đảm bảo tên ngẫu nhiên này là duy nhất. Ví dụ:
 
-[root@centos ~]# docker rm -f nodejs
+            docker run -d \
+              -it \
+              --name devtest \
+              --mount type=volume,source=myvol2,target=/app \
+              nginx:latest
 
-[root@centos ~]# ls -l /var/lib/docker/volumes/84894a09fe25f503cd0f2d3a30eaa00a08d72190a92e2568d395cea5a277c456/
-total 4
-drwxr-xr-x 4 root root 4096 Apr 11 16:32 _data
-To manually delete a volume, find the volume and remove it
+        câu lệnh trên sẽ thực hiện mount volume `myvol2` tới thư mục `/app` trong container `devtest`.
 
-[root@centos ~]# docker volume list
-DRIVER              VOLUME NAME
-local               84894a09fe25f503cd0f2d3a30eaa00a08d72190a92e2568d395cea5a277c456
-    
-[root@centos ~]# docker volume remove 84894a09fe25f503cd0f2d3a30eaa00a08d72190a92e2568d395cea5a277c456
-Persistent volumes can be created before the container and then attached to the container
+    - Nếu muốn mount volume với chế độ `readonly`, ta có thể thêm vào trong `--mount`. Với ví dụ trên có thể là làm như sau:
 
-[root@centos ~]# docker volume create --name myvolume
-[root@centos ~]# docker volume inspect myvolume
-    [
-        {
-            "Driver": "local",
-            "Labels": {},
-            "Mountpoint": "/var/lib/docker/volumes/myvolume/_data",
-            "Name": "myvolume",
-            "Options": {},
-            "Scope": "local"
-        }
-    ]
-[root@centos ~]# docker run --name=nodejs \
-       -p 80:8080 -d \
-       -e MESSAGE="Hello" \
-       -v myvolume:/var/log \
-    docker.io/kalise/nodejs-web-app:latest
+            --mount source=myvol2,target=/app,readonly
 
-[root@centos ~]# docker inspect nodejs
-    ...
-    "Mounts": [
-            {
-                "Type": "volume",
-                "Name": "myvolume",
-                "Source": "/var/lib/docker/volumes/myvolume/_data",
-                "Destination": "/var/log",
-                "Driver": "local",
-                "Mode": "z",
-                "RW": true,
-                "Propagation": ""
-            }
-        ]
-    ...
-Note: Persistent volumes are initialized when a container is created. If the container’s parent image contains data at the specified mount point, that existing data is copied into the new volume upon volume initialization.
+- ### <a name="use-bind">3.6 Cách sử dụng bind mounts</a>
 
-Persistent volumes can be mounted on any directory of the host file system. This helps sharing data between containers and host itself. For example, we can mount the volume on the /logs directory of the host running the container
+    - Sử dụng tương tự như volume, ta chỉ cần thay đổi giá trị của `type` trong `--mount`. Theo đó ta có câu lệnh ví dụ như sau:
 
-[root@centos ~]# docker run --name=nodejs \
-   -p 80:8080 -d \
-   -e MESSAGE="Hello" \
-   -v /logs:/var/log \
-docker.io/kalise/nodejs-web-app:latest
-Volume data now are placed on the /logs host directory.
+            docker run -d \
+              -it \
+              --name devtest \
+              --mount type=bind,source=myvol2,target=/app \
+              nginx:latest
 
-The same volume could be mounted by another container, for example a container performing some analytics on the logs produced by the nodejs application. However, multiple containers writing to a single shared volume can cause data corruption. Make sure the application is designed to write to shared data stores.
+- ### <a name="use-tmpfs">3.7 Cách sử dụng tmpfs mounts</a>
 
-Note: When mounting a persistent volume on a given host directory, if the container’s parent image contains data at the specified mount point, that existing data is overwritten upon volume initialization.
+    - Khi sử dụng `tmpfs mounts` thì ta không thể chia sẻ dữ liệu giữa containers.
+    - `tmpfs mounts` chỉ làm việc đối với Linux containers.
 
-Registry
-A Docker registry service is a storage and content delivery system containing tagged images. Main registry service is the official Docker Hub but users can build their own registry. Users interact with a registry by using push and pull commands.
+    - Tương tự như khi sử dụng volumes, ta chỉ cần thay đổi giá trị `type` trong `--mount`:
 
-[root@centos ~]# docker pull ubuntu:latest
-The above command instructs the docker engine to pull the latest ubuntu image from the official Docker Hub. This is simply a shortcut for the longer
-
-[root@centos ~]# docker pull docker.io/library/ubuntu:latest
-To pull images from a local registry service, use
-
-[root@centos ~]# docker pull <myregistrydomain>:<port>/kalise/ubuntu:latest
-The above command instructs Docker Engine to contact the registry located at <myregistrydomain>:<port> to find the image kalise/ubuntu:latest
-
-In a typical deployment workflow, a commit to source code would trigger a build on Continous Integration system, which would then push a new image to the registry service. A notification from the registry triggers a deployment on a staging environment, or notify other systems that a new image is available.
-
-Deploy a local Registry Service
-To deploy a local registry service on myregistry:5000, install Docker on that server and then start a Registry container based on the registry image provided by Docker Hub
-
-[root@centos ~]# docker pull registry:latest
-[root@centos ~]# docker run -d -p 5000:5000 --restart=always --name docker-registry registry:latest
-Get an image from the public Docker Hub, tag it to the local registry service
-
-[root@centos ~]# docker pull docker.io/kalise/httpd
-[root@centos ~]# docker tag docker.io/kalise/httpd myregistry:5000/kalise/httpd
-The plain registry above is considered as insecure by Docker Engine. To make it accessible, each Docker Engine host should be instructed to trust the insecure registry service running on myregistry:5000 host.
-
-Chance the docker engine /etc/docker/daemon.json configuration file
-
-{
-  "storage-driver": "devicemapper",
-  "hosts": ["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"],
-  "insecure-registries": ["myregistry:5000"]
-}
-and restart the docker engine.
-
-Now the Docker Engine is trusting the local registry, so we can push images on it
-
-docker push myregistry:5000/kalise/httpd
-The image can be now pulled from the local registry
-
-docker pull myregistry:5000/kalise/httpd
-To secure the registry with a self-signed certificate, first create the certificate
-
-mkdir /etc/certs
-cd /etc/certs
-openssl req \
--newkey rsa:4096 -nodes -sha256 -keyout domain.key \
--x509 -days 365 -out domain.crt
-Make sure the Common Name parameter matches the host name myregistry given to the host registry.
-
-Now each Docker engine needs to be instructed to trust this certificate.
-
-mkdir -p /etc/docker/certs.d/myregistry:5000
-cp /etc/certs/domain.crt /etc/docker/certs.d/myregistry:5000/ca.crt
-Remove the insecure registry set in the previous step by changing the /etc/docker/daemon.json configuration file
-
-{
-  "storage-driver": "devicemapper",
-  "hosts": ["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"],
-}
-and restart the Docker Engine.
-
-Start the registry in secure mode passing the certificate as local volume and setting the related envinronment variables to the container
-
-docker run -d -p 5000:5000 --restart=always --name docker-registry \
-  -v /etc/certs:/certs \
-  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
-  -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
-  registry:latest
-Now we can push/pull images to/from the local registry
-
-docker push myregistry:5000/kalise/httpd
-docker pull myregistry:5000/kalise/httpd
-Storage backend for registry
-By default, data in containers is ephemeral, meaning it will disappears when the container registry dies. To make images a persistent data of the registry container, use a docker volume on the host filesystem.
-
-mkdir /data
-docker run -d -p 443:5000 --restart=always --name docker-registry \
--v /data:/var/lib/registry \
--v /etc/certs:/certs \
--e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
--e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
-registry:latest
-Having used local file system directory /data as backend for the registry container, images pushed on that registry will survive to registry crashes or dies. However, having used a persistent backend does not prevent data loss due to local storage fails. For production use, a safer option is using a shared storage like NFS share.
-
-Set the default Docker registry
-Configure a registry mirror to change the default registry from Docker Hub to a local registry. The first time docker requests an image from local registry mirror, it pulls the image from the public Docker Hub and stores it locally. On subsequent requests, the local registry mirror is able to serve the image from its own storage.
-
-Edit the /etc/docker/daemon.json configuration file
-
-{
-  "storage-driver": "devicemapper",
-  "hosts": ["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"],
-  "registry-mirrors": ["https://myregistry:5000"]
-}
-and restart the Docker Engine.
+            docker run -d \
+              -it \
+              --name devtest \
+              --mount type=tmpfs,source=myvol2,target=/app \
+              nginx:latest
+              
 
