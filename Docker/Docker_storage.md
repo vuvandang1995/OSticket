@@ -70,7 +70,7 @@ drwx------ 3 root root 17 Apr 11 13:25 e8ef46122ade93666dd7c1218580063d0f4e0869f
 
         + `tmpfs mounts` cho phép lưu trữ tạm thời dữ liệu vào bộ nhớ của Docker host, không bao giờ ghi vào filesystem của Docker host.
 
-- ### <a name="volumes">3.2 Trường hợp nào thì sử dụng volumes</a>
+- ### <a name="volumes"> Trường hợp nào thì sử dụng volumes</a>
 
     - volumes được tạo và quản lý bởi Docker. Ta có thể tạo volumes với câu lệnh `docker volume create` hoặc tạo volumes trong khi tạo containers, ...
 
@@ -91,7 +91,7 @@ drwx------ 3 root root 17 Apr 11 13:25 e8ef46122ade93666dd7c1218580063d0f4e0869f
         + Khi có nhu cầu sao lưu, backup hoặc migrate dữ liệu tới Docker host khác thì volumes là một sự lựa tốt. Ta cần phải dừng containers sử dụng volumes sau đó thực hiện backup tại đường dẫn `/var/lib/docker/volumes/<volume-name>`
 
 
-- ### <a name="bind-mounts">3.3 Trường hợp nào thì sử dụng bind mounts</a>
+- ### <a name="bind-mounts"> Trường hợp nào thì sử dụng bind mounts</a>
 
     - `bind mounts` có chức năng hạn chế so với `volumes`. Khi ta sử dụng `bind mounts` thì một file hoặc một thư mục trên Docker host sẽ được mount tới containers với đường dẫn đầy đủ.
 
@@ -103,7 +103,7 @@ drwx------ 3 root root 17 Apr 11 13:25 e8ef46122ade93666dd7c1218580063d0f4e0869f
 
         + Kiểm soát được các thay đổi của containers đối với filesystem trên Docker host. Do khi sử dụng `bind mounts`, containers có thể trực tiếp thay đổi filesystem trên Docker host.
 
-- ### <a name="tmpfs">3.4 Trường hợp nào thì sử dụng tmpfs mount</a>
+- ### <a name="tmpfs"> Trường hợp nào thì sử dụng tmpfs mount</a>
 
     - `tmpfs mounts` được sử dụng trong các trường hợp ta không muốn dữ liệu tồn tại trên Docker host hay containers vì lý do bảo mật hoặc đảm bảo hiệu suất của containers khi ghi một lượng lớn dữ liệu một cách không liên tục.
 
@@ -118,7 +118,7 @@ ____
 
 - Khi sử dụng volumes cho services thì chỉ `--mount` mới có thể sử dụng.
 
-- ### <a name="use-volumes">3.5 Cách sử dụng volumes</a>
+- ### <a name="use-volumes"> Cách sử dụng volumes</a>
 
     - Volumes là cơ chế ưa thích cho việc duy trì dữ liệu được tạo ra bởi Docker containers và được quản lý bởi Docker. Trong khi `bind mounts` phụ thuộc vào cấu trúc thư mục của Docker host. Do đó, volumes có một số tính năng khác biệt so với `bind mounts` như sau:
 
@@ -145,7 +145,7 @@ ____
 
             --mount source=myvol2,target=/app,readonly
 
-- ### <a name="use-bind">3.6 Cách sử dụng bind mounts</a>
+- ### <a name="use-bind"> Cách sử dụng bind mounts</a>
 
     - Sử dụng tương tự như volume, ta chỉ cần thay đổi giá trị của `type` trong `--mount`. Theo đó ta có câu lệnh ví dụ như sau:
 
@@ -155,7 +155,7 @@ ____
               --mount type=bind,source=myvol2,target=/app \
               nginx:latest
 
-- ### <a name="use-tmpfs">3.7 Cách sử dụng tmpfs mounts</a>
+- ### <a name="use-tmpfs"> Cách sử dụng tmpfs mounts</a>
 
     - Khi sử dụng `tmpfs mounts` thì ta không thể chia sẻ dữ liệu giữa containers.
     - `tmpfs mounts` chỉ làm việc đối với Linux containers.
