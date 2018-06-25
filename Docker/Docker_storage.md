@@ -18,7 +18,6 @@ docker system info | grep -i "Storage Driver"
 Storage Driver: overlay
 ```
 
-When a docker image is pulled from the registry, the engine download all the dependent layers to the host machine. When the container is launched from an image comprised of many layers, docker uses the Copy-on-Write capability of the layered file system to add a read write working directory on top of existing read only layers.
 Khi một docker image được pull từ trên docker hub về, nó sẽ được tải tất cả những lớp phụ thuộc về docker host. Khi container được chạy từ một image  bao gồm nhiều lớp update, docker sử dụng tính năng **Copy-on-write** của hệ thống tệp layer để thêm một thư mục làm việc ghi đọc trên đầu các lớp chỉ đọc hiện có.
 
 <img src="">
