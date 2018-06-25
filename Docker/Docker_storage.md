@@ -6,7 +6,7 @@ Có 3 kiểu Container storage
   - Registry trong image storage
 
 ## Layered Filesystem
-Storage used for reading image filesystem layers from a running container state typically require IOPS and other read/write intensive operations, which leads to performance being a key storage metric. Docker adopted a layered storage architecture for the images and containers. A layered file system is made of many separate layers allowing images to be constructed and deconstructed as needed instead of creating a large, monolithic image.
+
 Loại Storage này được sử dụng để đọc lớp filesystem image. Mỗi khi file image được tạo ra, nó sẽ được lưu dưới dạng này. Và từ đó, mỗi lần file image được updated, sự thay đổi đó tạo ra 1 lớp mới nằm lồng lên file cũ.
 
 <img src="">
