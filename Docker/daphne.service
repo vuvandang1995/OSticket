@@ -1,0 +1,13 @@
+[Unit]
+Description=My Daphne Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/osticket
+ExecStart=/home/osticket/env/bin/daphne -b 0.0.0.0 -p 8001 osticket.asgi:application
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
