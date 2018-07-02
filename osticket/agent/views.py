@@ -160,8 +160,9 @@ def home_admin_data(request):
 def manager_topic(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
+        agent = Agents.objects.exclude(username=request.session['admin'])
         content = {'topic': Topics.objects.all(), 'admin': admin, 'today': timezone.now().date(), 'agent_name': mark_safe(json.dumps(admin.username)),
-                   'fullname': mark_safe(json.dumps(admin.fullname))}
+                   'fullname': mark_safe(json.dumps(admin.fullname)), 'agent':agent}
         if request.method == 'POST':
             if 'close' in request.POST:
                 topictid = request.POST['close']
@@ -181,17 +182,21 @@ def manager_topic(request):
                     ticket.save()
                 tp.delete()
             elif 'add_topic' in request.POST:
+                print(request.POST)
+                list_agent = request.POST['list_agent[]']
+                list_agent = json.loads(list_agent)
                 if request.POST['topicid'] == '0':
                     topicname = request.POST['add_topic']
                     description = request.POST['description']
-                    type_send = request.POST['type_send']
-                    tp = Topics(name=topicname, description=description, type_send=type_send)
+                    tp = Topics(name=topicname, description=description)
                     tp.save()
+                    for ag in list_agent:
+                        ag = Agents.objects.get(username=ag)
+                        TopicAgent.objects.create(agentid=ag, topicid=tp)
                 else:
                     tp = Topics.objects.get(id=request.POST['topicid'])
                     tp.name = request.POST['add_topic']
                     tp.description = request.POST['description']
-                    tp.type_send = request.POST['type_send']
                     tp.save()
         return render(request, 'agent/manager_topic.html', content)
     else:

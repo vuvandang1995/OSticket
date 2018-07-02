@@ -34,7 +34,7 @@
                                         <th>Name</th>
                                         <th>Status</th>
                                         <th>Description</th>
-                                        <th>Type send</th>
+                                        <th>Handler</th>
                                         <th>Option</th>
                                     </tr>
                                     </thead>
@@ -55,11 +55,7 @@
 
                                         <td id="description_topic{{tp.id}}">{{ tp.description}}</td>
 
-                                        {% if tp.type_send == 1 %}
-                                            <td id="type_send{{tp.id}}">All</td>
-                                        {% else %}
-                                            <td id="type_send{{tp.id}}">Leader</td>
-                                        {% endif %}
+                                        <td></td>
 
                                         {% if tp.name == 'Other' %}
                                             <td></td>
@@ -102,7 +98,15 @@
                             <label for="description"><b>Description</b></label>
                             <input class="form-control" type="text" placeholder="Enter description" name="description" required>
 
-                            <input class="inputText " type="checkbox" name="type_send" > <b> Send all</b>
+                            </br>
+                            <label for="agent"><b>Select Agent handle this Topic</b></label>
+                            <div class="modal-body form-group">
+                                {% for agent in agent %}
+                                    <input class="inputText" type="checkbox" name="{{ agent.username }}" > {{ agent.username }} - <b>{{agent.fullname}}</b><br>
+                                {% endfor%}
+                                <input type="hidden" name="ticketid" value="">
+                            </div>
+
 
                             <input type="hidden" name="topicid" value="">
 

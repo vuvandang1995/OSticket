@@ -38,16 +38,16 @@ $(document).ready(function(){
         var topicname = $("input[name=topicname]").val();
         var description = $("input[name=description]").val();
         var topicid = $("input[name=topicid]").val();
-        var type_send;
-            if ($('#topicModal input:checkbox').is(":checked")){
-                type_send = 1;
-            }else {
-                type_send = 0;
+        var list_agent = [];
+        $('#topicModal input:checkbox').each(function() {
+            if ($(this).is(":checked")){
+                list_agent.push(this.name);
             }
+        });
         $.ajax({
             type:'POST',
             url:location.href,
-            data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'type_send': type_send},
+            data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'list_agent[]': JSON.stringify(list_agent)},
             success: function(){
                 // window.location.reload();
                 $("#list_topic").load(location.href + " #list_topic");
@@ -80,7 +80,7 @@ $(document).ready(function(){
         }else{
             $('#title').html("Add New Topic")
             $("input[name=topicid]").val(0);
-            $('#topicModal input:checkbox').prop('checked', true);
+            // $('#topicModal input:checkbox').prop('checked', true);
             $("input[name=topicname]").val("");
             $("input[name=description]").val("");
         }
