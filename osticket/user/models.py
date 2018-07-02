@@ -55,6 +55,15 @@ class Agents(models.Model):
         db_table = 'agents'
 
 
+class TopicAgent(models.Model):
+    agentid = models.ForeignKey('Agents', models.CASCADE, db_column='agentid')
+    topicid = models.ForeignKey('Topics', models.CASCADE, db_column='topicid')
+
+    class Meta:
+        managed = True
+        db_table = 'topic_agent'
+
+
 class Tickets(models.Model):
     title = models.CharField(max_length=255)
     chat = models.CharField(max_length=30, null=True)
