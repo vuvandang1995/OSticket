@@ -1,0 +1,22 @@
+FROM ubuntu:16.04
+
+MAINTAINER dangvv
+
+RUN apt-get update \
+    && apt-get install -y nginx \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && echo "daemon off;" >> /etc/nginx/nginx.conf \
+	&& apt-get install -y python3-pip python3-dev python3.5-dev libmysqlclient-dev redis-server \
+	&& pip3 install --upgrade pip \
+	&& pip install virtualenv \
+	&& mkdir /home/osticket
+
+ADD osticket /home/osticket/
+ADD gunicorn.service /etc/systemd/system/gunicorn.service
+ADD daphne.service /etc/systemd/system/daphne.service
+ADD redis.conf /etc/redis/redis.conf
+ADD default /etc/nginx/sites-available/default
+
+EXPOSE 80
+CMD ["nginx"]

@@ -90,6 +90,93 @@ veth554166f	  Link encap:Ethernet  HWaddr c2:2c:85:40:de:2e
 	- Là chế độ không cấu hình network. Điều này hữu ích cho việc  container không cần ra khỏi mạng
 	`docker run --net=none -itd --name=centos-none centos`
 
+## User defined bridge networks
+- Docker cho phép user tạo network cô lập tốt hơn cho container. Docker cung cấp các drivers network để tạo những loại mạng này. Với docker, nó có khả năng tạo nhiều network và gán container vào nhiều hơn 1 network. Container CÓ THỂ chỉ giao tiếp trong mạng của nó. Một container gán với 2 network thì có thể giao tiếp với các container trong mạng đó. 
+- Hình bên dưới là mô hình Docker multiple networking
+
+<img src="">
+
+- Tạo một bridge network tùy chỉnh:
+
+<img src="">
+
+- Sau khi tạo một network như trên, 1 interface được tạo ra tương tự như `docker0`
+
+<img src="">
+
+- Cũng có thể tạo network mà có interface là tên muốn đặt:
+
+<img src="">
+
+- Xem thông tin của network vừa tạo:
+
+<img src="">
+
+- Tạo một container gắn với mạng `bridge2` bên trên:
+
+<img src="">
+
+- Kiểm tra lại thông tin network `bridge2`, bạn sẽ thấy địa chỉ ip của container vừa tạo
+
+<img src="">
+
+
+- Gắn thêm 1 network nữa vào container vừa tạo:
+
+<img src="">
+
+- Xóa network trong docker:
+
+<img src="">
+
+## Using custom Docker networks
+- Ví dụ: Chúng ta cần deploy nhiều ứng dụng như xây dựng 1 nền tảng blog WorPress sử dụng cơ sở dữ liệu MariaDB và máy chủ web Apache/PHP. Ứng dụng Apache/PHP sẽ lắng nghe các kết nối tới host port 80. Nó sử dụng một network internal User-defined để kết nối tới Máy chủ MarieDB lắng nghe trên cổng 3306. Máy chủ MarieDB được gắn với network internal
+- Test:
+	- Tạo một Internal network
+	
+	<img src="">
+	
+	- Tạo một MariaDB server gắn vào internal network
+	
+	<img src="">
+	
+	- Tạo ứng dụng WordPress gắn với default network:
+	
+	<img src="">
+	
+	- Để container Wordpress có thể kết nối được tới container mariadb
+	
+	<img src="">
+	
+## Inter container Communication
+- Mặc định, Docker có thể giao tiếp giữa các container bởi vì tùy chọn `enable_icc=true` nghĩa là các container trên một host là giao tiếp tự do. Container giao tiếp với bên ngoài được quản lý thông qua Iptables và ip_fordwarding.
+- Vì lý do bảo mật, nó phải disable inter-container  bằng các cài tùy chọn `enable_icc=true`  khi mình tạo network user-defined.
+- Ví dụ, tạo một internal network và disable inter-container:
+
+<img src="">
+
+- Tạo 2 container gắn vào mạng internal vừa tạo và gán địa chỉ ip cho chúng:
+
+<img src="">
+
+- **Lưu ý**: Phần này để lại hỏi a Công.
+
+
+
+# Tổng hợp các lưu ý:
+1. thường thì sẽ sử dụng network user-defined.
+	- Sư khác nhau giữa default network và user-defined là"
+		- Các container gắn vào mạng user-defined có thể giao tiếp tự do với nhau ở tất cả các cổng. lưu ý là chỉ giao tiếp với nhau tự do ở tất cả các cổng thôi chứ muốn giao tiếp với bên ngoài vẫn cần phải NAT port thông qua máy host
+		- Còn các container gắn vào mạng default thì muốn giao tiếp với nhau thì cần mở port đó. Ví dụ như container Apache và Mariadb đều gắn vào default network, Apache muốn kết nối tới Mariadb thì Mariadb phải mở port 3306.
+		- User-defined network linh hoạt hơn trong việc thay đổi dải địa chỉ ip. Ví dụ cụ thể là: Giả sử có 2 container gắn với user-defined network dùng dải địa chỉ `192.168.1.0/24`. Muốn thay đổi dải địa chỉ cung cấp cho các container đó, chỉ cần disable user-default network kia đi, tạo cáo mới và gắn container vào cáo network mới.
+		- Còn muốn thay đổi dải địa chỉ IP của default networkt thì cần phải thay đổi trong file cấu hình (file json gì đó)
+		- Giả sử có 1 container gắn vào 1 user-defined network, muốn thay đổi network cho container đó, chỉ cần disable mạng ý, tạo user-defined mới và gắn container vào VÀ KHÔNG CẦN TẮT CONTAINER đó. Còn đối với container default network, muốn thay đổi network trong container đó, thì phải stop container đó, tạo container mới rồi gắn network thôi.
+		
+		
+
+
+
+
 	
 	
 	
