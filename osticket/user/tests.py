@@ -5,6 +5,7 @@ from .models import *
 
 class TestModels(TestCase):
     def setUp(self):
+        from django.utils import timezone
         self.time_start = timezone.now()
         self.time_end = timezone.now() + timezone.timedelta(days=7)
         self.user = [Users.objects.create(fullname="Nguyen Viet K",
