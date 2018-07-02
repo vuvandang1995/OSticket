@@ -2,7 +2,7 @@
 ## Một số chú ý:
 - Docker images là template để tạo ra các container. Tức là các container chạy được từ các image này
 - Có 2 cách để tạo ra các mirror container
-	- C1: Tạo một container, chạy các câu lệnh cần thiết và sử dụng lệnh docker commit để tạo image mới. Cách này thường không được  khuyến cáo
+	- C1: Tạo một container, chạy các câu lệnh cần thiết và sử dụng lệnh docker commit để tạo image mới. Cách này thường không được  khuyến cáo.
 	- C2: Viết một dockerfile và thực thi nó để tạo ra một images.
 - Khi một container được tạo ra từ đầu, nó sẽ kép các image (pull) từ `Docker Hub` (Chính là Docker Registry) về và thực tạo container từ image đó
 - Tất cả mọi người đều có thể tạo ra các images

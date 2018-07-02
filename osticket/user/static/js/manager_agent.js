@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $("#list_agent").on('click', '.close_', function(){
+    $("#mnag").on('click', '.close_', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
@@ -10,14 +10,14 @@ $(document).ready(function(){
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     // window.location.reload();
-                    $("body #list_agent").load(location.href + " #list_agent");
+                    $("body #tb1").load(location.href + " #tb1");
                 }
            });
         }
     });
 
 
-    $("#list_agent").on('click', '.btn-danger', function(){
+    $("#mnag").on('click', '.btn-danger', function(){
         var id = $(this).attr('id');
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var r = confirm('Are you sure?');
@@ -28,7 +28,7 @@ $(document).ready(function(){
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     // window.location.reload();
-                    $("body #list_agent").load(location.href + " #list_agent");
+                    $("body #tb1").load(location.href + " #tb1");
                 }
            });
         }
@@ -48,7 +48,7 @@ $(document).ready(function(){
             data: {'add_agent': fullname, 'email': email, 'username': username, 'phone': phone, 'csrfmiddlewaretoken':token, 'agentid': agentid, 'password': password},
             success: function(){
                 // window.location.reload();
-                $("body #list_agent").load(location.href + " #list_agent");
+                $("body #tb1").load(location.href + " #tb1");
                 document.getElementById("add_agent_close").click();
             }
         });
