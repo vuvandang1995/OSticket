@@ -202,6 +202,12 @@ def manager_topic(request):
     else:
         return redirect('/')
 
+def manager_department(request):
+    if request.session.has_key('admin'):
+        return render(request, 'agent/manager_topic.html', content)
+    else:
+        return redirect('/')
+
 
 def manager_agent(request):
     if request.session.has_key('admin'):
