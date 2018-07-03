@@ -34,6 +34,7 @@
                                         <th>Name</th>
                                         <th>Status</th>
                                         <th>Description</th>
+                                        <th>Department</th>
                                         <th>Handler</th>
                                         <th>Option</th>
                                     </tr>
@@ -54,6 +55,7 @@
                                         {% endif %}
 
                                         <td id="description_topic{{tp.id}}">{{ tp.description}}</td>
+                                        <td id="department_topic{{tp.id}}">{{ tp.department.name}}</td>
 
                                         <td></td>
 
@@ -98,16 +100,16 @@
                             <label for="description"><b>Description</b></label>
                             <input class="form-control" type="text" placeholder="Enter description" name="description" required>
 
+                            <br />
+                            <label for="department"><b>Department</b></label><br />
+                            <select name="department" class="form-control" id="mySelect" onchange="myFunction()">
+                                {% for dm in department %}
+                                    <option value="{{dm.id}}" name="{{dm.id}}">{{dm.name}}</option>
+                                {% endfor %}
+                            </select>
                             </br>
-                            <label for="agent"><b>Select Agent handle this Topic</b></label>
-                            <div class="modal-body form-group">
-                                {% for agent in agent %}
-                                    <input class="inputText" type="checkbox" name="{{ agent.username }}" > {{ agent.username }} - <b>{{agent.fullname}}</b><br>
-                                {% endfor%}
-                                <input type="hidden" name="ticketid" value="">
-                            </div>
-
-
+                            <label for="agent"><b>Select Agent handle this Topic</b></label></br>
+                            
                             <input type="hidden" name="topicid" value="">
 
                         <div class="msg"></div>
@@ -121,6 +123,13 @@
                     </div>
                 </div>
             </div>
+            <script>
+                function myFunction() {
+                    var x = document.getElementById("mySelect").value;
+                    var element = '{% for key, value in list_ag %}{% if key == '+x+' %}{% for ag in value %}{{ag.username}} - <b> {{ag.fullname}}</b></br>{% endfor%}{% endif%}{% endfor %}';
+                    document.getElementById("dm").innerHTML = element;
+                }
+            </script>
             <!-- End Container fluid  -->
             <!-- footer -->
             <!-- End footer -->

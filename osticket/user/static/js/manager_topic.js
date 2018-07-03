@@ -38,6 +38,7 @@ $(document).ready(function(){
         var topicname = $("input[name=topicname]").val();
         var description = $("input[name=description]").val();
         var topicid = $("input[name=topicid]").val();
+        var department = document.getElementById("mySelect").value;
         var list_agent = [];
         $('#topicModal input:checkbox').each(function() {
             if ($(this).is(":checked")){

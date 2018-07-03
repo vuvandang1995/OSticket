@@ -155,6 +155,14 @@ def count_tk(agentname):
     except Agents.DoesNotExist:
         return None
 
+def get_list_agent(department):
+    try:
+        dm = Departments.objects.get(name=department)
+        ag = Agents.objects.filter(departmentid=dm)
+        return ag
+    except Departments.DoesNotExist:
+        return None
+
 
 class TicketLog(models.Model):
     userid = models.ForeignKey(Users, models.CASCADE, null=True, db_column='userid', related_name='usertl')
