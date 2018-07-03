@@ -31,10 +31,19 @@ class Topics(models.Model):
     status = models.IntegerField(default=0)
     type_send = models.IntegerField(default=1)
     description = models.TextField()
+    departmentid = models.ForeignKey('Departments', models.CASCADE, db_column='departmentid')
 
     class Meta:
         managed = True
         db_table = 'topics'
+
+class Departments(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+
+    class Meta:
+        managed = True
+        db_table = 'departments'
 
 
 class Agents(models.Model):
@@ -48,6 +57,7 @@ class Agents(models.Model):
     status = models.IntegerField(default=1)
     noti_noti = models.IntegerField(default=0)
     noti_chat = models.IntegerField(default=0)
+    departmentid = models.ForeignKey('Departments', models.CASCADE, db_column='departmentid')
 
 
     class Meta:
@@ -143,6 +153,14 @@ def count_tk(agentname):
                 processing = processing + 1
         return done, processing
     except Agents.DoesNotExist:
+        return None
+
+def get_list_agent(department):
+    try:
+        dm = Departments.objects.get(name=department)
+        ag = Agents.objects.filter(departmentid=dm)
+        return ag
+    except Departments.DoesNotExist:
         return None
 
 

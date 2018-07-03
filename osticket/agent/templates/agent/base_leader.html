@@ -79,6 +79,7 @@
                     <ul id="sidebarnav">
                     	<li class="nav-label">Master Admin</li>
                         <li><a href="{% url 'agent:home_admin' %}"><i class="fa fa-ticket"></i> Tickets </a></li>
+                        <li><a href="{% url 'agent:manager_department' %}"><i class="fa fa-group"></i> Departments </a></li>
                         <li><a href="{% url 'agent:manager_agent' %}"><i class="fa fa fa-user-secret"></i> Agents </a></li>
                         <li><a href="{% url 'agent:manager_topic' %}"><i class="fa fa-list-alt"></i> Topics </a></li>
                         <li><a href="{% url 'agent:history_all_ticket' today|safe today|safe %}"><i class="fa fa-history"></i> History all ticket </a></li>
@@ -119,6 +120,7 @@
         'ws://' + window.location.host +
         '/ws/agent/'+agentName+'+group_agent_Socket/');
 
+    
 
 
     function formatAMPM(date) {

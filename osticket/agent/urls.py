@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', views.home_admin, name='home_admin'),
     path('admin/data', views.home_admin_data, name='home_admin_data'),
     path('topic/', views.manager_topic, name='manager_topic'),
+    path('department/', views.manager_department, name='manager_department'),
     path('agent/', views.manager_agent, name='manager_agent'),
     path('', views.home_agent, name="index"),
     path('logout', views.logout, name="logout"),

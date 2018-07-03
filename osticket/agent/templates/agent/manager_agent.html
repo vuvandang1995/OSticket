@@ -30,13 +30,12 @@
                         <table class="table table-striped table-bordered" id="tb1">
                             <thead>
                             <tr>
-                                <th width="5%">Full Name</th>
-                                <th width="5%">Username</th>
-                                <th width="5%">Email</th>
-                                <th width="5%">Phone</th>
-                                <th width="2%">Admin</th>
+                                <th width="5%">ID</th>
+                                <th width="15%">Full Name</th>
+                                <th width="5%">Admin</th>
                                 <th width="5%">Status</th>
-                                <th width="3%">Process/Done</th>
+                                <th width="5%">Department</th>
+                                <th width="5%">Process/Done</th>
                                 <th>Option</th>
                             </tr>
                             </thead>
@@ -45,13 +44,17 @@
                             {% for ag in agent %}
                             <tr>
 
+                                <th scope="row">
+                                    <button type="button" class="btn" data-toggle="modal" data-target="#{{ag.id}}content1">{{ag.id}}</button>
+                                </th>
+
                                 <td id="full_name{{ag.id}}">{{ag.fullname}}</td>
 
-                                <td id="user_name{{ag.id}}">{{ag.username}}</td>
+                                <input type="hidden" id="user_name{{ag.id}}" value="{{ag.fullname}}">
 
-                                <td id="email_agent{{ag.id}}">{{ag.email}}</td>
+                                <input type="hidden" id="email_agent{{ag.id}}" value="{{ag.email}}">
 
-                                <td id="phone_agent{{ag.id}}">{{ag.phone}}</td>
+                                <input type="hidden" id="phone_agent{{ag.id}}" value="{{ag.phone}}">
 
                                 {% if ag.admin == 0 %}
                                     <td><span class="label label-danger">no</span></td>
@@ -64,6 +67,8 @@
                                 {% else %}
                                     <td><span class="label label-success">active</span></td>
                                 {% endif %}
+
+                                <td id="department{{ag.id}}">{{ag.departmentid.name}}</td>
 
                                 {% for key, value in list_tk %}
                                     {% if key == ag.username %}
@@ -94,6 +99,28 @@
                                     </button>
                                 </td>
                             </tr>
+                            
+                            <div class="modal" id="{{ag.id}}content1" role="dialog">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">{{ag.fullname}}</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body form-group" id="ct{{ag.id}}">
+                                        <label>Username:</label>
+                                        <p><b>{{ag.username}}</b></p><br>
+                                        <label>Email:</label>
+                                        <p><b>{{ag.email}}</b></p><br>
+                                        <label>Phone:</label>
+                                        <p><b>{{ag.phone}}</b></p><br>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
                             {% endfor%}
                             </tbody>
                         </table>
@@ -125,6 +152,12 @@
                     <label for="phone"><b>Phone</b></label>
                     <input class="inputText form-control" type="text" placeholder="Enter your phone number" name="phone">
 
+                    <label for="department"><b>Department</b></label><br />
+                    <select name="department" class="form-control" id="mySelect">
+                        {% for dm in department %}
+                        <option value="{{dm.id}}" name="{{dm.name}}">{{dm.name}}</option>
+                        {% endfor %}
+                    </select>
                     <div id="pwd">
                     <label for="psw"><b>Password</b></label>
                     <input class="inputText form-control" type="password" placeholder="Enter Password" name="password" id="p1" >

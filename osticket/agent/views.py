@@ -161,8 +161,13 @@ def manager_topic(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
         agent = Agents.objects.exclude(username=request.session['admin'])
+        department = Departments.objects.filter().order_by('-id')
+        list_ag = {}
+        dm = Departments.objects.all()
+        for dm in dm:
+            list_ag[dm.name] = get_list_agent(dm.name)
         content = {'topic': Topics.objects.all(), 'admin': admin, 'today': timezone.now().date(), 'agent_name': mark_safe(json.dumps(admin.username)),
-                   'fullname': mark_safe(json.dumps(admin.fullname)), 'agent':agent}
+                   'fullname': mark_safe(json.dumps(admin.fullname)), 'agent':agent, 'department': department, 'list_ag': list_ag.items(),}
         if request.method == 'POST':
             if 'close' in request.POST:
                 topictid = request.POST['close']
@@ -182,7 +187,6 @@ def manager_topic(request):
                     ticket.save()
                 tp.delete()
             elif 'add_topic' in request.POST:
-                print(request.POST)
                 list_agent = request.POST['list_agent[]']
                 list_agent = json.loads(list_agent)
                 if request.POST['topicid'] == '0':
@@ -202,10 +206,17 @@ def manager_topic(request):
     else:
         return redirect('/')
 
+def manager_department(request):
+    if request.session.has_key('admin'):
+        return render(request, 'agent/manager_department.html')
+    else:
+        return redirect('/')
+
 
 def manager_agent(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
+        department = Departments.objects.filter().order_by('-id')
         list_tk = {}
         ag = Agents.objects.all()
         for ag in ag:
@@ -215,7 +226,8 @@ def manager_agent(request):
                    'list_tk': list_tk.items(),
                    'today': timezone.now().date(),
                    'agent_name': mark_safe(json.dumps(admin.username)),
-                   'fullname': mark_safe(json.dumps(admin.fullname))}
+                   'fullname': mark_safe(json.dumps(admin.fullname)),
+                   'department':department}
         if request.method == 'POST':
             if 'close' in request.POST:
                 agentid = request.POST['close']
@@ -236,16 +248,19 @@ def manager_agent(request):
                     phone = request.POST['phone']
                     username = request.POST['username']
                     password = request.POST['password']
-                    ag = Agents(fullname=fullname, username=username, phone=phone, email=email, password=password)
+                    department = Departments.objects.get(id=request.POST['department'])
+                    ag = Agents.objects.create(fullname=fullname, username=username, phone=phone, email=email, password=password, departmentid=department)
                     ag.save()
                 else:
                     ag = Agents.objects.get(id=request.POST['agentid'])
                     fullname = request.POST['add_agent']
                     email = request.POST['email']
                     phone = request.POST['phone']
+                    department = request.POST['department']
                     ag.fullname = fullname
                     ag.email = email
                     ag.phone = phone
+                    ag.departmentid = Departments.objects.get(id=department)
                     ag.save()
                     username = ag.username
         return render(request, 'agent/manager_agent.html', content)
