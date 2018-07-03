@@ -208,7 +208,37 @@ def manager_topic(request):
 
 def manager_department(request):
     if request.session.has_key('admin'):
-        return render(request, 'agent/manager_department.html')
+        admin = Agents.objects.get(username=request.session['admin'])
+        department = Departments.objects.exclude(name='admin')
+        list_ag = {}
+        list_tp = {}
+        for dp in department:
+            ags = Agents.objects.filter(departmentid=dp)
+            tps = Topics.objects.filter(departmentid=dp)
+            list_ag[dp.id] = [ag.fullname for ag in ags]
+            list_tp[dp.id] = [tp.name for tp in tps]
+        content = {'list_ag': list_ag,
+                   'list_tp': list_tp,
+                   'admin': admin,
+                   'today': timezone.now().date(),
+                   'department': department}
+        print(list_ag)
+        print(list_tp)
+        if request.method == 'POST':
+            if 'addname' in request.POST:
+                if request.POST['dmid'] == '':
+                    Departments.objects.create(name=request.POST['addname'],
+                                               description=request.POST['adddescription'])
+                else:
+                    dp = Departments.objects.get(id=request.POST['dmid'])
+                    dp.name = request.POST['addname']
+                    dp.description = request.POST['adddescription']
+                    dp.save()
+            elif 'delete' in request.POST:
+                Departments.objects.filter(id=request.POST['delete']).delete()
+            return redirect("/agent/department")
+        else:
+            return render(request, 'agent/manage_department.html', content)
     else:
         return redirect('/')
 

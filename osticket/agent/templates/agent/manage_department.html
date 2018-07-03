@@ -1,0 +1,134 @@
+{% extends 'agent/base_leader.html' %}
+{% block title %} Manage topics {% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <div class="page-wrapper">
+        <!-- Bread crumb -->
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-primary">Manage departments</h3> </div>
+            <div class="col-md-7 align-self-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                    <li class="breadcrumb-item active">Manage departments</li>
+                </ol>
+            </div>
+        </div>
+        <!-- End Bread crumb -->
+                {% csrf_token %}
+            <div class="container-fluid" id="list_dm">
+                <!-- Start Page Content -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-title">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-title="add" data-target="#departmentModal" >
+                                    <i class="fa fa-plus"></i> Create new department
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <table  class="table display table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Option</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% csrf_token %}
+                                    {% for dm in department %}
+                                    <tr>
+                                        <td scope="row">
+                                            <button type="button" class="btn" data-toggle="modal" id="dm{{dm.id}}" data-target="#{{dm.id}}content">{{dm.id}}</button>
+                                        </td>
+                                        <td id="name{{dm.id}}">{{dm.name}}</td>
+                                        <td id="des{{dm.id}}">{{ dm.description}}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" id="{{dm.id}}" data-toggle="tooltip" title="delete">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-info" data-name="{{dm.name}}" data-title="edit" id="{{dm.id}}" data-toggle="modal" data-target="#departmentModal">
+                                                <i class="fa fa-wrench" data-toggle="tooltip" title="change"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <div class="modal" id="{{dm.id}}content" role="dialog">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Department details</h4>
+                                                </div>
+                                                <div class="modal-body form-group">
+                                                    <label for="content"><b>Name:</b></label>
+                                                    <p>{{dm.name}}</p>
+                                                    <label for="content"><b>Description:</b></label>
+                                                    <p>{{dm.description}}</p>
+                                                    <label for="content"><b>List agents:</b></label>
+                                                    <p>
+                                                    {% for key,value in list_ag.items %}
+                                                        {% if key == dm.id %}
+                                                            {% for va in value %}
+                                                                {{va}},
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </p>
+                                                    <label for="datestart"><b>List topic:</b></label>
+                                                    <p>
+                                                    {% for key,value in list_tp.items %}
+                                                        {% if key == dm.id %}
+                                                            {% for va in value %}
+                                                                {{va}},
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </p>
+                                                </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End PAge Content -->
+            </div>
+            <div id="departmentModal" class="modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Add New Department</h3>
+                        </div>
+                        <div class="modal-body form-group">
+                            <label for="topicname"><b>Department name</b></label>
+                            <input class="form-control" type="text" placeholder="Enter department name" name="name" required>
+                            <font id="add_name_error" color="red"></font><br>
+                            <label for="description"><b>Description</b></label>
+                            <input class="form-control" type="text" placeholder="Enter description" name="des" required>
+                            <font id="add_des_error" color="red"></font><br>
+                            <input type="hidden" name="dmid">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="addDepartment" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" id = "add_department_close">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Container fluid  -->
+            <!-- footer -->
+            <!-- End footer -->
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/manager_department.js' %}"></script>
+{% endblock %}
