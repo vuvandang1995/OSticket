@@ -1,1 +1,0 @@
-<a href="javascript:register_popup('chat28', 28);" class="noti_chat"><div style="float:left;width:15%" class="btn btn-info btn-circle m-r-10"><i class="fa fa-envelope-o"></i></div><div style="float:right; width:80%"><p>28</p><small><i class="fa fa-clock-o"></i>5:04 PM 4/6/2018</small></div></a>*&*%^chat
