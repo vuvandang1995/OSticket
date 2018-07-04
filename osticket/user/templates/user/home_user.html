@@ -51,7 +51,7 @@
                                     <label>Title:</label>
                                     <p>{{tk.title}}</p>
                                     <label>Topic:</label>
-                                    <p>{{tk.topicid.name}}</p>
+                                    <p>{{tk.topicid.name}} - {{tk.topicid.description}}</p>
                                     <label>Content:</label>
                                     <p>{{tk.content}}</p>
                                     <label>Date Start:</label>
@@ -96,7 +96,7 @@
                          <br /><label for="topic"><b>Topic</b></label><br />
                          <select name="topic" class="form-control">
                              {% for tp in topic %}
-                             <option value="{{tp.id}}" name="{{tp.type_send}}">{{tp.name}}</option>
+                             <option value="{{tp.id}}" name="haha">{{tp.name}} - {{tp.description}}</option>
                              {% endfor %}
                          </select>
                          <br />

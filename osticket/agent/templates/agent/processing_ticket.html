@@ -30,6 +30,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Title</th>
+                                        <th>Topic</th>
                                         <th>Handler</th>
                                         <th>Status</th>
                                         <th>Option</th>
@@ -57,7 +58,7 @@
                     <label>Title:</label>
                     <p><b>{{tk.title}}</b></p><br>
                     <label>Topic:</label>
-                    <p><b>{{tk.topicid.name}}</b></p><br>
+                    <p><b>{{tk.topicid.name}}</b> - {{ tk.topicid.description }}</p><br>
                     <label>Content:</label>
                     <p><b>{{tk.content}}</b></p><br>
                     <label>Date Start:</label>
@@ -89,11 +90,25 @@
                 <br />
                 <label><b>Receiver</b></label>
                 <br />
-                {% for agent in agent %}
-                <div id="{{ agent.username }}">
-                    <input class="inputText" type="checkbox" name="{{ agent.username }}" > {{ agent.username }} <br>
-                </div>
-                {% endfor%}
+                <!--{% for agent in agent %}-->
+                <!--<div id="{{ agent.username }}">-->
+                    <!--<input class="inputText" type="checkbox" name="{{ agent.username }}" > {{ agent.username }} <br>-->
+                <!--</div>-->
+                <!--{% endfor%}-->
+                {% for tp in topic %}
+                    <div class="tpic" style="display:none;">
+                        <input type="hidden" value="{{tp.name}}">
+                        {% for key,value in list_ag.items %}
+                            {% if key == tp.name %}
+                                {% for va in value %}
+                                    <div id="{{ va.username }}">
+                                        <input class="inputText" type="checkbox" name="{{ va.username }}" > {{ va.username }} - {{va.fullname}} <br>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
                 <br>
                 <input type="hidden" name="ticketid" value="">
                 <button type="submit" class="btn btn-info" value="OK" id="fw_add"><span class="glyphicon glyphicon-share"></span>Submit</button>
