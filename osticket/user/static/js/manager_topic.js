@@ -48,7 +48,7 @@ $(document).ready(function(){
         $.ajax({
             type:'POST',
             url:location.href,
-            data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'list_agent[]': JSON.stringify(list_agent)},
+            data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'list_agent[]': JSON.stringify(list_agent), 'department': department},
             success: function(){
                 // window.location.reload();
                 $("#list_topic").load(location.href + " #list_topic");
@@ -81,7 +81,7 @@ $(document).ready(function(){
         }else{
             $('#title').html("Add New Topic")
             $("input[name=topicid]").val(0);
-            // $('#topicModal input:checkbox').prop('checked', true);
+            $('#topicModal input:checkbox').prop('checked', false);
             $("input[name=topicname]").val("");
             $("input[name=description]").val("");
         }

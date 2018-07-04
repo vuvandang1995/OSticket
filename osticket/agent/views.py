@@ -166,8 +166,12 @@ def manager_topic(request):
         dm = Departments.objects.all()
         for dm in dm:
             list_ag[dm.name] = get_list_agent(dm.name)
+        list_ag_tp = {}
+        tp = Topics.objects.all()
+        for tp in tp:
+            list_ag_tp[tp.name] = get_agent_tp(tp.name)
         content = {'topic': Topics.objects.all(), 'admin': admin, 'today': timezone.now().date(), 'agent_name': mark_safe(json.dumps(admin.username)),
-                   'fullname': mark_safe(json.dumps(admin.fullname)), 'agent':agent, 'department': department, 'list_ag': list_ag.items(),}
+                   'fullname': mark_safe(json.dumps(admin.fullname)), 'agent':agent, 'department': department, 'list_ag': list_ag.items(), 'list_ag_tp': list_ag_tp.items(),}
         if request.method == 'POST':
             if 'close' in request.POST:
                 topictid = request.POST['close']
@@ -190,10 +194,11 @@ def manager_topic(request):
                 list_agent = request.POST['list_agent[]']
                 list_agent = json.loads(list_agent)
                 if request.POST['topicid'] == '0':
+                    print(request.POST)
                     topicname = request.POST['add_topic']
                     description = request.POST['description']
-                    tp = Topics(name=topicname, description=description)
-                    tp.save()
+                    department = Departments.objects.get(id=request.POST['department'])
+                    tp = Topics.objects.create(name=topicname, description=description, departmentid=department)
                     for ag in list_agent:
                         ag = Agents.objects.get(username=ag)
                         TopicAgent.objects.create(agentid=ag, topicid=tp)
@@ -201,7 +206,16 @@ def manager_topic(request):
                     tp = Topics.objects.get(id=request.POST['topicid'])
                     tp.name = request.POST['add_topic']
                     tp.description = request.POST['description']
+                    tp.department = request.POST['department']
                     tp.save()
+                    for ag in list_agent:
+                        try:
+                            ag = Agents.objects.get(username=ag)
+                            tpag = TopicAgent.objects.get(topicid=tp)
+                            tpag.delete()
+                            TopicAgent.objects.create(agentid=ag, topicid=tp)
+                        except:
+                            pass
         return render(request, 'agent/manager_topic.html', content)
     else:
         return redirect('/')
@@ -222,8 +236,6 @@ def manager_department(request):
                    'admin': admin,
                    'today': timezone.now().date(),
                    'department': department}
-        print(list_ag)
-        print(list_tp)
         if request.method == 'POST':
             if 'addname' in request.POST:
                 if request.POST['dmid'] == '':

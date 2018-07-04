@@ -29,9 +29,8 @@ class Users(models.Model):
 class Topics(models.Model):
     name = models.CharField(max_length=255)
     status = models.IntegerField(default=0)
-    type_send = models.IntegerField(default=1)
     description = models.TextField()
-    departmentid = models.ForeignKey('Departments', models.CASCADE, db_column='departmentid')
+    departmentid = models.ForeignKey('Departments', models.SET_NULL, null=True, db_column='departmentid')
 
     class Meta:
         managed = True
@@ -57,7 +56,7 @@ class Agents(models.Model):
     status = models.IntegerField(default=1)
     noti_noti = models.IntegerField(default=0)
     noti_chat = models.IntegerField(default=0)
-    departmentid = models.ForeignKey('Departments', models.CASCADE, db_column='departmentid')
+    departmentid = models.ForeignKey('Departments', models.SET_NULL, null=True, db_column='departmentid')
 
 
     class Meta:
@@ -121,17 +120,6 @@ class AddAgents(models.Model):
         db_table = 'add_agents'
 
 
-class Comments(models.Model):
-    userid = models.ForeignKey(Users, models.CASCADE, null=True, db_column='userid', related_name='usercm')
-    agentid = models.ForeignKey(Agents, models.CASCADE, null=True, db_column='agentid', related_name='agentcm')
-    ticketid = models.ForeignKey(Tickets, models.CASCADE, db_column='ticketid', related_name='ticketcm')
-    content = models.TextField()
-    date = models.DateTimeField()
-
-    class Meta:
-        managed = True
-        db_table = 'comments'
-
 
 def get_user(usname):
     try:
@@ -160,6 +148,14 @@ def get_list_agent(department):
         dm = Departments.objects.get(name=department)
         ag = Agents.objects.filter(departmentid=dm)
         return ag
+    except Departments.DoesNotExist:
+        return None
+
+def get_agent_tp(topic):
+    try:
+        tp = Topics.objects.get(name=topic)
+        tpag = TopicAgent.objects.filter(topicid=tp)
+        return tpag
     except Departments.DoesNotExist:
         return None
 
