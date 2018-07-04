@@ -37,6 +37,10 @@
                                             <td>Agent</td>
                                         </tr>
                                         <tr>
+                                            <td>Department</td>
+                                            <td>{{ agent.departmentid.name }}</td>
+                                        </tr>
+                                        <tr>
                                             <td>Username</td>
                                             <td>{{ agent.username }}</td>
                                         </tr>
@@ -63,6 +67,14 @@
                                             {% else %}
                                                 <td id="rc_email">No</td>
                                             {% endif%}
+                                        </tr>
+                                        <tr>
+                                            <td>Handle topic</td>
+                                            <td>
+                                                {% for tp in topic %}
+                                                    {{tp}}<br>
+                                                {% endfor %}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
