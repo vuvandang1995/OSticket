@@ -57,7 +57,15 @@
                                         <td id="description_topic{{tp.id}}">{{ tp.description}}</td>
                                         <td id="department_topic{{tp.id}}">{{ tp.departmentid.name}}</td>
 
-                                        <td></td>
+                                        <td>
+                                        {% for key, value in list_ag_tp %}
+                                            {% if key == tp.name%}
+                                                {% for ag in value%}
+                                                    {{ag.agentid.username}} </br>
+                                                {% endfor%}
+                                            {% endif%}
+                                        {% endfor%}
+                                        </td>
 
                                         {% if tp.name == 'Other' %}
                                             <td></td>
@@ -104,11 +112,25 @@
                             <label for="department"><b>Department</b></label><br />
                             <select name="department" class="form-control" id="mySelect" onchange="myFunction()">
                                 {% for dm in department %}
-                                    <option value="{{dm.id}}" name="{{dm.id}}">{{dm.name}}</option>
+                                    <option value="{{dm.id}}" name="{{dm.name}}">{{dm.name}}</option>
                                 {% endfor %}
                             </select>
                             </br>
+
+                            
                             <label for="agent"><b>Select Agent handle this Topic</b></label></br>
+                            {% for dm in department %}
+                                <div class="dpm" style="display: none;">
+                                    <input type="hidden" value="{{dm.name}}">
+                                    {% for key, value in list_ag %}
+                                        {% if key == dm.name%}
+                                            {% for ag in value %}
+                                                <input class="inputText" type="checkbox" name="{{ ag.username }}" > {{ ag.username }} - {{ag.fullname}}<br>
+                                            {% endfor%}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
                             
                             <input type="hidden" name="topicid" value="">
 
@@ -125,9 +147,16 @@
             </div>
             <script>
                 function myFunction() {
-                    var x = document.getElementById("mySelect").value;
-                    var element = '{% for key, value in list_ag %}{% if key == '+x+' %}{% for ag in value %}{{ag.username}} - <b> {{ag.fullname}}</b></br>{% endfor%}{% endif%}{% endfor %}';
-                    document.getElementById("dm").innerHTML = element;
+                    var x = $('#mySelect option:selected').html();
+                    $('#topicModal input:checkbox').prop('checked', false);
+                    $('.dpm').each(function() {
+                        var dm = $(this).children('input').val();
+                        if (dm == x){
+                            $(this).show();
+                        }else{
+                            $(this).hide();
+                        }
+                    });
                 }
             </script>
             <!-- End Container fluid  -->
