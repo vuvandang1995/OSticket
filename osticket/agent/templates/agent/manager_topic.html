@@ -104,11 +104,10 @@
                         <div class="modal-body form-group">
                             <label for="topicname"><b>Topic name</b></label>
                             <input class="form-control" type="text" placeholder="Enter Topic name" name="topicname" required>
-
+                            <font id="nameerr" color="red"></font><br>
                             <label for="description"><b>Description</b></label>
                             <input class="form-control" type="text" placeholder="Enter description" name="description" required>
-
-                            <br />
+                            <font id="deserr" color="red"></font><br>
                             <label for="department"><b>Department</b></label><br />
                             <select name="department" class="form-control" id="mySelect" onchange="myFunction()">
                                 {% for dm in department %}

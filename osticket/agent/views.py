@@ -161,7 +161,7 @@ def manager_topic(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
         agent = Agents.objects.exclude(username=request.session['admin'])
-        department = Departments.objects.filter().order_by('-id')
+        department = Departments.objects.exclude(name='admin').order_by('-id')
         list_ag = {}
         dm = Departments.objects.all()
         for dm in dm:
@@ -804,6 +804,7 @@ def outbox(request):
 def profile(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
+        tpag =[ ta.topicid.name for ta in TopicAgent.objects.filter(agentid=agent)]
         if request.method == 'POST':
             if 'change_user' in request.POST:
                 u = Agents.objects.get(id=request.POST['agentid'])
@@ -826,8 +827,11 @@ def profile(request):
             elif 'noti_chat' in request.POST:
                 agent.noti_chat = 0
                 agent.save()
-        return render(request,"agent/profile.html",{'agent':agent, 'noti_noti': agent.noti_noti,
-                    'noti_chat': agent.noti_chat, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
+        return render(request,"agent/profile.html", {'agent': agent, 'noti_noti': agent.noti_noti,
+                                                     'noti_chat': agent.noti_chat,
+                                                     'topic': tpag,
+                                                     'agent_name': mark_safe(json.dumps(agent.username)),
+                                                     'fullname': mark_safe(json.dumps(agent.fullname))})
     else:
         return redirect("/")
 
