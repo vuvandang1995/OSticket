@@ -1,0 +1,2 @@
+<a href="/agent/inbox"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-share-square-o"></i></div><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span> <span class="time">3:11 PM 4/6/2018</span></div></a>
+<a href="/agent/inbox"><div class="btn btn-info btn-circle m-r-10"><i class="fa fa-user-plus"></i></div><div class="mail-contnet"><span class="mail-desc">INBOX: You have a new ticket(forward)</span> <span class="time">3:11 PM 4/6/2018</span></div></a>

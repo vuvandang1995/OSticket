@@ -227,6 +227,7 @@ def manager_topic(request):
     else:
         return redirect('/')
 
+
 def manager_department(request):
     if request.session.has_key('admin'):
         admin = Agents.objects.get(username=request.session['admin'])
@@ -267,12 +268,16 @@ def manager_agent(request):
         admin = Agents.objects.get(username=request.session['admin'])
         department = Departments.objects.filter().order_by('-id')
         list_tk = {}
+        list_tp = {}
         ag = Agents.objects.all()
         for ag in ag:
             list_tk[ag.username] = count_tk(ag.username)
+            tpag = TopicAgent.objects.filter(agentid=ag).values('topicid')
+            list_tp[ag.username] = [tp.name for tp in Topics.objects.filter(id__in=tpag)]
         content = {'agent': Agents.objects.all(),
                    'admin': admin,
                    'list_tk': list_tk.items(),
+                   'list_tp': list_tp,
                    'today': timezone.now().date(),
                    'agent_name': mark_safe(json.dumps(admin.username)),
                    'fullname': mark_safe(json.dumps(admin.fullname)),
@@ -417,13 +422,21 @@ def assign_ticket(request, id):
 
 def processing_ticket(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
+        sender = Agents.objects.get(username=request.session['agent'])
         agent = Agents.objects.exclude(Q(username=request.session['agent']) | Q(admin=1))
+        tpag = TopicAgent.objects.filter(agentid=sender).values('topicid')
+        tp = Topics.objects.filter(id__in=tpag)
+        list_ag = {}
+        for t in tp:
+            ag = TopicAgent.objects.filter(topicid=t, agentid__in=agent)
+            list_ag[t.name] = [a.agentid for a in ag]
         form = ForwardForm()
         form1 = AddForm()
-        sender = Agents.objects.get(username=request.session['agent'])
         tksd = TicketAgent.objects.filter(agentid=sender)
         tksdpr = Tickets.objects.filter(id__in=tksd.values('ticketid'),status__in=[1, 2])
-        content = {'noti_noti': sender.noti_noti,
+        content = {'list_ag': list_ag,
+                   'topic': tp,
+                   'noti_noti': sender.noti_noti,
                    'noti_chat': sender.noti_chat,
                    'agent': agent, 'ticket': tksdpr,
                    'form': form,
@@ -453,17 +466,17 @@ def processing_ticket(request):
                                     ForwardTickets.objects.get(senderid=sender, receiverid=rc, ticketid=tk)
                                 except ObjectDoesNotExist:
                                     ForwardTickets.objects.create(senderid=sender, receiverid=rc, ticketid=tk,content=text)
-                                    if rc.receive_email == 1:
-                                        email = EmailMessage(
-                                            'Forward ticket',
-                                            render_to_string('agent/mail/forward_mail.html',
-                                                            {'receiver': rc,
-                                                            'domain': "113.190.232.90:8892",
-                                                            # 'domain': (get_current_site(request)).domain,
-                                                            'sender': sender}),
-                                            to=[rc.email],
-                                        )
-                                        email.send()
+                                    # if rc.receive_email == 1:
+                                    #     email = EmailMessage(
+                                    #         'Forward ticket',
+                                    #         render_to_string('agent/mail/forward_mail.html',
+                                    #                         {'receiver': rc,
+                                    #                         'domain': "113.190.232.90:8892",
+                                    #                         # 'domain': (get_current_site(request)).domain,
+                                    #                         'sender': sender}),
+                                    #         to=[rc.email],
+                                    #     )
+                                    #     email.send()
                     return redirect("/agent/processing_ticket")
                 elif request.POST['type'] == 'add_agent':
                     list_agent = request.POST['list_agent[]']
@@ -549,6 +562,7 @@ def processing_ticket_data(request):
                 option += r'''<button id="''' + str(tk.id) + '''" type="button" class="btn btn-success handle_processing" data-toggle="tooltip" title="process" ><i class="fa fa-wrench"></i></button>'''
             id = r'''<th scope="row"><button type="button" class="btn" data-toggle="modal" data-target="#''' + str(tk.id) + '''content">''' + str(tk.id) + '''</button></th>'''
             handler = '<p id="hd' + str(tk.id) + '">'
+            topic = '<p id="tp' + str(tk.id) + '">' + tk.topicid.name + '</p>'
             tem = 0
             for t in TicketAgent.objects.filter(ticketid=tk.id):
                 tem += 1
@@ -563,7 +577,7 @@ def processing_ticket_data(request):
             else:
                 option += r'''<button id="''' + str(tk.id) + '''" type="button" class="btn btn-danger give_up" data-toggle="tooltip" title="give up" ><i class="fa fa-minus-circle"></i></button>'''
             option +='''<a target="_blank" href="/agent/history/'''+str(tk.id)+ '''" type="button" class="btn btn-warning" data-toggle="tooltip" title="history" ><span class="glyphicon glyphicon-floppy-disk" ></span><i class="fa fa-history"></i></a>'''
-            data.append([id, tk.title, handler, status, option])
+            data.append([id, tk.title, topic, handler, status, option])
         ticket = {"data": data}
         tickets = json.loads(json.dumps(ticket))
         return JsonResponse(tickets, safe=False)

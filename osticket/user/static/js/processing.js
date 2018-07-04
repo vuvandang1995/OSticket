@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
     $('#list_ticket_processing').DataTable({
         "ajax": {
             "type": "GET",
@@ -14,6 +15,15 @@ $(document).ready(function(){
 
     $('body').on('click', '.fw_agent', function(){
         var tkid = $(this).attr('id');
+        var topic = $("#tp"+tkid).text();
+        $('.tpic').each(function() {
+            var dm = $(this).children('input').val();
+            if (dm == topic){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        });
         $("body input[name=ticketid]").val(tkid);
         $("body #content").val('');
         $('body #title').html("Forward ticket no."+tkid+" to agents")
@@ -35,6 +45,15 @@ $(document).ready(function(){
 
     $('body').on('click', '.add_agent', function(){
         var tkid = $(this).attr('id');
+        var topic = $("#tp"+tkid).text();
+        $('.tpic').each(function() {
+            var dm = $(this).children('input').val();
+            if (dm == topic){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        });
         $("body input[name=ticketid]").val(tkid);
         $("body #content").val('');
         $('body #title').html("Add ticket no."+tkid+" to agents")

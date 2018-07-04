@@ -36,6 +36,7 @@
                                 <th width="5%">Status</th>
                                 <th width="5%">Department</th>
                                 <th width="5%">Process/Done</th>
+                                <th width="5%">Topic</th>
                                 <th>Option</th>
                             </tr>
                             </thead>
@@ -73,6 +74,15 @@
                                 {% for key, value in list_tk %}
                                     {% if key == ag.username %}
                                         <td>{{ value.1 }}/{{ value.0 }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                {% for key,value in list_tp.items %}
+                                    {% if key == ag.username %}
+                                    <td>
+                                        {% for va in value %}
+                                            {{ va }}<br>
+                                        {% endfor %}
+                                    </td>
                                     {% endif %}
                                 {% endfor %}
                                 <td>
