@@ -567,6 +567,22 @@ class AgentConsumer(WebsocketConsumer):
                 ag = Agents.objects.get(username=agent.split('+')[0])
                 ag.noti_noti = ag.noti_noti + 1
                 ag.save()
+        
+        if 'admin_add_department' in message:
+            list_agent = message
+            dpm = message[0]
+            del list_agent[0]
+            del list_agent[0]
+            for agent in list_agent:
+                f = r'notification/agent/noti_'+agent+'.txt'
+                file = open(f,'a')
+                message1 = 'Leader just have added you to department <b>'+dpm+'</b>'
+                noti = '<a href="/agent/profile"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-minus-circle"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>'
+                file.write(noti + "\n")
+                file.close()
+                ag = Agents.objects.get(username=agent)
+                ag.noti_noti = ag.noti_noti + 1
+                ag.save()
             
 
     # Receive message from room group

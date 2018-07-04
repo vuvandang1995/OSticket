@@ -206,7 +206,7 @@ def manager_topic(request):
                     tp = Topics.objects.get(id=request.POST['topicid'])
                     tp.name = request.POST['add_topic']
                     tp.description = request.POST['description']
-                    tp.department = request.POST['department']
+                    tp.departmentid = Departments.objects.get(id=request.POST['department'])
                     tp.save()
                     if not list_agent:
                         try:
