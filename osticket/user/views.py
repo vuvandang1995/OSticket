@@ -15,6 +15,7 @@ from .forms import *
 import string
 import datetime
 from random import *
+
 min_char = 8
 max_char = 12
 allchar = string.ascii_letters + string.digits

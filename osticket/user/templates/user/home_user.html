@@ -9,7 +9,7 @@
         Your tickets
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li><a ><i class="fa fa-home"></i> Home</a></li>
         <li class="active">Tickets</li>
       </ol>
     </section>
@@ -61,7 +61,7 @@
                                     <br/>
                                     {% if tk.attach != '' %}
                                     <label for="dateend">Attach:</label>
-                                    <img src="/media/{{tk.attach}}" alt="none" style="width:100%;height:100%;">
+                                    <img src="/media/{{tk.attach}}" alt="none" style="max-width:600px;max-height:600px;">
                                     {% endif %}
                                 </div>
                                     <div class="modal-footer">
