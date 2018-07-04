@@ -97,9 +97,23 @@ class UserConsumer(WebsocketConsumer):
         try:
             f = r'notification/user/'+self.room_group_name+'.txt'
             file = open(f, 'r')
-            for line in file:
-                dem = dem + 1
-                if dem < 15:
+            if len(open(f).readlines()) > 15:
+                count = len(open(f).readlines()) - 15
+                for i, line in enumerate(file):
+                    if i > count:
+                        if '*&*%^chat' in line:
+                            msg = line.split('*&*%^chat')[0]
+                            self.send(text_data=json.dumps({
+                                'message': msg,
+                                'type' : 're-noti-chat'
+                            }))
+                        else:
+                            self.send(text_data=json.dumps({
+                                'message': line,
+                                'type' : 're-noti'
+                            }))
+            else:
+                for line in file:
                     if '*&*%^chat' in line:
                         msg = line.split('*&*%^chat')[0]
                         self.send(text_data=json.dumps({
@@ -268,9 +282,23 @@ class AgentConsumer(WebsocketConsumer):
         try:
             f = r'notification/agent/noti_'+agentName+'.txt'
             file = open(f, 'r')
-            for line in file:
-                dem = dem + 1
-                if dem < 15:
+            if len(open(f).readlines()) > 15:
+                count = len(open(f).readlines()) - 15
+                for i, line in enumerate(file):
+                    if i > count:
+                        if '*&*%^chat' in line:
+                            msg = line.split('*&*%^chat')[0]
+                            self.send(text_data=json.dumps({
+                                'message': msg,
+                                'type' : 're-noti-chat'
+                            }))
+                        else:
+                            self.send(text_data=json.dumps({
+                                'message': line,
+                                'type' : 're-noti'
+                            }))
+            else:
+                for line in file:
                     if '*&*%^chat' in line:
                         msg = line.split('*&*%^chat')[0]
                         self.send(text_data=json.dumps({
@@ -331,10 +359,6 @@ class AgentConsumer(WebsocketConsumer):
                     'time' : time,
                 }
             )
-        
-
-
-        
         
 
 
