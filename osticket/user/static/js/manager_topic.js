@@ -46,23 +46,25 @@ $(document).ready(function(){
             }
         });
         var department_name = $("#mySelect option[value='"+department+"']").html();
-        $.ajax({
-            type:'POST',
-            url:location.href,
-            data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'list_agent[]': JSON.stringify(list_agent), 'department': department},
-            success: function(){
-                // window.location.reload();
-                $("#list_topic").load(location.href + " #list_topic");
-                document.getElementById("add_topic_close").click();
-                list_agent.unshift('admin_add_department');
-                list_agent.unshift(department_name);
-                var date = formatAMPM(new Date());
-                group_agent_Socket.send(JSON.stringify({
-                    'message' : list_agent,
-                    'time' : date
-                }));
-            }
-        });
+        $("#nameerr").html("");
+        $("#deserr").html("");
+        if (topicname==''){
+            $("#nameerr").html("not null");
+        }
+        else if(description==''){
+            $("#deserr").html("not null");
+        }else{
+            $.ajax({
+                type:'POST',
+                url:location.href,
+                data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'list_agent[]': JSON.stringify(list_agent), 'department': department},
+                success: function(){
+                    // window.location.reload();
+                    $("#list_topic").load(location.href + " #list_topic");
+                    document.getElementById("add_topic_close").click();
+                }
+            });
+        }
     });
 
 
