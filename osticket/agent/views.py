@@ -208,14 +208,21 @@ def manager_topic(request):
                     tp.description = request.POST['description']
                     tp.department = request.POST['department']
                     tp.save()
-                    for ag in list_agent:
+                    if not list_agent:
                         try:
-                            ag = Agents.objects.get(username=ag)
-                            tpag = TopicAgent.objects.get(topicid=tp)
+                            tpag = TopicAgent.objects.filter(topicid=tp)
                             tpag.delete()
-                            TopicAgent.objects.create(agentid=ag, topicid=tp)
                         except:
                             pass
+                    else:
+                        try:
+                            tpag = TopicAgent.objects.filter(topicid=tp)
+                            tpag.delete()
+                        except:
+                            pass
+                        for ag in list_agent:
+                            ag = Agents.objects.get(username=ag)
+                            TopicAgent.objects.create(agentid=ag, topicid=tp)
         return render(request, 'agent/manager_topic.html', content)
     else:
         return redirect('/')
@@ -323,14 +330,16 @@ def logout(request):
 def home_agent(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
-        topic = Topics.objects.exclude(Q(name='Other') | Q(type_send=0))
+        # department = Departments.objects.get(id=agent.departmentid)
+        tpag = TopicAgent.objects.filter(agentid=agent).values('topicid')
+        topic = Topics.objects.filter(id__in=tpag)
         user_total = Users.objects.count()
-        process = Tickets.objects.filter(Q(status=1) | Q(status=2))
+        process = Tickets.objects.filter(topicid__in=topic, status__in=[1,2])
         done = Tickets.objects.filter(status=3)
         tk_open = Tickets.objects.filter(status=0, topicid__in=topic).count()
         tk_processing = TicketAgent.objects.filter(agentid=agent, ticketid__in=process).count()
         tk_done = TicketAgent.objects.filter(agentid=agent, ticketid__in=done).count()
-        content = {'ticket': Tickets.objects.filter(status=0, topicid__in=topic).order_by('-id'),
+        content = {'ticket': Tickets.objects.filter(status=0, topicid__in=topic, ).order_by('-id'),
                     'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username)),
                     'fullname': mark_safe(json.dumps(agent.fullname)),
                     'user_total': user_total,
