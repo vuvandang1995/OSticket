@@ -45,16 +45,25 @@ $(document).ready(function(){
                 list_agent.push(this.name);
             }
         });
-        $.ajax({
-            type:'POST',
-            url:location.href,
-            data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'list_agent[]': JSON.stringify(list_agent), 'department': department},
-            success: function(){
-                // window.location.reload();
-                $("#list_topic").load(location.href + " #list_topic");
-                document.getElementById("add_topic_close").click();
-            }
-        });
+        $("#nameerr").html("");
+        $("#deserr").html("");
+        if (topicname==''){
+            $("#nameerr").html("not null");
+        }
+        else if(description==''){
+            $("#deserr").html("not null");
+        }else{
+            $.ajax({
+                type:'POST',
+                url:location.href,
+                data: {'add_topic': topicname, 'description': description, 'csrfmiddlewaretoken':token, 'topicid': topicid, 'list_agent[]': JSON.stringify(list_agent), 'department': department},
+                success: function(){
+                    // window.location.reload();
+                    $("#list_topic").load(location.href + " #list_topic");
+                    document.getElementById("add_topic_close").click();
+                }
+            });
+        }
     });
 
 
