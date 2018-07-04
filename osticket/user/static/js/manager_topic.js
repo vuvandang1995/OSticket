@@ -45,6 +45,7 @@ $(document).ready(function(){
                 list_agent.push(this.name);
             }
         });
+        var department_name = $("#mySelect option[value='"+department+"']").html();
         $.ajax({
             type:'POST',
             url:location.href,
@@ -53,6 +54,13 @@ $(document).ready(function(){
                 // window.location.reload();
                 $("#list_topic").load(location.href + " #list_topic");
                 document.getElementById("add_topic_close").click();
+                list_agent.unshift('admin_add_department');
+                list_agent.unshift(department_name);
+                var date = formatAMPM(new Date());
+                group_agent_Socket.send(JSON.stringify({
+                    'message' : list_agent,
+                    'time' : date
+                }));
             }
         });
     });

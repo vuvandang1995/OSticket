@@ -513,11 +513,25 @@
                     }, 2000);
                 }
 
+                if (message.includes(agentName) && message.includes('admin_add_department')) {
+                    var message1 = 'Leader just have added you to department <b>'+message[0]+'</b>';
+                    var href = "{% url 'agent:profile' %}";
+                    var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    $('.noti_noti').prepend(noti);
+                    var noti1 = '<span class="heartbit"></span> <span class="point">';
+                    $('body .noti_fy').prepend(noti1);
+                    x.play();
+
+                    setTimeout(function(){
+                        $("body #info-agent").load(location.href + " #info-agent");
+                    }, 2000);
+                }
+
 
                 if (message.includes(agentName+'+') && message[2].includes(' is done!')) {
                     var message1 = message[0]+' just have done ticket no. '+message[1];
                     var href = "{% url 'agent:processing_ticket' %}";
-                    var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-minus-circle"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
+                    var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-check"></i></div><div class="mail-contnet"><span class="mail-desc">'+message1+'</span> <span class="time">'+time+'</span></div></a>';
                     $('.noti_noti').prepend(noti);
                     var noti1 = '<span class="heartbit"></span> <span class="point">';
                     $('body .noti_fy').prepend(noti1);
