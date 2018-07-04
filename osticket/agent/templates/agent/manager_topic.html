@@ -57,7 +57,7 @@
                                         <td id="description_topic{{tp.id}}">{{ tp.description}}</td>
                                         <td id="department_topic{{tp.id}}">{{ tp.departmentid.name}}</td>
 
-                                        <td>
+                                        <td id="hd_topic{{tp.id}}">
                                         {% for key, value in list_ag_tp %}
                                             {% if key == tp.name%}
                                                 {% for ag in value%}
@@ -146,6 +146,7 @@
                 </div>
             </div>
             <script>
+                
                 function myFunction() {
                     var x = $('#mySelect option:selected').html();
                     $('#topicModal input:checkbox').prop('checked', false);

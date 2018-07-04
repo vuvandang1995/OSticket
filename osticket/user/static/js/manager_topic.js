@@ -71,14 +71,39 @@ $(document).ready(function(){
             var description = $("#description_topic"+topicid).html();
             $("input[name=description]").val(description);
 
-            if ($('#type_send'+topicid).html() == 'All'){
-                $('#topicModal input:checkbox').prop('checked', true);
-            }else{
-                $('#topicModal input:checkbox').prop('checked', false);
-            }
+            var department = $("#department_topic"+topicid).html();
+            $("#mySelect option[name='"+department+"']").prop("selected", true);
+
+            $('.dpm').each(function() {
+                var dm = $(this).children('input').val();
+                if (dm == department){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            });
+
+            var hd = $("#hd_topic"+topicid).html().split("<br>");
+            $('#topicModal input:checkbox').each(function() {
+                for (i = 0; i < hd.length-1; i++) {
+                    if (this.name == hd[i].replace(/\s/g,'')){
+                        $(this).prop('checked', true);
+                    }
+                }
+            });
+            
 
             $("input[name=topicid]").val(topicid);
         }else{
+            var x = $('#mySelect option:selected').html();
+            $('.dpm').each(function() {
+                var dm = $(this).children('input').val();
+                if (dm == x){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            });
             $('#title').html("Add New Topic")
             $("input[name=topicid]").val(0);
             $('#topicModal input:checkbox').prop('checked', false);
