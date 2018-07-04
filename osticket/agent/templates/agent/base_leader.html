@@ -147,6 +147,9 @@
         // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
         setTimeout(function(){
             $('#list_ticket_leader').DataTable().ajax.reload();
+            $("body #pending").load(location.href + " #pending");
+            $("body #processing").load(location.href + " #processing");
+            $("body #done").load(location.href + " #done");
         }, 1000);
     };
 </script>

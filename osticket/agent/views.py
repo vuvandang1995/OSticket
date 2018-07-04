@@ -132,15 +132,15 @@ def home_admin_data(request):
         data = []
         for tk in tk:
             if tk.status == 0:
-                status = r'<span class ="label label-danger" id="leader'+str(tk.id)+'"> pending</span>'
+                status = r'<span class ="label label-danger" id="leader'+str(tk.id)+'">pending</span>'
                 handler = '<p id="hd' + str(tk.id) + '">Nobody</p>'
             else:
                 if tk.status == 1:
-                    status = r'<span class ="label label-warning" id="leader'+str(tk.id)+'"> processing </span>'
+                    status = r'<span class ="label label-warning" id="leader'+str(tk.id)+'">processing</span>'
                 elif tk.status == 2:
-                    status = r'<span class ="label label-success" id="leader'+str(tk.id)+'"> done </span>'
+                    status = r'<span class ="label label-success" id="leader'+str(tk.id)+'">done</span>'
                 else:
-                    status = r'<span class ="label label-default" id="leader'+str(tk.id)+'"> closed </span>'
+                    status = r'<span class ="label label-default" id="leader'+str(tk.id)+'">closed</span>'
                 handler = '<p id="hd' + str(tk.id) + '">'
                 for t in TicketAgent.objects.filter(ticketid=tk.id):
                     handler += t.agentid.username + "<br>"

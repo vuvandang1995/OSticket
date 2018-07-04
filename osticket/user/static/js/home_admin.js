@@ -30,6 +30,7 @@ $(document).ready(function(){
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     $('#list_ticket_leader').DataTable().ajax.reload();
+                    alert(stt)
                     if (stt != 'closed'){
                         array2.push('admin_close_ticket');
                         array2.push(id);
