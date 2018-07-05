@@ -278,7 +278,7 @@ class AgentConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
-        dem = 0
+        
         try:
             f = r'notification/agent/noti_'+agentName+'.txt'
             file = open(f, 'r')

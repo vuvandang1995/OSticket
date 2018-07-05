@@ -335,7 +335,6 @@ def logout(request):
 def home_agent(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
-        # department = Departments.objects.get(id=agent.departmentid)
         tpag = TopicAgent.objects.filter(agentid=agent).values('topicid')
         topic = Topics.objects.filter(id__in=tpag)
         user_total = Users.objects.count()
@@ -344,6 +343,10 @@ def home_agent(request):
         tk_open = Tickets.objects.filter(status=0, topicid__in=topic).count()
         tk_processing = TicketAgent.objects.filter(agentid=agent, ticketid__in=process).count()
         tk_done = TicketAgent.objects.filter(agentid=agent, ticketid__in=done).count()
+        tp = TopicAgent.objects.filter(agentid=agent)
+        list_tp = ""
+        for tp in tp:
+            list_tp += str(tp.topicid.name) + "!"
         content = {'ticket': Tickets.objects.filter(status=0, topicid__in=topic, ).order_by('-id'),
                     'agent': agent, 'agent_name': mark_safe(json.dumps(agent.username)),
                     'fullname': mark_safe(json.dumps(agent.fullname)),
@@ -352,7 +355,8 @@ def home_agent(request):
                     'tk_processing': tk_processing,
                     'tk_done': tk_done,
                     'noti_noti': agent.noti_noti,
-                    'noti_chat': agent.noti_chat}
+                    'noti_chat': agent.noti_chat,
+                    'list_tp': mark_safe(json.dumps(list_tp))}
         if request.method == 'POST':
             if 'tkid' in request.POST:
                 ticket = Tickets.objects.get(id=request.POST['tkid'])
@@ -380,13 +384,6 @@ def home_agent(request):
             if 'noti_chat' in request.POST:
                 agent.noti_chat = 0
                 agent.save()
-            # if 'date' in request.POST:
-            #     date1 = request.POST['date']
-            #     dtDate = datetime.strptime(date1, "%Y-%m-%d").date() + timedelta(days=1)
-            #     end = dtDate + timedelta(days=1)
-            #     tk_by_date = Tickets.objects.filter(datestart__range=[dtDate, end], ticketagent__agentid=agent)
-            #     return render(request, 'agent/home_agent.html', {'tk_date': tk_by_date})
-            #     print(tk_by_date)
         return render(request, 'agent/home_agent.html', content)
     else:
         return redirect("/")
@@ -891,13 +888,6 @@ def manage_user_data(request):
         ticket = {"data": data}
         tickets = json.loads(json.dumps(ticket))
         return JsonResponse(tickets, safe=False)
-
-
-def get_data(request, name):
-    res = name
-    json_data = name
-    # return HttpResponse(json_data, content_type="application/json")
-    return JsonResponse(json_data, safe=False)
 
 
 

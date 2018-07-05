@@ -62,6 +62,13 @@ $(document).ready(function(){
                     // window.location.reload();
                     $("#list_topic").load(location.href + " #list_topic");
                     document.getElementById("add_topic_close").click();
+                    var date = formatAMPM(new Date());
+                    list_agent.unshift('admin_add_department');
+                    list_agent.unshift(department_name);
+                    group_agent_Socket.send(JSON.stringify({
+                        'message' : list_agent,
+                        'time' : date
+                    }));
                 }
             });
         }

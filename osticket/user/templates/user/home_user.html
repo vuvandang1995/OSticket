@@ -94,9 +94,9 @@
                          <label for="title"><b>Title</b></label>
                          {{form.title}}
                          <br /><label for="topic"><b>Topic</b></label><br />
-                         <select name="topic" class="form-control">
+                         <select name="topic" class="form-control" id="mySelect">
                              {% for tp in topic %}
-                             <option value="{{tp.id}}" name="haha">{{tp.name}} - {{tp.description}}</option>
+                                <option value="{{tp.id}}" name="{{tp.name}}">{{tp.name}} - {{tp.description}}</option>
                              {% endfor %}
                          </select>
                          <br />
@@ -250,13 +250,13 @@
     $(document).ready(function(){
         // sau khi submit thanh cong thi send message tu websocket len server
         $("#id02").submit(function() {
-            var type_send = $(this).find('option:selected').attr("name");
             var chatSocket1 = new WebSocket(
             'ws://' + window.location.host +
             '/ws/agent/agent+group_agent_Socket/');
             var message = '';
-            message = 'You have a new ticket!';
-
+            var department = document.getElementById("mySelect").value;
+            var department_name = $("#mySelect option[value='"+department+"']").attr("name");
+            message = 'You have a new ticket!'+department_name;
 
             var date = formatAMPM(new Date());
             chatSocket1.onopen = function (event) {

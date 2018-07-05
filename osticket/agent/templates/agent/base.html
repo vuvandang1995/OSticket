@@ -175,6 +175,8 @@
     var x = document.getElementById("myAudio"); 
     var fullname = {{ fullname }};
     var agentName = {{ agent_name }};
+    var list_tp = {{list_tp}};
+    list_tp = list_tp.split('!');
     /*var chatSocket = new WebSocket(
         'ws://' + window.location.host +
         '/ws/agent/' + agentName + '/');*/
@@ -271,7 +273,7 @@
             }else{
                 // Thong bao va load lai table home_agent khi co new ticket hoac co 1 agent nhan xu ly ticket
                 switch(message) {
-                    case 'You have a new ticket!':
+                    /*case 'You have a new ticket!':
                         var message = 'You have a new ticket!';
                         var href = "{% url 'agent:index' %}";
                         var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-link"></i></div><div class="mail-contnet"><span class="mail-desc">'+message+'</span> <span class="time">'+time+'</span></div></a>';
@@ -284,7 +286,7 @@
                             $("body #pending").load(location.href + " #pending");
                         }, 1000);
                         x.play();
-                        break;
+                        break;*/
 
                     case 'ticket da duoc xu ly':
                         setTimeout(function(){
@@ -293,6 +295,25 @@
                             $("body #processing").load(location.href + " #processing");
                         }, 1000);
                         break;
+                }
+
+                if (message.includes('You have a new ticket!')) {
+                    var message1 = message.split('!')[1];
+                    for (i = 0; i <= list_tp.length-1; i++){
+                        if (message1 == list_tp[i]){
+                            var href = "{% url 'agent:index' %}";
+                            var noti = '<a href="'+href+'"><div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-link"></i></div><div class="mail-contnet"><span class="mail-desc">'+message.split('!')[0]+'</span> <span class="time">'+time+'</span></div></a>';
+                            $('.noti_noti').prepend(noti);
+                            var noti1 = '<span class="heartbit"></span> <span class="point">';
+                            $('body .noti_fy').prepend(noti1);
+                            
+                            setTimeout(function(){
+                                $("body #list_ticket_home").load(location.href + " #list_ticket_home");
+                                $("body #pending").load(location.href + " #pending");
+                            }, 1000);
+                            x.play();
+                        }
+                    }
                 }
 
                 // Thong bao va load lai table processing khi ban duoc ai do forward hoac add ticket
