@@ -511,15 +511,24 @@
                     var noti1 = '<span class="heartbit"></span> <span class="point">';
                     $('body .noti_fy').prepend(noti1);
                     x.play();
-
                     
                     setTimeout(function(){
-                        $("#example23").load(location.href + " #example23");
-                        $("#list_ticket_processing").DataTable().ajax.reload();
+                        $("body #example23").load(location.href + " #example23");
+                        $("body #list_ticket_home").load(location.href + " #list_ticket_home");
                         $("body #done").load(location.href + " #done");
                         $("body #processing").load(location.href + " #processing");
+                        $("#list_ticket_processing").DataTable().ajax.reload();
                     }, 2000);
                 }
+
+
+                if (message == 'reload_home_agent') {
+                    setTimeout(function(){
+                        $("body #list_ticket_home").load(location.href + " #list_ticket_home");
+                    }, 2000);
+                }
+
+                
 
                 if (message.includes(agentName+'+') && message.includes('give_up')) {
                     var message1 = message[0]+' just have given up ticket no. '+message[1];

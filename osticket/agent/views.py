@@ -33,7 +33,15 @@ def home_admin(request):
         tk_processing = Tickets.objects.filter(Q(status=1) | Q(status=2)).count()
         tk_done = Tickets.objects.filter(status=3).count()
         tk_open = Tickets.objects.filter(status=0).count()
+        # tpag = TopicAgent.objects.filter(agentid=sender).values('topicid')
+        tp = Topics.objects.all()
+        list_ag = {}
+        for t in tp:
+            ag = TopicAgent.objects.filter(topicid=t, agentid__in=agent)
+            list_ag[t.name] = [a.agentid for a in ag]
         content = {'ticket': Tickets.objects.filter().order_by("-id"),
+                   'list_ag': list_ag,
+                   'topic': tp,
                    'handler': TicketAgent.objects.all(),
                    'admin': admin,
                    'today': timezone.now().date(),
@@ -147,11 +155,12 @@ def home_admin_data(request):
                 handler += '</p>'
             id = r'''<button type="button" class="btn" data-toggle="modal" data-target="#'''+str(tk.id)+'''content">'''+str(tk.id)+'''</button>'''
             sender = '<p id="sender' + str(tk.id) + '">' + tk.sender.username + '</p>'
+            topic = '<p id="tp' + str(tk.id) + '">' + tk.topicid.name + '</p>'
             option = r'''<button type="button" class="btn btn-primary" id="'''+str(tk.id)+'''" data-toggle="tooltip" title="open/close"><i class="fa fa-power-off"></i></button>
             <button type="button" class="btn btn-danger" id="'''+str(tk.id)+'''" data-toggle="tooltip" title="delete"><i class="fa fa-trash-o"></i></button>
             <button type="button" class="btn btn-info" data-title="forward" id="'''+str(tk.id)+'''"data-toggle="modal" data-target="#forward_modal"><i class="fa fa-share-square-o" data-toggle="tooltip" title="forward" ></i></button>
             <a type="button" target=_blank class="btn btn-warning" href="/agent/history/'''+str(tk.id)+ '''" data-toggle="tooltip" title="history"><i class="fa fa-history"></i></a>'''
-            data.append([id, tk.title, tk.topicid.name, sender, status, handler, option])
+            data.append([id, tk.title, topic, sender, status, handler, option])
         ticket = {"data": data}
         tickets = json.loads(json.dumps(ticket))
         return JsonResponse(tickets, safe=False)
@@ -431,6 +440,10 @@ def processing_ticket(request):
         form1 = AddForm()
         tksd = TicketAgent.objects.filter(agentid=sender)
         tksdpr = Tickets.objects.filter(id__in=tksd.values('ticketid'),status__in=[1, 2])
+        topicag = TopicAgent.objects.filter(agentid=sender)
+        list_tp = ""
+        for tp1 in topicag:
+            list_tp += str(tp1.topicid.name) + "!"
         content = {'list_ag': list_ag,
                    'topic': tp,
                    'noti_noti': sender.noti_noti,
@@ -439,7 +452,8 @@ def processing_ticket(request):
                    'form': form,
                    'form1': form1,
                    'agent_name': mark_safe(json.dumps(sender.username)),
-                   'fullname': mark_safe(json.dumps(sender.fullname))}
+                   'fullname': mark_safe(json.dumps(sender.fullname)),
+                   'list_tp': mark_safe(json.dumps(list_tp))}
         if request.method == 'POST':
             if 'noti_noti' in request.POST:
                 sender.noti_noti = 0
@@ -665,10 +679,17 @@ def history_all_ticket(request, date, date2):
 def inbox(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
+        topicag = TopicAgent.objects.filter(agentid=agent)
+        list_tp = ""
+        for tp1 in topicag:
+            list_tp += str(tp1.topicid.name) + "!"
         content = {'forwardin': ForwardTickets.objects.filter(receiverid=agent),
                     'noti_noti': agent.noti_noti,
                     'noti_chat': agent.noti_chat,
-                   'addin': AddAgents.objects.filter(receiverid=agent), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
+                   'addin': AddAgents.objects.filter(receiverid=agent), 
+                   'agent_name': mark_safe(json.dumps(agent.username)), 
+                   'fullname': mark_safe(json.dumps(agent.fullname)),
+                   'list_tp': mark_safe(json.dumps(list_tp))}
         if request.method == 'POST':
             
             if 'forward' in request.POST:
@@ -775,10 +796,17 @@ def inbox(request):
 def outbox(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session.get('agent'))
+        topicag = TopicAgent.objects.filter(agentid=agent)
+        list_tp = ""
+        for tp1 in topicag:
+            list_tp += str(tp1.topicid.name) + "!"
         content ={'forwardout':ForwardTickets.objects.filter(senderid=agent),
                     'noti_noti': agent.noti_noti,
                     'noti_chat': agent.noti_chat,
-                  'addout': AddAgents.objects.filter(senderid=agent), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
+                    'addout': AddAgents.objects.filter(senderid=agent),
+                    'agent_name': mark_safe(json.dumps(agent.username)),
+                    'fullname': mark_safe(json.dumps(agent.fullname)),
+                    'list_tp': mark_safe(json.dumps(list_tp))}
         if request.method == 'POST':
             if 'forward' in request.POST:
                 fwticket = ForwardTickets.objects.get(id=request.POST['tkid'])
@@ -801,6 +829,10 @@ def outbox(request):
 def profile(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
+        topicag = TopicAgent.objects.filter(agentid=agent)
+        list_tp = ""
+        for tp1 in topicag:
+            list_tp += str(tp1.topicid.name) + "!"
         tpag =[ ta.topicid.name for ta in TopicAgent.objects.filter(agentid=agent)]
         if request.method == 'POST':
             if 'change_user' in request.POST:
@@ -828,7 +860,8 @@ def profile(request):
                                                      'noti_chat': agent.noti_chat,
                                                      'topic': tpag,
                                                      'agent_name': mark_safe(json.dumps(agent.username)),
-                                                     'fullname': mark_safe(json.dumps(agent.fullname))})
+                                                     'fullname': mark_safe(json.dumps(agent.fullname)),
+                                                     'list_tp': mark_safe(json.dumps(list_tp))})
     else:
         return redirect("/")
 
@@ -837,8 +870,16 @@ def closed_ticket(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
         tem = Tickets.objects.filter(status=3)
+        topicag = TopicAgent.objects.filter(agentid=agent)
+        list_tp = ""
+        for tp1 in topicag:
+            list_tp += str(tp1.topicid.name) + "!"
         content = {'noti_noti': agent.noti_noti,
-                    'noti_chat': agent.noti_chat, 'ticket': TicketAgent.objects.filter(agentid=agent, ticketid__in=tem), 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))}
+                    'noti_chat': agent.noti_chat, 
+                    'ticket': TicketAgent.objects.filter(agentid=agent, ticketid__in=tem), 
+                    'agent_name': mark_safe(json.dumps(agent.username)), 
+                    'fullname': mark_safe(json.dumps(agent.fullname)),
+                    'list_tp': mark_safe(json.dumps(list_tp))}
         if request.method == 'POST':
             if 'noti_noti' in request.POST:
                 agent.noti_noti = 0
@@ -854,6 +895,10 @@ def closed_ticket(request):
 def manager_user(request):
     if request.session.has_key('agent')and(Agents.objects.get(username=request.session['agent'])).status == 1:
         agent = Agents.objects.get(username=request.session['agent'])
+        topicag = TopicAgent.objects.filter(agentid=agent)
+        list_tp = ""
+        for tp1 in topicag:
+            list_tp += str(tp1.topicid.name) + "!"
         users = Users.objects.all()
         if request.method == 'POST':
             if 'noti_noti' in request.POST:
@@ -868,7 +913,11 @@ def manager_user(request):
                 user.save()
         
         return render(request,"agent/manage_user.html",{'noti_noti': agent.noti_noti,
-                    'noti_chat': agent.noti_chat, 'user':users, 'agent_name': mark_safe(json.dumps(agent.username)), 'fullname': mark_safe(json.dumps(agent.fullname))})
+                    'noti_chat': agent.noti_chat, 
+                    'user':users, 
+                    'agent_name': mark_safe(json.dumps(agent.username)), 
+                    'fullname': mark_safe(json.dumps(agent.fullname)),
+                    'list_tp': mark_safe(json.dumps(list_tp))})
     else:
         return redirect("/")
 

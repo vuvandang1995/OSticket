@@ -161,6 +161,11 @@
                                     'message' : message,
                                     'time': date
                                 }));
+
+                                chatSocket1.send(JSON.stringify({
+                                    'message' : 'reload_home_agent',
+                                    'time': date
+                                }));
                             };
                         }
                     });

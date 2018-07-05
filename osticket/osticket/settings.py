@@ -103,7 +103,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'osticket',
+        'NAME': 'mticket',
         'USER': 'dangvv',
         'PASSWORD': '1',
         'HOST': '192.168.100.22',
