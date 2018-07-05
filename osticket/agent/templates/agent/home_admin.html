@@ -141,9 +141,20 @@
                             <h3 class="modal-title">Agent List</h3>
                         </div>
                         <div class="modal-body form-group">
-                            {% for agent in agent %}
-                                <input class="inputText" type="checkbox" name="{{ agent.username }}" > {{ agent.username }} <br>
-                            {% endfor%}
+                            {% for tp in topic %}
+                                <div class="tpic" style="display:none;">
+                                    <input type="hidden" value="{{tp.name}}">
+                                    {% for key,value in list_ag.items %}
+                                        {% if key == tp.name %}
+                                            {% for va in value %}
+                                                <div id="{{ va.username }}">
+                                                    <input class="inputText" type="checkbox" name="{{ va.username }}" > {{ va.username }} - {{va.fullname}} <br>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
                             <input type="hidden" name="ticketid" value="">
                         </div>
 

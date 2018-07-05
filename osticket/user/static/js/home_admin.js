@@ -30,7 +30,6 @@ $(document).ready(function(){
                 data: {'close':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     $('#list_ticket_leader').DataTable().ajax.reload();
-                    alert(stt)
                     if (stt != 'closed'){
                         array2.push('admin_close_ticket');
                         array2.push(id);
@@ -135,6 +134,7 @@ $(document).ready(function(){
         //$(".closefd").prop('disabled', true);
         var token = $("input[name=csrfmiddlewaretoken]").val();
         var id = $("input[name=ticketid]").val();
+        
         var list_agent = [];
         var date = formatAMPM(new Date());
         $('#forward_modal input:checkbox').each(function() {
@@ -183,6 +183,15 @@ $(document).ready(function(){
     $('#forward_modal').on('show.bs.modal', function(event){
         var button = $(event.relatedTarget);
         var ticketid = button.attr('id');
+        var topic = $("#tp"+ticketid).text();
+        $('.tpic').each(function() {
+            var dm = $(this).children('input').val();
+            if (dm == topic){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        });
         $("input[name=ticketid]").val(ticketid);
         var array = $('#hd'+ticketid).html().split("<br>");
         var list_agent = [];
