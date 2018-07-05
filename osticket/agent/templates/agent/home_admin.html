@@ -110,20 +110,21 @@
                                     <h4 class="modal-title">Ticket no.{{tk.id}}</h4>
                                 </div>
                                 <div class="modal-body form-group">
-                                    <label for="content">Title:</label>
-                                    <p><b>{{tk.title}}</b></p>
-                                    <label for="content">Topic:</label>
-                                    <p><b>{{tk.topicid.name}}</b></p>
-                                    <label for="content">Content:</label>
-                                    <p><b>{{tk.content}}</b></p>
-                                    <label for="datestart">Date Start:</label>
-                                    <p><b>{{ tk.datestart}}</b></p>
-                                    <label for="dateend">Date End:</label>
-                                    <p><b>{{tk.dateend}}</b></p>
-                                    <br/>
+                                    <b>Owner:</b>
+                                    <p>{{tk.sender.fullname}}</p>
+                                    <b>Title:</b>
+                                    <p>{{tk.title}}</p>
+                                    <b>Topic:</b>
+                                    <p>{{tk.topicid.name}}</p>
+                                    <b>Content:</b>
+                                    <p>{{tk.content}}</p>
+                                    <b>Date Start:</b>
+                                    <p>{{ tk.datestart}}</p>
+                                    <b>Date End:</b>
+                                    <p>{{tk.dateend}}</p>
                                     {% if tk.attach != '' %}
-                                    <label for="dateend">Attach:</label>
-                                    <img src="/media/{{tk.attach}}" alt="none" style="max-width:600px;max-height:600px;">
+                                    <b>Attach:</b><br>
+                                    <img src="/media/{{tk.attach}}" alt="none" style="max-width:80%;max-height:600px;display: block;margin-left: auto;margin-right: auto;">
                                     {% endif %}
                                 </div>
                                     <div class="modal-footer">

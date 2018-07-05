@@ -200,7 +200,7 @@ def user_data(request):
             else:
                 option += '''<a  type="button" disabled class="btn btn-primary not-active" data-toggle="tooltip" title="conversation"><span class="glyphicon glyphicon-comment" ></span></a>'''
             option += '''<a type="button" target=_blank class="btn btn-warning" href="/user/history_'''+str(tk.id)+ '''" data-toggle="tooltip" title="history"><i class="fa fa-history"></i></a>'''
-            data.append([id, tk.title, status, handler, option])
+            data.append([id, tk.topicid.name, tk.title, status, handler, option])
         ticket = {"data": data}
         tickets = json.loads(json.dumps(ticket))
         return JsonResponse(tickets, safe=False)

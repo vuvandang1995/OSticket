@@ -30,9 +30,10 @@
                 <thead>
                     <tr>
                         <th width="5%">ID</th>
+                        <th width="15%">Topic</th>
                         <th width="40%">Title</th>
                         <th width="10%">Status</th>
-                        <th width="25%">Handler</th>
+                        <th width="10%">Handler</th>
                         <th width="20%">Option</th>
                     </tr>
                   </thead>
@@ -58,10 +59,9 @@
                                     <p>{{ tk.datestart}}</p>
                                     <label>Date End:</label>
                                     <p>{{tk.dateend}}</p>
-                                    <br/>
                                     {% if tk.attach != '' %}
-                                    <label for="dateend">Attach:</label>
-                                    <img src="/media/{{tk.attach}}" alt="none" style="max-width:600px;max-height:600px;">
+                                    <b>Attach:</b><br>
+                                    <img src="/media/{{tk.attach}}" alt="none" style="max-width:80%;max-height:600px;display: block;margin-left: auto;margin-right: auto;">
                                     {% endif %}
                                 </div>
                                     <div class="modal-footer">

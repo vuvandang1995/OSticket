@@ -59,22 +59,22 @@
                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                             </div>
                                             <div class="modal-body form-group">
-                                                <label>Owner:</label>
-                                                <p><b>{{tk.ticketid.sender.fullname}}</b></p><br>
-                                                <label>Title:</label>
-                                                <p><b>{{tk.ticketid.title}}</b></p><br>
-                                                <label>Topic:</label>
-                                                <p><b>{{tk.ticketid.topicid.name}}</b></p><br>
-                                                <label>Content:</label>
-                                                <p><b>{{tk.ticketid.content}}</b></p><br>
-                                                <label>Date Start:</label>
-                                                <p><b>{{tk.ticketid.datestart}}</b></p><br>
-                                                <label>Date End:</label>
-                                                <p><b>{{tk.ticketid.dateend}}</b></p>
+                                                <b>Owner:</b>
+                                                <p>{{tk.ticketid.sender.fullname}}</p>
+                                                <b>Title:</b>
+                                                <p>{{tk.ticketid.title}}</p>
+                                                <b>Topic:</b>
+                                                <p>{{tk.ticketid.topicid.name}}</p>
+                                                <b>Content:</b>
+                                                <p>{{tk.ticketid.content}}</p>
+                                                <b>Date Start:</b>
+                                                <p>{{ tk.ticketid.datestart}}</p>
+                                                <b>Date End:</b>
+                                                <p>{{tk.ticketid.dateend}}</p>
                                                 {% if tk.ticketid.attach != '' %}
-                                                <label>Attach:</label>
-                                                <img src="/media/{{tk.attach}}" alt="none" style="max-width:600px;max-height:600px;">
-                                                    {% endif %}
+                                                <b>Attach:</b><br>
+                                                <img src="/media/{{tk.attach}}" alt="none" style="max-width:80%;max-height:600px;display: block;margin-left: auto;margin-right: auto;">
+                                                {% endif %}
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
