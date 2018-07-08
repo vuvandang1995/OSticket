@@ -1,0 +1,62 @@
+.vis-timeline {
+  border: 2px solid #000000;
+  font-family:  purisa, 'comic sans', cursive;
+  font-size: 12pt;
+  background: #edfaff;
+}
+
+.vis-item {
+  border-color: #3aa0ff;
+  background-color: transparent;
+  font-size: 15pt;
+  color: 84ff#00;
+  box-shadow: 5px 5px 20px rgba(128,128,128, 0.5);
+
+}
+
+.vis-item.vis-box {
+  border-radius: 50%;
+}
+
+.vis-item,
+.vis-item.vis-line {
+  border-width: 2px;
+}
+
+.vis-item.vis-dot {
+  border-width: 10px;
+  border-radius: 10px;
+}
+
+.vis-item.vis-selected {
+}
+
+.vis-time-axis .vis-text {
+  color: #0e2233;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.vis-item.expected {
+    background-color: transparent;
+    border-style: dashed!important;
+    z-index: 0;
+}
+
+.vis-time-axis .vis-text.vis-major {
+  font-weight: bold;
+}
+
+.vis-time-axis .vis-grid.vis-minor {
+  border-width: 2px;
+  border-color: #e0e0e0;
+}
+
+.vis-time-axis .vis-grid.vis-major {
+  border-width: 2px;
+  border-color: #F991A3;
+}
+
+.vis-item-content {
+}
+

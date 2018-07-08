@@ -1,0 +1,6 @@
+Django==2.0.5
+gunicorn
+channels
+channels_redis
+mysqlclient
+simplejson

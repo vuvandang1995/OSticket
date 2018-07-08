@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  nginx: 
+    build: ./nginx
+    depends_on:
+      - web
+    volumes:
+      - ./static:/static
+    ports:
+      - "80:80"
+  db:
+    image: mysql:5.7
+    restart: always
+    expose:
+      - "3306"
+    volumes:
+      - ./dockermysql:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_DATABASE=mticket
+      - MYSQL_ROOT_PASSWORD=1
+  rd:
+    image: redis
+    restart: always
+    expose:
+      - "6379"
+    volumes:
+      - ./dockerredis:/var/lib/redis
+  web:
+    build: .
+    volumes:
+      - ./osticket:/home/osticket
+      - ./static:/static
+    expose:
+      - "8000"
+      - "8001"
+    depends_on:
+      - rd
+      - db
