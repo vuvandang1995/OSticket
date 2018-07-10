@@ -1,5 +1,14 @@
 $(document).ready(function(){
     $('#list_ticket_leader').DataTable({
+        "columnDefs": [
+            { "width": "5%", "targets": 0 },
+            { "width": "20%", "targets": 1 },
+            { "width": "15%", "targets": 2 },
+            { "width": "5%", "targets": 3 },
+            { "width": "10%", "targets": 4 },
+            { "width": "5%", "targets": 5 },
+            { "width": "40%", "targets": 6 },
+        ],
         "ajax": {
             "type": "GET",
             "url": location.href +"data",
