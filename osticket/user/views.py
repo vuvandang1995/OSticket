@@ -10,6 +10,7 @@ from django.core.mail import EmailMessage
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.utils.safestring import mark_safe
 from django.http import JsonResponse
+from django.conf import settings
 import json
 from .forms import *
 import string
@@ -207,7 +208,8 @@ def user_data(request):
 
 
 def handle_uploaded_file(f):
-    path = "media/photos/"+f.name
+    # path = settings.MEDIA_ROOT+"/photos/"+f.name
+    path = "media/photos/" + f.name
     file = open(path, 'wb+')
     for chunk in f.chunks():
         file.write(chunk)
